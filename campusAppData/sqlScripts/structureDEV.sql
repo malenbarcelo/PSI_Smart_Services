@@ -1,0 +1,50 @@
+/*Delete database if exists*/
+DROP DATABASE IF EXISTS psi_db;
+
+/*Create database*/
+CREATE DATABASE psi_db;
+
+/*Create table user_categories*/
+CREATE TABLE psi_db.user_categories (
+    id INT NOT NULL AUTO_INCREMENT,
+    category_name VARCHAR(50) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+);
+
+/*Create table users*/
+CREATE TABLE psi_db.users (
+    id INT NOT NULL AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    user_email VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(150) NOT NULL,
+    id_user_categories INT NOT NULL,
+    company VARCHAR(50) NOT NULL,
+    enabled INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_user_categories) REFERENCES user_categories(id)
+);
+
+/*Create table courses*/
+CREATE TABLE psi_db.courses (
+    id INT NOT NULL AUTO_INCREMENT,
+    course_name VARCHAR(50) NOT NULL UNIQUE,
+    url VARCHAR(1000),
+    enabled INT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+/*Create table forms_data*/
+CREATE TABLE psi_db.forms_data (
+    id INT NOT NULL AUTO_INCREMENT,
+    date VARCHAR(10) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    result VARCHAR(50) NOT NULL,
+    grade DECIMAL(5,2) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    company VARCHAR(50) NOT NULL,
+    dni BIGINT NOT NULL,
+    form_name VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id)
+);

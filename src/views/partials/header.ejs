@@ -1,0 +1,37 @@
+<div class="sidenav">
+    
+    <div class="divSideNavImg">
+        <img src="/images/companyLogo.png" alt="Company Logo" class="companyLogo">
+    </div>
+    <div class="divSideNav">
+
+        <div class="divMenu">
+            <% if (locals.isLogged) { %>
+                <div class = "a1SideNavBar">DATOS</div>
+                <a class = "a2SideNavBar" href="/courses/my-courses">Cursos</a>
+                <a class = "a2SideNavBar" href="/users/delete-administrator">Alumnos</a>
+                
+            <% } %>
+        </div>
+
+        <div class="divMenu">
+            <% if (locals.isLogged && userLogged.id_user_categories == 1 ) { %>
+                <div class = "a1SideNavBar">ADMINISTRACIÓN</div>
+                <a class = "a2SideNavBar" href="/users/create-administrator">Alta usuario administrador</a>
+                <a class = "a2SideNavBar" href="/users/delete-administrator">Baja usuario administrador</a>
+                <a class = "a2SideNavBar" href="/users/restore-password">Restablecer contraseña</a>
+            <% } %>
+        </div>
+
+        <div class="divMenu">
+            <% if (locals.isLogged && userLogged.id_user_categories == 1 ) { %>
+                <div class = "a1SideNavBar">CURSOS</div>
+                <a class = "a2SideNavBar" href="/courses/create-course">Crear curso</a>
+                <a class = "a2SideNavBar" href="/courses/view-courses">Ver formularios</a>
+                <a class = "a2SideNavBar" href="/courses/start-course">Iniciar curso</a>
+            <% } %>
+        </div>
+
+    </div>
+    
+</div>
