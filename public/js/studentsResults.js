@@ -14,8 +14,10 @@ window.addEventListener('load',async()=>{
     const viewNotPassed = document.getElementById('viewNotPassed')
     const tableTitle = document.getElementById('tableTitle')
     const tableStudentsResults = document.getElementById('tableStudentsResults')
+    const downloadAll = document.getElementById('downloadAll')
+    const downloadSelected = document.getElementById('downloadSelected')
 
-    const tableInnerHTMLFirstLine = '<table class="table1"><tr><th class="tableTitle1">DNI</th><th class="tableTitle1">Apellido y nombre</th><th class="tableTitle1">Email</th><th class="tableTitle1">Nota</th></tr>'
+    const tableInnerHTMLFirstLine = '<table class="table1"><tr><th class="tableTitle1">Fecha</th><th class="tableTitle1">DNI</th><th class="tableTitle1">Apellido y nombre</th><th class="tableTitle1">Email</th><th class="tableTitle1">Nota</th></tr>'
     const tableInnerHTMLLastLine = '<table>'
     
     viewPassed.addEventListener("click",async(e)=>{
@@ -23,11 +25,15 @@ window.addEventListener('load',async()=>{
         viewAllData.classList.remove('underlined')
         viewPassed.classList.add('underlined')
         viewNotPassed.classList.remove('underlined')
+        downloadAll.classList.remove('notVisible')
+        downloadSelected.classList.remove('notVisible')
 
         let tableInnerHTML = ''
 
         for( let i = 0; i < studentsResultsPassed.length; i++ ) {
-            tableInnerHTML += '<tr><td class="td1">' + studentsResultsPassed[i].dni + '</td><td class="td1">' + studentsResultsPassed[i].last_name + ', ' + studentsResultsPassed[i].first_name + '</td><td class="td1">' + studentsResultsPassed[i].email + '</td><td class="td1 span1">' + studentsResultsPassed[i].grade * 100 + '%' + '</td><td class="td3"> <i class="fa-solid fa-plus"></i></td><td class="td3"><a href="/courses/print-credential/' + studentsResultsPassed[i].id +'"><i class="fa-solid fa-download"></i></a></td></tr>'
+            tableInnerHTML += '<tr><td class="td1">' + studentsResultsPassed[i].dateString + '</td><td class="td1">' + studentsResultsPassed[i].dni + '</td><td class="td1">' + studentsResultsPassed[i].last_name + ', ' + studentsResultsPassed[i].first_name + '</td><td class="td1">' + studentsResultsPassed[i].email + '</td><td class="td1 span1">' + studentsResultsPassed[i].grade * 100 + '%' + 
+
+            '<td class="td3"><input type="checkbox" name="' + studentsResultsPassed[i].id + '" class="checkbox1"></td></tr>'
         }
 
         tableStudentsResults.innerHTML = tableInnerHTMLFirstLine + tableInnerHTML + tableInnerHTMLLastLine
@@ -38,11 +44,15 @@ window.addEventListener('load',async()=>{
         viewAllData.classList.remove('underlined')
         viewPassed.classList.remove('underlined')
         viewNotPassed.classList.add('underlined')
+        downloadAll.classList.add('notVisible')
+        downloadSelected.classList.add('notVisible')
+
+        tableTitle.classList.add('enabled')
 
         let tableInnerHTML = ''
 
         for( let i = 0; i < studentsResultsNotPassed.length; i++ ) {
-            tableInnerHTML += '<tr><td class="td1">' + studentsResultsNotPassed[i].dni + '</td><td class="td1">' + studentsResultsNotPassed[i].last_name + ', ' + studentsResultsNotPassed[i].first_name + '</td><td class="td1">' + studentsResultsNotPassed[i].email + '</td><td class="td1 span2">' + studentsResultsNotPassed[i].grade * 100 + '%' + '</td><td class="td3"> <i class="fa-solid fa-plus"></i></td></tr>'
+            tableInnerHTML += '<tr><td class="td1">' + studentsResultsNotPassed[i].dateString + '</td><td class="td1">' + studentsResultsNotPassed[i].dni + '</td><td class="td1">' + studentsResultsNotPassed[i].last_name + ', ' + studentsResultsNotPassed[i].first_name + '</td><td class="td1">' + studentsResultsNotPassed[i].email + '</td><td class="td1 span2">' + studentsResultsNotPassed[i].grade * 100 + '%' + '</td></tr>'
         }
 
         tableStudentsResults.innerHTML = tableInnerHTMLFirstLine + tableInnerHTML + tableInnerHTMLLastLine
@@ -52,22 +62,26 @@ window.addEventListener('load',async()=>{
         viewAllData.classList.add('underlined')
         viewPassed.classList.remove('underlined')
         viewNotPassed.classList.remove('underlined')
+        downloadAll.classList.remove('notVisible')
+        downloadSelected.classList.remove('notVisible')
 
         let tableInnerHTML = ''
 
         for( let i = 0; i < studentsResults.length; i++ ) {
 
             let gradeClass = ''
-            let downloadIcon = ''
+            let checkIcon = ''
+            
 
             if (studentsResults[i].grade > 0.78){
                 gradeClass = 'span1'
-                downloadIcon = '<td class="td3"><a href="/courses/print-credential/' + studentsResults[i].id +'"><i class="fa-solid fa-download"></i></a></td>'
+                checkIcon = '<td class="td3"><input type="checkbox" name="' + studentsResults[i].id + '" class="checkbox1"></td>'
+
             }else{
                 gradeClass = 'span2'
             }
 
-            tableInnerHTML += '<tr><td class="td1">' + studentsResults[i].dni + '</td><td class="td1">' + studentsResults[i].last_name + ', ' + studentsResults[i].first_name + '</td><td class="td1">' + studentsResults[i].email + '</td><td class="td1 ' + gradeClass + '">' + studentsResults[i].grade * 100 + '%' + '</td><td class="td3"> <i class="fa-solid fa-plus"></i></td>' + downloadIcon + '</tr>'
+            tableInnerHTML += '<tr><td class="td1">' + studentsResults[i].dateString + '</td><td class="td1">' + studentsResults[i].dni + '</td><td class="td1">' + studentsResults[i].last_name + ', ' + studentsResults[i].first_name + '</td><td class="td1">' + studentsResults[i].email + '</td><td class="td1 ' + gradeClass + '">' + studentsResults[i].grade * 100 + '%' + '</td>' + checkIcon + '</tr>'
         }
 
         tableStudentsResults.innerHTML = tableInnerHTMLFirstLine + tableInnerHTML + tableInnerHTMLLastLine

@@ -33,6 +33,15 @@
         </div>
 
         <div>
+            <input type="text" name="validity" placeholder="Vigencia del certificado (meses)" class="input1 input7 <%= locals.errors && errors.validity ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.validity : null %>">
+            <div class="divError1">
+                <% if (locals.errors && errors.validity) { %>
+                    <%= errors.validity.msg %>
+                <% } %>
+            </div>
+        </div>
+
+        <div>
             <button type="submit" class="button1">Crear</button>
         </div>    
     </form>

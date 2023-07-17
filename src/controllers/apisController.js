@@ -5,6 +5,7 @@ const { google } = require('googleapis')
 
 //Google drive APIs configuration
 const credentials = require('../forms/credentials.json')
+const dateFunctions = require('../functions/datesFunctions')
 const clientID = credentials.web.client_id;
 const clientSecret = credentials.web.client_secret;
 const redirectURL = credentials.web.redirect_uris[0];
@@ -47,14 +48,41 @@ const apisController = {
       res.redirect(authURL);
     }        
 },
+studentData: async(req,res) =>{
+  try{
+    const company = req.params.company
+    const dni = req.params.dni
+
+    //get student data
+    const studentData = await formsDataQueries.studentData(company,dni)
+
+    return res.status(200).json(studentData)
+
+  }catch(error){
+    console.log(error)
+    return res.send('Ha ocurrido un error')
+  }
+},
   studentsResults: async(req,res) =>{
     try{
       const course = req.params.courseName
       const company = req.params.company
+
       //get course students
-      const studentsData = await formsDataQueries.studentsDataFiltered(company,course)
-      return res.status(200).json(studentsData)
+      let studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+
+      //add date as string
+      const newDataArray = await Promise.all(studentsData.map(async (element) => {
+        const dateString = await dateFunctions.dateToString(element.date);
+        return {
+          ...element.dataValues,
+          dateString: dateString, 
+        };
+      }));
+
+      return res.status(200).json(newDataArray)
     }catch(error){
+      console.log(error)
       return res.send('Ha ocurrido un error')
     }
   },
@@ -65,7 +93,17 @@ const apisController = {
       //get course students
       const studentsData = await formsDataQueries.studentsDataFiltered(company,course)
       const studentsDataNotPassed = studentsData.filter(data => parseFloat(data.grade) <= 0.78)
-      return res.status(200).json(studentsDataNotPassed)
+
+      //add date as string
+      const newDataArray = await Promise.all(studentsDataNotPassed.map(async (element) => {
+        const dateString = await dateFunctions.dateToString(element.date);
+        return {
+          ...element.dataValues,
+          dateString: dateString, 
+        }
+      }))
+
+      return res.status(200).json(newDataArray)
     }catch(error){
       return res.send('Ha ocurrido un error')
     }
@@ -77,39 +115,21 @@ const apisController = {
       //get course students
       const studentsData = await formsDataQueries.studentsDataFiltered(company,course)
       const studentsDataPassed = studentsData.filter(data => parseFloat(data.grade) > 0.78)
-      return res.status(200).json(studentsDataPassed)
+
+      //add date as string
+      const newDataArray = await Promise.all(studentsDataPassed.map(async (element) => {
+        const dateString = await dateFunctions.dateToString(element.date);
+        return {
+          ...element.dataValues,
+          dateString: dateString, 
+        }
+      }))
+
+      return res.status(200).json(newDataArray)
     }catch(error){
       return res.send('Ha ocurrido un error')
     }
   },
-
-    /*users: async(req,res) =>{
-        const users = await db.Users.findAll({
-            include:[{all:true}]
-        })
-        return res.status(200).json(users)
-    },
-    usersFiltered: async(req,res) =>{
-        const idUser = req.params.idUser
-        const userFiltered = await db.Users.findOne({
-            where:{id:idUser}
-        })
-        return res.status(200).json(userFiltered)
-    },
-    questionTypes: async(req,res) =>{
-        const questionTypes = await databaseData.questionTypes()
-        return res.status(200).json(questionTypes)
-    },
-    studentFiltered: async(req,res) =>{
-        const studentEmail = req.params.studentEmail
-        const studentFiltered = await databaseData.findStudent(studentEmail)
-        return res.status(200).json(studentFiltered)
-    },
-    coursesResults: async(req,res) =>{
-        const courseResults = await databaseData.coursesResults()
-        return res.status(200).json(courseResults)
-    },
-    */
 }
 module.exports = apisController
 

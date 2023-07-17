@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 
-   const alias = "Courses"
+   const alias = "Profile_images"
    const cols = {
    id:{
       type : DataTypes.INTEGER,
@@ -8,29 +8,24 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement : true,
       allowNull: false
    },
-   course_name:{
-      type: DataTypes.STRING,
-      allowNull: false,
-   },
-   url:{
-      type: DataTypes.STRING,
-      allowNull: false,
-   },
-   validity:{
+   dni:{
       type: DataTypes.INTEGER,
       allowNull: false,
    },
-   enabled:{
-      type: DataTypes.INTEGER,
-      allowNull: true,
-   }
+   image:{
+      type: DataTypes.STRING,
+      allowNull: false,
+   },
+   course:{
+      type: DataTypes.STRING,
+      allowNull: false,
+   },
    }
    const config = {
-   tableName : 'courses',
+   tableName : 'profile_images',
    timestamps : false
    }
-   const Course = sequelize.define(alias, cols, config)
+   const Profile_image = sequelize.define(alias, cols, config)
 
-   
-   return Course
+   return Profile_image
 }

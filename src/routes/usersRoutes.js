@@ -4,23 +4,6 @@ const router = express.Router()
 const userFormsValidations = require('../validations/userFormsValidations.js')
 const authMiddleware = require('../middlewares/authMiddleware.js')
 const admMiddleware = require('../middlewares/admMiddleware.js')
-const multer = require('multer')
-const path = require('path')
-
-//Multer config
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.resolve('public/assignStudentsFiles'))
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now()    
-      const fileExtension = path.extname(file.originalname)   
-      const fileName = file.originalname.replace(fileExtension,'')      
-      cb(null, 'fileAssignStudents' + uniqueSuffix + fileExtension)
-    }
-  })
-
-const upload = multer({storage: storage})  
 
 router.get('/',usersController.login)
 router.post('/login',userFormsValidations.loginFormValidations,usersController.processLogin)

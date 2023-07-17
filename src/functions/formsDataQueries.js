@@ -1,7 +1,20 @@
 const db = require('../../database/models')
+const datesFunctions = require('../functions/datesFunctions')
 const sequelize = require('sequelize')
 
 const formsDataQueries = {
+    allCourses: async() => {
+        try{
+            const courses = await db.Forms_data.findAll({
+                attributes: [[sequelize.fn('DISTINCT', sequelize.col('form_name')), 'form_name']],
+                order:['form_name'],
+                raw:true,
+            })
+            return courses
+        }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },
     companies: async() => {
         try{
             const companies = await db.Forms_data.findAll({
@@ -27,14 +40,28 @@ const formsDataQueries = {
             return res.send('Ha ocurrido un error')
         }
     },
-    allCourses: async() => {
+    companyStudents: async(company) => {
         try{
-            const courses = await db.Forms_data.findAll({
-                attributes: [[sequelize.fn('DISTINCT', sequelize.col('form_name')), 'form_name']],
-                order:['form_name'],
+            let studentsData = await db.Forms_data.findAll({
+                where: { company: company },
+                order:[['last_name','ASC']],
+                raw: true
+              })            
+
+            return studentsData
+
+        }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },    
+    courseName: async(idFormData) => {
+        try{
+            const courseName = await db.Forms_data.findOne({
+                where:{id:idFormData},
+                attributes:['form_name'],
                 raw:true,
             })
-            return courses
+            return courseName.form_name
         }catch(error){
             return res.send('Ha ocurrido un error')
         }
@@ -51,6 +78,49 @@ const formsDataQueries = {
         }catch(error){
             return res.send('Ha ocurrido un error')
         }
+    },
+    dataCredentialsToPrint: async(credentialsToPrint) => {
+
+        const dataCredentialsToPrint = await db.Forms_data.findAll({
+            where:{id:credentialsToPrint},
+        })
+
+        return dataCredentialsToPrint        
+    },
+    studentData: async(company,dni) => {
+
+        const studentCourses = await db.Forms_data.findAll({
+            where:{dni:dni,company:company},
+            attributes: [[sequelize.fn('DISTINCT', sequelize.col('form_name')), 'form_name']],
+            order:[['form_name','ASC']],
+            raw:true
+        })
+
+        const studentData = await db.Forms_data.findAll({
+            where:{dni:dni,company:company},
+            order:[['form_name','ASC'],['date','ASC']],
+            raw:true
+        })
+
+        for (let i = 0; i < studentCourses.length; i++) {
+            studentCourses[i].data = []
+            for (let j = 0; j < studentData.length; j++) {
+                if (studentData[j].form_name == studentCourses[i].form_name) {
+                    studentCourses[i].data.push(studentData[j])
+                }
+            }
+        }
+
+        for (let i = 0; i < studentCourses.length; i++) {
+            for (let j = 0; j < studentCourses[i].data.length; j++) {
+                const dateString = await datesFunctions.dateToString(studentCourses[i].data[j].date)
+                studentCourses[i].data[j].dateString = dateString
+                
+            }
+            
+        }
+
+        return studentCourses      
     },
     studentDataFiltered: async(idFormData) => {
 

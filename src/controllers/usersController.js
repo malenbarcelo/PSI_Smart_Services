@@ -1,9 +1,10 @@
 const db = require('../../database/models')
 const {validationResult} = require('express-validator')
 const bcrypt = require('bcryptjs')
-//const databaseData = require('../functions/databaseData')
 const formsDataQueries = require('../functions/formsDataQueries')
 const usersQueries = require('../functions/usersQueries')
+const readGoogleSheets = require('../functions/readGoogleSheets')
+const datesFunctions = require('../functions/datesFunctions')
 
 const usersController = {
     createAdministrator: async(req,res) => {
@@ -140,8 +141,52 @@ const usersController = {
                     alertMessage
                 })
             }
+
+            //Add new data to dataBase
+            const mdbData = await readGoogleSheets.mdbData()
+
+            //find first row to add to database
+            //database data qty
+            const formsData = await db.Forms_data.findAll({raw:true})
+            const firstRowToAdd =  formsData.length + 1 // add one row because data includes titles
+
+            //googlesheets data qty
+            let lastRowToAdd = 0
+            for (let i = 0; i < mdbData.length; i++) {
+                if (mdbData[i].length < 10) {
+                    break
+                }
+                lastRowToAdd += 1
+            }
+
+            lastRowToAdd = lastRowToAdd - 1
+
+
+            //add data to database
+            for (let i = firstRowToAdd; i <= lastRowToAdd; i++) {
+                //get the date as string and complete with zeros if necessary
+                const dateString = mdbData[i][1].split(' ')[0]
+                const dateArray = dateString.split('/')
+                const date = new Date( dateArray[2], dateArray[1] - 1, dateArray[0])
+                const dateTimestamp = date.getTime()
+
+                //const dateString = await datesFunctions.certificateDate(date)
+
+                await db.Forms_data.create({
+                    date:dateTimestamp,
+                    email:mdbData[i][2],
+                    grade:parseFloat(mdbData[i][4]).toFixed(2),
+                    last_name:mdbData[i][5],
+                    first_name:mdbData[i][6],
+                    company:mdbData[i][8],
+                    dni:mdbData[i][7],
+                    form_name:mdbData[i][9],
+                })
+            }
+
+            //login and show my-courses
             const userToLogin = await usersQueries.findUser(req.body.email)
-                        delete userToLogin.password
+            delete userToLogin.password
             req.session.userLogged = userToLogin
 
             return res.redirect('/courses/my-courses')

@@ -6,10 +6,10 @@
     <div class="divSideNav">
 
         <div class="divMenu">
-            <% if (locals.isLogged) { %>
+            <% if (locals.isLogged && userLogged.id_user_categories == 2) { %>
                 <div class = "a1SideNavBar">DATOS</div>
                 <a class = "a2SideNavBar" href="/courses/my-courses">Cursos</a>
-                <a class = "a2SideNavBar" href="/users/delete-administrator">Alumnos</a>
+                <a class = "a2SideNavBar" href="/courses/view-students">Alumnos</a>
                 
             <% } %>
         </div>
@@ -27,8 +27,10 @@
             <% if (locals.isLogged && userLogged.id_user_categories == 1 ) { %>
                 <div class = "a1SideNavBar">CURSOS</div>
                 <a class = "a2SideNavBar" href="/courses/create-course">Crear curso</a>
-                <a class = "a2SideNavBar" href="/courses/view-courses">Ver formularios</a>
                 <a class = "a2SideNavBar" href="/courses/start-course">Iniciar curso</a>
+                <a class = "a2SideNavBar" href="/courses/my-courses">Mis cursos</a>
+                <a class = "a2SideNavBar" href="/courses/view-courses">Ver formularios</a>
+                
             <% } %>
         </div>
 

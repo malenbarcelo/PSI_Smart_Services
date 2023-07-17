@@ -7,43 +7,56 @@
     <h3 class="title1 title3" id="course"><%= course %></h3>
     <h3 class="title2">Resultados del formulario</h3>
 
-    <div class="divFlex8">
+    <form action="/courses/students-results/<%= userLogged.company %>/<%= course %>" method="POST" class="form1">
 
-        <div class="divFlex10">
-            <div class="div29 underlined" id="viewAllData">Ver todos</i></div>
-            <div class="div29" id="viewPassed">Ver aprobados</i></div>
-            <div class="div29 div30" id="viewNotPassed">Ver desaprobados</i></div>
-        </div>
+        <div class="divFlex8">
 
-        <div class="divFlex11">
+            <input type="date" name="date">
+
+            <div class="divFlex10">
+                <div class="div29 underlined" id="viewAllData">Ver todos</i></div>
+                <div class="div29" id="viewPassed">Ver aprobados</i></div>
+                <div class="div29 div30" id="viewNotPassed">Ver desaprobados</i></div>
+            </div>
+            
             <div class="div31" id="tableTitle">Todos los resultados</div>
-            <div class="div31"><a href="/courses/print-credentials/ExxonMobil/Seguridad en el manejo - 042023"><i class="fa-solid fa-download"></i></a></div>
-        </div>
-        
-        <div id="tableStudentsResults">
-            <table class="table1">
-                <tr>
-                    <th class="tableTitle1">DNI</th>
-                    <th class="tableTitle1">Apellido y nombre</th>
-                    <th class="tableTitle1">Email</th>
-                    <th class="tableTitle1">Nota</th>
-                </tr>
-        
-                <% for( let i = 0; i < studentsData.length; i++ ) { %>
+            <a href="<%= '/courses/print-credentials/' + userLogged.company + '/' + course  %>" class="a4" id="downloadAll">
+                <div class="divFlex11">
+                    <div class="div39"><i class="fa-solid fa-download"></i></div>
+                    <div class="div39">Descargar todas las credenciales</div>
+                </div>
+            </a>
+            <div class="divFlex11" id="downloadSelected">
+                <div class="div39"><i class="fa-solid fa-download"></i></div>
+                <button type="submit" class="div39 button3">Descargar credenciales seleccionadas</button>
+            </div>
+            
+            <div id="tableStudentsResults">
+                <table class="table1">
                     <tr>
-                        <td class="td1"><%= studentsData[i].dni %></td>
-                        <td class="td1"><%= studentsData[i].last_name + ', ' + studentsData[i].first_name %></td>
-                        <td class="td1"><%= studentsData[i].email %></td>
-                        <td class="td1 td2 <%= studentsData[i].grade > 0.78 ? 'span1' : 'span2' %>"><%= studentsData[i].grade * 100 + '%' %></td>
-                        <td class="td3"> <i class="fa-solid fa-plus"></i></td>
-                        <% if (studentsData[i].grade > 0.78) { %>
-                            <td class="td3"><a href="/courses/print-credential/<%= studentsData[i].id %>"><i class="fa-solid fa-download"></i></a></td>
-                        <% } %>
+                        <th class="tableTitle1 tableTitle2">Fecha<i class="fa-solid fa-arrow-down-long orderDate"></i></th>
+                        <th class="tableTitle1">DNI</th>
+                        <th class="tableTitle1 tableTitle2">Apellido y nombre<i class="fa-solid fa-arrow-down-long orderName"></i></th>
+                        <th class="tableTitle1">Email</th>
+                        <th class="tableTitle1">Nota</th>
                     </tr>
-                <% } %>
-            </table>
+            
+                    <% for( let i = 0; i < studentsData.length; i++ ) { %>
+                        <tr>
+                            <td class="td1"><%= datesStrings[i].dateString %></td>
+                            <td class="td1"><%= studentsData[i].dni %></td>
+                            <td class="td1"><%= studentsData[i].last_name + ', ' + studentsData[i].first_name %></td>
+                            <td class="td1"><%= studentsData[i].email %></td>
+                            <td class="td1 td2 <%= studentsData[i].grade > 0.78 ? 'span1' : 'span2' %>"><%= studentsData[i].grade * 100 + '%' %></td>
+                            <% if (studentsData[i].grade > 0.78) { %>
+                                <td class="td3"><input type="checkbox" name="<%=studentsData[i].id %>" class="checkbox1"></td>
+                            <% } %>
+                        </tr>
+                    <% } %>
+                </table>
+            </div>
         </div>
-    </div>
+    </form>
 
 </div>
 

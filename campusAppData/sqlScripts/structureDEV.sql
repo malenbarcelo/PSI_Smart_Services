@@ -29,7 +29,8 @@ CREATE TABLE psi_db.users (
 CREATE TABLE psi_db.courses (
     id INT NOT NULL AUTO_INCREMENT,
     course_name VARCHAR(50) NOT NULL UNIQUE,
-    url VARCHAR(1000),
+    url VARCHAR(1000) NOT NULL,
+    validity INT NOT NULL,
     enabled INT NOT NULL,
     PRIMARY KEY (id)
 );
@@ -37,14 +38,22 @@ CREATE TABLE psi_db.courses (
 /*Create table forms_data*/
 CREATE TABLE psi_db.forms_data (
     id INT NOT NULL AUTO_INCREMENT,
-    date VARCHAR(10) NOT NULL,
+    date TIMESTAMP NOT NULL,
     email VARCHAR(50) NOT NULL,
-    result VARCHAR(50) NOT NULL,
     grade DECIMAL(5,2) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     company VARCHAR(50) NOT NULL,
     dni BIGINT NOT NULL,
     form_name VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+/*Create table forms_data*/
+CREATE TABLE psi_db.profile_images (
+    id INT NOT NULL AUTO_INCREMENT,
+    dni BIGINT NOT NULL,
+    image VARCHAR(200) NOT NULL,
+    course VARCHAR(200) NOT NULL,
     PRIMARY KEY (id)
 );

@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs')
 const db = require('../../database/models');
 const path = require('path')
 const readXlsFile = require('read-excel-file/node')
+const usersQueries = require('../functions/usersQueries')
 
 const userFormsValidations = {
     loginFormValidations: [
@@ -62,7 +63,7 @@ const userFormsValidations = {
             .notEmpty().withMessage('Ingrese un mail')
             .isEmail().withMessage('Ingrese un mail válido')
             .custom(async(value,{ req }) => {
-                const user = await databaseData.findUser(req.body.email)
+                const user = await usersQueries.findUser(req.body.email)
                 if (user) {
                 throw new Error('El mail ingresado ya existe en la base de usuarios')
                 }

@@ -8,7 +8,11 @@
 
     <div class="divFlex7">
         <% coursesData.forEach(course => { %>
-            <div class="div23"><a href= "<%= '/courses/students-results/' + userLogged.company + '/' + course.form_name  %>" class="a2">
+            <% if (locals.isLogged && userLogged.id_user_categories == 1) { %>
+                <div class="div233">
+                <% } else { %>
+                    <div class="div23"><a href= "<%= '/courses/students-results/' + userLogged.company + '/' + course.form_name  %>" class="a2">
+            <% } %>
                 <div class="div24"><%= course.form_name  %></div>
                 <% if (locals.isLogged && userLogged.id_user_categories == 1) { %>
                     <div class="div25"><b>Cantidad de empresas:</b> <%= course.companiesQty  %></div>
@@ -20,13 +24,6 @@
                 </div>
         <% }) %>
     </div>
-    
-
-    
-
-    
-    
-    
 </div>
 
 
