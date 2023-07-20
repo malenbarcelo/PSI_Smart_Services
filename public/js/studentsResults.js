@@ -1,43 +1,49 @@
 import { dominio } from "./dominio.js"
+import { getData } from "./getData.js"
 
 window.addEventListener('load',async()=>{
 
     const company = document.getElementById('userLoggedCompany').innerText
     const course = document.getElementById('course').innerText
-
-    const studentsResults = await (await fetch(dominio + 'apis/students-results/' + company + '/' + course)).json()
-    const studentsResultsPassed = await (await fetch(dominio + 'apis/students-results-passed/' + company + '/' + course)).json()
-    const studentsResultsNotPassed = await (await fetch(dominio + 'apis/students-results-not-passed/' + company + '/' + course)).json()
-    
+    const tableRows = document.getElementById('tableRows')
+    let filter = 'allData'
+    let order = 'noOrder'
     const viewAllData = document.getElementById('viewAllData')
     const viewPassed = document.getElementById('viewPassed')
     const viewNotPassed = document.getElementById('viewNotPassed')
     const tableTitle = document.getElementById('tableTitle')
-    const tableStudentsResults = document.getElementById('tableStudentsResults')
     const downloadAll = document.getElementById('downloadAll')
     const downloadSelected = document.getElementById('downloadSelected')
-
-    const tableInnerHTMLFirstLine = '<table class="table1"><tr><th class="tableTitle1">Fecha</th><th class="tableTitle1">DNI</th><th class="tableTitle1">Apellido y nombre</th><th class="tableTitle1">Email</th><th class="tableTitle1">Nota</th></tr>'
-    const tableInnerHTMLLastLine = '<table>'
+    const orderDateAsc = document.getElementById('orderDateAsc')
+    const orderDateDesc = document.getElementById('orderDateDesc')
+    const orderNameAsc = document.getElementById('orderNameAsc')
+    const orderNameDesc = document.getElementById('orderNameDesc')
+    const dateFilter = document.getElementById('dateFilter')
+    const divDateFilter = document.getElementById('divDateFilter')
+    const acceptBtn = document.getElementById('acceptBtn')
+    const divError = document.getElementById('divError')
+    const formTitle = document.getElementById('formTitle')
     
+    //get last 90 days to filter data
+    let dateUntil = new Date().getTime() //today as timestamp
+    let dateFrom = dateUntil - (90 * 24 * 60 * 60 * 1000) //remove 90 days in millisecs
+        
+    tableRows.innerHTML = await getData(course,company,filter)
+    
+    //Add events listeners
     viewPassed.addEventListener("click",async(e)=>{
+        
         tableTitle.innerText = 'Aprobados'
         viewAllData.classList.remove('underlined')
         viewPassed.classList.add('underlined')
         viewNotPassed.classList.remove('underlined')
         downloadAll.classList.remove('notVisible')
         downloadSelected.classList.remove('notVisible')
+        filter = 'passed'
+        order = 'noOrder'
 
-        let tableInnerHTML = ''
+        tableRows.innerHTML = await getData(course,company,filter,order)
 
-        for( let i = 0; i < studentsResultsPassed.length; i++ ) {
-            tableInnerHTML += '<tr><td class="td1">' + studentsResultsPassed[i].dateString + '</td><td class="td1">' + studentsResultsPassed[i].dni + '</td><td class="td1">' + studentsResultsPassed[i].last_name + ', ' + studentsResultsPassed[i].first_name + '</td><td class="td1">' + studentsResultsPassed[i].email + '</td><td class="td1 span1">' + studentsResultsPassed[i].grade * 100 + '%' + 
-
-            '<td class="td3"><input type="checkbox" name="' + studentsResultsPassed[i].id + '" class="checkbox1"></td></tr>'
-        }
-
-        tableStudentsResults.innerHTML = tableInnerHTMLFirstLine + tableInnerHTML + tableInnerHTMLLastLine
-        
     })
     viewNotPassed.addEventListener("click",async(e)=>{
         tableTitle.innerText = 'Desprobados'
@@ -46,16 +52,12 @@ window.addEventListener('load',async()=>{
         viewNotPassed.classList.add('underlined')
         downloadAll.classList.add('notVisible')
         downloadSelected.classList.add('notVisible')
-
         tableTitle.classList.add('enabled')
+        filter = 'notPassed'
+        order = 'noOrder'
 
-        let tableInnerHTML = ''
+        tableRows.innerHTML = await getData(course,company,filter,order)
 
-        for( let i = 0; i < studentsResultsNotPassed.length; i++ ) {
-            tableInnerHTML += '<tr><td class="td1">' + studentsResultsNotPassed[i].dateString + '</td><td class="td1">' + studentsResultsNotPassed[i].dni + '</td><td class="td1">' + studentsResultsNotPassed[i].last_name + ', ' + studentsResultsNotPassed[i].first_name + '</td><td class="td1">' + studentsResultsNotPassed[i].email + '</td><td class="td1 span2">' + studentsResultsNotPassed[i].grade * 100 + '%' + '</td></tr>'
-        }
-
-        tableStudentsResults.innerHTML = tableInnerHTMLFirstLine + tableInnerHTML + tableInnerHTMLLastLine
     })
     viewAllData.addEventListener("click",async(e)=>{
         tableTitle.innerText = 'Todos los resultados'
@@ -64,26 +66,60 @@ window.addEventListener('load',async()=>{
         viewNotPassed.classList.remove('underlined')
         downloadAll.classList.remove('notVisible')
         downloadSelected.classList.remove('notVisible')
+        filter = 'allData'
+        order = 'noOrder'
 
-        let tableInnerHTML = ''
+        tableRows.innerHTML = await getData(course,company,filter,order)
+    })
+    orderDateAsc.addEventListener("click",async(e)=>{
+        order = 'orderDateAsc'
+        orderDateAsc.classList.add('notVisible')
+        orderDateDesc.classList.remove('notVisible')
+        tableRows.innerHTML = await getData(course,company,filter,order)
+    })
+    orderDateDesc.addEventListener("click",async(e)=>{
+        order = 'orderDateDesc'
+        orderDateAsc.classList.remove('notVisible')
+        orderDateDesc.classList.add('notVisible')
+        tableRows.innerHTML = await getData(course,company,filter,order)
+    })
+    orderNameAsc.addEventListener("click",async(e)=>{
+        order = 'orderNameAsc'
+        orderNameAsc.classList.add('notVisible')
+        orderNameDesc.classList.remove('notVisible')
+        tableRows.innerHTML = await getData(course,company,filter,order)
+    })
+    orderNameDesc.addEventListener("click",async(e)=>{
+        order = 'orderNameDesc'
+        orderNameAsc.classList.remove('notVisible')
+        orderNameDesc.classList.add('notVisible')
+        tableRows.innerHTML = await getData(course,company,filter,order)
+    })
+    dateFilter.addEventListener("click",async(e)=>{
+        divDateFilter.classList.toggle('notVisible')
+    })
+    acceptBtn.addEventListener("click",async(e)=>{
 
-        for( let i = 0; i < studentsResults.length; i++ ) {
-
-            let gradeClass = ''
-            let checkIcon = ''
-            
-
-            if (studentsResults[i].grade > 0.78){
-                gradeClass = 'span1'
-                checkIcon = '<td class="td3"><input type="checkbox" name="' + studentsResults[i].id + '" class="checkbox1"></td>'
-
+        const dateFrom = document.getElementById('dateFrom')
+        const dateUntil = document.getElementById('dateUntil')
+        
+        if (dateFrom.value == '' || dateUntil.value == 'Invalid Date') {
+            divError.innerHTML = '<b>!Debe completar las fechas</b>'
+        }else{
+            if (dateFrom.value > dateUntil.value) {
+                divError.innerHTML = '<b>!La fecha "Desde" debe ser menor a la fecha "Hasta"</b>'
             }else{
-                gradeClass = 'span2'
+
+                divError.innerHTML = ''
+
+                const dateFromArray = dateFrom.value.split('-')
+                const dateUntilArray = dateUntil.value.split('-')
+                
+                const dateFromString = dateFromArray[2] + '/' + dateFromArray[1] + '/' + dateFromArray[0]
+                const dateUntilString = dateUntilArray[2] + '/' + dateUntilArray[1] + '/' + dateUntilArray[0]
+
+                formTitle.innerHTML = 'Resultados del formulario (' + dateFromString + ' - ' + dateUntilString + ')'
             }
-
-            tableInnerHTML += '<tr><td class="td1">' + studentsResults[i].dateString + '</td><td class="td1">' + studentsResults[i].dni + '</td><td class="td1">' + studentsResults[i].last_name + ', ' + studentsResults[i].first_name + '</td><td class="td1">' + studentsResults[i].email + '</td><td class="td1 ' + gradeClass + '">' + studentsResults[i].grade * 100 + '%' + '</td>' + checkIcon + '</tr>'
         }
-
-        tableStudentsResults.innerHTML = tableInnerHTMLFirstLine + tableInnerHTML + tableInnerHTMLLastLine
     })
 })

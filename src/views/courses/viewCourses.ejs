@@ -12,7 +12,7 @@
 
     <div>
         <% for( let i = 0; i < courses.length; i++ ) { %>
-            <div class="div43">
+            <div class="div43 <%= i%2==0 ? ' div49' : '' %>">
                 <a href="<%= refLink == 'startCourse' ? '/courses/start-course/' + courses[i].course_name : courses[i].url  %>" class="a3" target="_blank"><%= courses[i].course_name  %></a>
             </div>
         <% } %>
