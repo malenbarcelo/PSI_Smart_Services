@@ -6,13 +6,13 @@ const { clearScreenDown } = require('readline');
 //Change dominio.js from 'http://localhost:3000' to 'https://psi-smart-services.wnpower.host'
 const dominio = path.resolve('./public/js/dominio.js')
 const devDominioFile = fs.readFileSync(dominio, 'utf-8')
-const prdDominioFile = devDominioFile.replaceAll('http://localhost:3000','https://psi-smart-services.wnpower.host/')
+const prdDominioFile = devDominioFile.replaceAll('http://localhost:3000','https://psi-smart-services.wnpower.host')
 fs.writeFileSync(dominio,prdDominioFile)
 
 //Change config.js from DEV database to PRD database
 const config = path.resolve('./database/config/config.js')
 const configFile = fs.readFileSync(config, 'utf-8')
-let prdConfigFile = configFile.replaceAll('root','psismart_user_psi') //In WNPower cPanel --> Bases de Datos MySQl --> Añadir usuario a la base de datos --> Usuario
+let prdConfigFile = configFile.replaceAll('root','psismart_userpsi') //In WNPower cPanel --> Bases de Datos MySQl --> Añadir usuario a la base de datos --> Usuario
 prdConfigFile = prdConfigFile.replaceAll('30941767','psismartservices')
 prdConfigFile = prdConfigFile.replaceAll('psi_db','psismart_psi_db')//In WNPower cPanel --> Bases de Datos MySQl --> Bases de datos actuales
 prdConfigFile = prdConfigFile.replaceAll('psismart_psi_db','psismart_psi_db')// In case deToPrd is run twice

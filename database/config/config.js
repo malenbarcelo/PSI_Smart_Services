@@ -1,23 +1,27 @@
+const username = "psismart_userpsi"
+const password = "psismartservices"
+const database = "psismart_psi_db"
+
 module.exports = 
 {
   "development": {
-    "username": "psismart_user_psi",
-    "password": "psismartservices",
-    "database": "psismart_psi_db",
+    "username": username,
+    "password": password,
+    "database": database,
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
-    "username": "psismart_user_psi",
-    "password": null,
-    "database": "database_test",
+    "username": username,
+    "password": password,
+    "database": database,
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
-    "username": "psismart_user_psi",
-    "password": null,
-    "database": "database_production",
+    "username": username,
+    "password": password,
+    "database": database,
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
