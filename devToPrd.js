@@ -15,6 +15,7 @@ const configFile = fs.readFileSync(config, 'utf-8')
 let prdConfigFile = configFile.replaceAll('root','psismart_user_psi') //In WNPower cPanel --> Bases de Datos MySQl --> Añadir usuario a la base de datos --> Usuario
 prdConfigFile = prdConfigFile.replaceAll('30941767','psismartservices')
 prdConfigFile = prdConfigFile.replaceAll('psi_db','psismart_psi_db')//In WNPower cPanel --> Bases de Datos MySQl --> Bases de datos actuales
+prdConfigFile = prdConfigFile.replaceAll('psismart_psi_db','psismart_psi_db')// In case deToPrd is run twice
 fs.writeFileSync(config,prdConfigFile)
 
 //Change .sql scripts from DEV to PRD

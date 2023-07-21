@@ -3,7 +3,7 @@ module.exports =
   "development": {
     "username": "psismart_user_psi",
     "password": "psismartservices",
-    "database": "psismart_psismart_psi_db",
+    "database": "psismart_psi_db",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
