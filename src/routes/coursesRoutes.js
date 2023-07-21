@@ -32,6 +32,7 @@ router.get('/start-course',coursesController.startCourse)
 router.get('/start-course/:courseName',coursesController.entryData)
 router.post('/start-course/:courseName',upload.single('image'),coursesFormsValidations.entryData,coursesController.openForm)
 router.get('/view-students',coursesController.viewStudents)
+router.get('/view-certificate/:idFormData',coursesController.viewCertificate)
 
 module.exports = router
 

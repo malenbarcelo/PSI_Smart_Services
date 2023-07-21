@@ -29,10 +29,51 @@ CREATE TABLE psi_db.users (
 CREATE TABLE psi_db.courses (
     id INT NOT NULL AUTO_INCREMENT,
     course_name VARCHAR(50) NOT NULL UNIQUE,
-    url VARCHAR(1000) NOT NULL,
+    url VARCHAR(500) NOT NULL,
     validity INT NOT NULL,
     enabled INT NOT NULL,
     PRIMARY KEY (id)
+);
+
+/*Create table certificate templates*/
+CREATE TABLE psi_db.credentials_templates (
+    id INT NOT NULL AUTO_INCREMENT,
+    id_courses INT NOT NULL,
+    title1 varchar(100) NOT NULL,
+    title2 varchar(100) NOT NULL,
+    logo1 varchar(100) NOT NULL,
+    logo2 varchar(100) NOT NULL,
+    logo3 varchar(100) NOT NULL,
+    signature1_image varchar(100) NOT NULL,
+    signature2_image varchar(100) NOT NULL,
+    signature1_line1 varchar(100) NOT NULL,
+    signature1_line2 varchar(100) NOT NULL,
+    signature2_line1 varchar(100) NOT NULL,
+    signature2_line2 varchar(100) NOT NULL,    
+    enabled INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_courses) REFERENCES courses(id)
+);
+
+/*Create table certificate templates*/
+CREATE TABLE psi_db.certificates_templates (
+    id INT NOT NULL AUTO_INCREMENT,
+    id_courses INT NOT NULL,
+    logo1 varchar(100) NOT NULL,
+    logo2 varchar(100) NOT NULL,
+    logo3 varchar(100) NOT NULL,
+    signature1_image varchar(100) NOT NULL,
+    signature2_image varchar(100) NOT NULL,
+    signature1_line1 varchar(100) NOT NULL,
+    signature1_line2 varchar(100) NOT NULL,
+    signature2_line1 varchar(100) NOT NULL,
+    signature2_line2 varchar(100) NOT NULL,
+    text1 varchar(100) NOT NULL,
+    text2 varchar(1000) NOT NULL,
+    text3 varchar(1000) NOT NULL,
+    enabled INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_courses) REFERENCES courses(id)
 );
 
 /*Create table forms_data*/
@@ -46,10 +87,12 @@ CREATE TABLE psi_db.forms_data (
     company VARCHAR(50) NOT NULL,
     dni BIGINT NOT NULL,
     form_name VARCHAR(50) NOT NULL,
+    course_code INT NOT NULL,
+    student_code VARCHAR(10) NOT NULL,
     PRIMARY KEY (id)
 );
 
-/*Create table forms_data*/
+/*Create table profila_images*/
 CREATE TABLE psi_db.profile_images (
     id INT NOT NULL AUTO_INCREMENT,
     dni BIGINT NOT NULL,

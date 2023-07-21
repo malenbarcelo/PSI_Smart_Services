@@ -39,6 +39,14 @@ module.exports = (sequelize, DataTypes) => {
    form_name:{
       type: DataTypes.STRING,
       allowNull: true,
+   },
+   course_code:{
+      type: DataTypes.INTEGER,
+      allowNull: true,
+   },
+   student_code:{
+      type: DataTypes.STRING,
+      allowNull: true,
    }
 
    }

@@ -181,6 +181,8 @@ const usersController = {
                     company:mdbData[i][8],
                     dni:mdbData[i][7],
                     form_name:mdbData[i][9],
+                    course_code:999,
+                    student_code:'01'
                 })
             }
 

@@ -336,6 +336,54 @@ const coursesController = {
             return res.send('Ha ocurrido un error')
         }
     },
+    viewCertificate: async(req,res) => {
+        try{
+            const idFormData = req.params.idFormData                        
+
+            //get certificate data
+            const certificateData = await formsDataQueries.studentDataFiltered(idFormData)
+
+            //get course name
+            const courseName = certificateData.form_name
+
+            //get course
+            const courseData = await coursesQueries.filtrateCourse(courseName) 
+
+            //get course id
+            const courseId = courseData.id
+
+            //get certificate template
+            const certificateTemplate = await db.Certificates_templates.findOne({
+                where:{id_courses:courseId},
+                raw:true
+            })
+
+            //get validity
+            const validity =  courseData.validity
+
+            //get expiration date
+            const issueDate = certificateData.date
+            const issueDateString = await datesFunctions.dateToString(issueDate)
+            const expirationDateTimestamp =  issueDate.setMonth(issueDate.getMonth() + validity)
+            const expirationDate = new Date(expirationDateTimestamp)
+            const expirationDateString = await datesFunctions.dateToString(expirationDate)
+
+            //get student image
+            const studentImage = await profileImagesQueries.imageName(certificateData.dni,courseName)
+            
+            //get certificate code
+            const courseCode = certificateData.course_code
+            const date = issueDateString.split('/')[0] + issueDateString.split('/')[1] + issueDateString.split('/')[2]
+            const studentCode = certificateData.student_code
+            const certificateCode = courseCode + '-' + date + '-' + studentCode
+
+            return res.render('courses/certificates',{title:'Certificado',certificateCode,certificateTemplate,certificateData,issueDateString,expirationDateString,studentImage})
+            
+        }catch(error){
+            console.log(error)
+            return res.send('Ha ocurrido un error')
+        }
+    },
     viewCredential: async(req,res) => {
         try{
             const idFormData = req.params.idFormData                        
@@ -346,13 +394,20 @@ const coursesController = {
             //get course name
             const courseName = credentialData.form_name
 
-            //get months of validity of the course
-            const courseValidity = await db.Courses.findOne({
-                where:{course_name:courseName},
-                attributes:['validity'],
+            //get course
+            const courseData = await coursesQueries.filtrateCourse(courseName) 
+
+            //get course id
+            const courseId = courseData.id
+
+            //get credential template
+            const credentialTemplate = await db.Credentials_templates.findOne({
+                where:{id_courses:courseId},
                 raw:true
             })
-            const validity = parseInt(courseValidity.validity)            
+
+            //get validity
+            const validity =  courseData.validity
 
             //get expiration date
             const issueDate = credentialData.date
@@ -361,14 +416,19 @@ const coursesController = {
             const expirationDate = new Date(expirationDateTimestamp)
             const expirationDateString = await datesFunctions.dateToString(expirationDate)
 
-            //get the credential name
-            const courseId = await coursesQueries.courseId(courseName)
-            const credentialName = 'credential' + courseId
-
-            //get the student image
+            //get student image
             const studentImage = await profileImagesQueries.imageName(credentialData.dni,courseName)
-            return res.render('credentials/' + credentialName,{title:'Credencial',credentialData,issueDateString,expirationDateString,studentImage})
+            
+            //get credential code
+            const courseCode = credentialData.course_code
+            const date = issueDateString.split('/')[0] + issueDateString.split('/')[1] + issueDateString.split('/')[2]
+            const studentCode = credentialData.student_code
+            const credentialCode = courseCode + '-' + date + '-' + studentCode
+            
 
+            return res.render('courses/credentials',{title:'Credencial',credentialCode,credentialTemplate,credentialData,issueDateString,expirationDateString,studentImage})
+
+            
         }catch(error){
             console.log(error)
             return res.send('Ha ocurrido un error')

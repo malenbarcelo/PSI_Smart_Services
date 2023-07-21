@@ -1,0 +1,29 @@
+.divCertificate{
+    border: black solid 1px;
+    width: 90%;
+    margin: auto;
+}
+.divHeaderLogo{
+    border:red solid 1px;
+    text-align: center;
+    vertical-align: center;
+
+}
+
+.header{
+    display: flex;
+}
+
+.headerData{
+    text-align: right;
+    border:red solid 1px
+}
+
+.headerLogo1{
+    height: 40px;
+    border:grey solid 1px;
+}
+
+.headerLogo2{
+    height: 80px;
+}

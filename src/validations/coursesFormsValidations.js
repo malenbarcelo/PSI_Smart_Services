@@ -2,16 +2,29 @@ const {body} = require('express-validator')
 const db = require('../../database/models')
 const path = require('path')
 const fs = require('fs')
+const coursesQueries = require('../functions/coursesQueries')
 
 const coursesFormsValidations = {
     createCourse: [
         body('courseName')
-            .notEmpty().withMessage('Ingrese el nombre del curso'),
+            .notEmpty().withMessage('Ingrese el nombre del curso')
+            .custom(async(value,{ req }) => {
+                const course = await db.Courses.findOne({
+                    where:{course_name:req.body.courseName},
+                    attributes:['id'],
+                    raw:true,
+                })
+                if (course) {
+                throw new Error('Ya existe en la base un curso con ese nombre')
+                }
+                return true
+            }),
         body('url')
             .notEmpty().withMessage('Ingrese el enlace del formulario'),
         body('validity')
-            .notEmpty().withMessage('Ingrese la vigencia del certificado en meses')
-            .isNumeric().withMessage('La vigencia debe ser numérica (meses de validez)')
+            .notEmpty().withMessage('Ingrese la validez del formulario')
+            .isNumeric().withMessage('La validez debe ser un número entero (cantidad de meses)')
+        
     ],
     entryData: [
         body('dni')
