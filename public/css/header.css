@@ -22,12 +22,16 @@
     margin-top: 20px;
     margin-left: 10px;
     height: 40px;
-  }
+}
 
-  .companyLogo2{
+.companyLogo2{
     height: 60px;
-    ;
-  }
+}
+
+.companyLogoMobile{
+    height: 35px;
+
+}
 
 .divMenu{
     margin-top:15px
@@ -35,6 +39,10 @@
 
 .divSideNav{
     margin-top:25px
+}
+
+.divSideNavImgMobile{
+    display:none
 }
 
 .logoutUserLogged{
@@ -90,6 +98,10 @@ padding-right: 15px;
     .sidenav{
         display:none
     }
+    .divSideNavImgMobile{
+        display:block;
+    }
+
 }
 
 

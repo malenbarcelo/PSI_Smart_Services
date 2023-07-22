@@ -1,13 +1,18 @@
+.certificateText{
+    width: 95%;
+    margin: auto;
+
+}
+
 .divCertificate{
     border: black solid 1px;
     width: 90%;
     margin: auto;
+    font-family: arial;
 }
 .divHeaderLogo{
     border:red solid 1px;
     text-align: center;
-    vertical-align: center;
-
 }
 
 .header{
@@ -26,4 +31,66 @@
 
 .headerLogo2{
     height: 80px;
+}
+
+.imgSignature{
+    height: 70px;
+}
+
+.studentName{
+    font-size: 36px;
+    margin: auto;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.signature{
+    border:red solid 1px;
+    padding-bottom: 10px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.signatures{
+    margin-top: 50px;
+    display: flex;
+}
+
+.studentDni{
+    font-size: 28px;
+    margin: auto;
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.text1{
+    font-size: 20px;
+    margin: auto;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.validity{
+    font-size: 20px;
+    margin: auto;
+    text-align: center;
+    margin-top: 15px;
+    font-style: italic;
+}
+
+.text2{
+    font-size: 20px;
+    margin: auto;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.text3{
+    font-size: 20px;
+    margin: auto;
+    text-align: center;
+    margin-top: 15px;
+    line-height: 25px;
 }

@@ -377,7 +377,12 @@ const coursesController = {
             const studentCode = certificateData.student_code
             const certificateCode = courseCode + '-' + date + '-' + studentCode
 
-            return res.render('courses/certificates',{title:'Certificado',certificateCode,certificateTemplate,certificateData,issueDateString,expirationDateString,studentImage})
+            //get month name
+            const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Nomviembre','Diciembre']
+            const month = certificateData.date.getMonth()
+            const issueMonth = months[month]
+
+            return res.render('courses/certificates',{title:'Certificado',certificateCode,certificateTemplate,certificateData,issueMonth,issueDateString,expirationDateString,studentImage})
             
         }catch(error){
             console.log(error)

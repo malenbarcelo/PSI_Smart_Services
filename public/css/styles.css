@@ -872,14 +872,18 @@ input[type="checkbox"]:checked {
 
 
 
-@media (max-width:360px){
-    .divLogin{
-        width: 95%;
-        margin:auto;
-        border:red solid 1px
+@media (max-width:769px){
+    .div1{
+        width: 80%;
+        margin: auto;
+    }
+    .div2{
+        margin-top: 100px;
+    }
+    .input1{
+        width: 250px;
     }
 }
-
 
 
 
