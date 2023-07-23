@@ -3,11 +3,11 @@
 <div class="divCertificate">
     <div class="header">
         <div class="divHeaderLogo"><img src="/images/certificateImages/<%= certificateTemplate.logo1 %>" alt="Logo1" class="headerLogo1"></div>
-        <div class="divHeaderLogo"><img src="/images/certificateImages/<%= certificateTemplate.logo2 %>" alt="Logo1" class="headerLogo2"></div>
+        <div class="divHeaderLogo"><img src="/images/certificateImages/<%= certificateTemplate.logo2 %>" alt="Logo2" class="headerLogo2"></div>
         <div class="headerData">
-            <div>Certificado de aprobación curso teórico-práctico</div>
-            <div>ARGENTINA, Neuquén <%= issueDateString %></div>
-            <div>Código: <%= certificateCode %></div>
+            <div class="headerDataLine">Certificado de aprobación curso teórico-práctico</div>
+            <div class="headerDataLine">ARGENTINA, Neuquén <%= issueDateString %></div>
+            <div class="headerDataLine">Código: <%= certificateCode %></div>
         </div>
     </div>
 
@@ -21,9 +21,13 @@
     </div>
 
     <div class="signatures">
-        <div class="signature"><img src="/images/certificateImages/<%= certificateTemplate.signature1_image %>" alt="Firma1" class="imgSignature"></div>
+        <div class="signature">
+            <img src="/images/certificateImages/<%= certificateTemplate.signature1_image %>" alt="Firma1" class="imgSignature">
+            <div class="signatureAclaration1"><%= certificateTemplate.signature1_line1 %></div>
+            <div class="signatureAclaration2"><%= certificateTemplate.signature1_line2 %></div>
+        </div>
         <div class="signature"><img src="/images/certificateImages/<%= certificateTemplate.signature2_image %>" alt="Firma2" class="imgSignature"></div>
-
+        <div class="divLogo3"><img src="/images/certificateImages/<%= certificateTemplate.logo3 %>" alt="Logo3" class="logo3"></div>
     </div>
 </div>
 

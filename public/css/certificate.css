@@ -11,22 +11,35 @@
     font-family: arial;
 }
 .divHeaderLogo{
-    border:red solid 1px;
     text-align: center;
+}
+
+.divLogo3{
+    width: 550px;
+    border: red solid 1px;
+    text-align: right;
+    padding-right: 50px;
 }
 
 .header{
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 15px 50px 50px;
 }
 
 .headerData{
     text-align: right;
-    border:red solid 1px
+    width: 600px;
+}
+
+.headerDataLine{
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .headerLogo1{
-    height: 40px;
-    border:grey solid 1px;
+    height: 45px;
 }
 
 .headerLogo2{
@@ -35,6 +48,13 @@
 
 .imgSignature{
     height: 70px;
+    padding-left: 25px;
+    padding-right: 25px;
+    border-bottom:black solid 1px
+}
+
+.logo3{
+    height: 100px;
 }
 
 .studentName{
@@ -52,9 +72,21 @@
     padding-right: 50px;
 }
 
+.signatureAclaration1{
+    border:red solid 1px;
+    font-size: 13px;
+}
+
+.signatureAclaration2{
+    border:red solid 1px;
+    font-size: 13px;
+}
+
 .signatures{
     margin-top: 50px;
     display: flex;
+    justify-content: center;
+    column-gap: 20px;
 }
 
 .studentDni{

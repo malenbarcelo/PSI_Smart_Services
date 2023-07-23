@@ -38,11 +38,27 @@
 }
 
 .divSideNav{
-    margin-top:25px
+    margin-top:25px;
+}
+
+.divNavMobile{
+    padding-top: 10px;
+    background-color: rgb(237, 234, 234);
+    border-radius: 3px;
+    position: absolute;
+    right: 15px;
+    top:25px;
+    font-family: Arial, Helvetica, sans-serif;
+    width: 190px;
 }
 
 .divSideNavImgMobile{
     display:none
+}
+
+.fa-bars{
+    font-size: 25px;
+    position: relative;
 }
 
 .logoutUserLogged{
@@ -51,6 +67,16 @@
 
 .nameUserLogged{
     color:white
+}
+
+.navMobile{
+    display: flex;
+    justify-content: space-between;
+    padding-right: 10px;
+    padding-bottom: 3px;
+    align-items: center;
+    border-bottom: rgb(202, 199, 199) solid 1px;
+    display: none;
 }
 
 .aUserLogged{
@@ -83,10 +109,21 @@ padding-right: 15px;
     font-weight: bold;
     font-size: 15px;
 }
+
+.userLoggedMobile{
+    display: none;
+}
+
+.userLoggedNameMobile{
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: right;
+}
 .userLoggedLogout{
     margin-top:3px;
     font-size: 12px;
 }
+
 
 .aUserLogged{
     color: rgb(4, 4, 222);
@@ -100,6 +137,15 @@ padding-right: 15px;
     }
     .divSideNavImgMobile{
         display:block;
+    }
+    .userLogged{
+        display:none
+    }
+    .navMobile{
+        display: flex;
+    }
+    .userLoggedMobile{
+        display: block;
     }
 
 }

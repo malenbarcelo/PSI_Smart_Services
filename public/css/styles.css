@@ -366,7 +366,6 @@ color:rgb(2, 2, 83)
     text-align: center;
     padding-top: 8px;
     padding-bottom: 8px;
-    width: 380px;
     margin: auto;
     cursor: pointer;
 }
@@ -876,6 +875,7 @@ input[type="checkbox"]:checked {
     .div1{
         width: 80%;
         margin: auto;
+        margin-top:50px
     }
     .div2{
         margin-top: 100px;
