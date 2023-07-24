@@ -54,7 +54,7 @@ export async function getData(course,company,filter,order) {
         tableDate = '<td class="td1">' + data[i].dateString + '</td>'
         tableDni = '<td class="td1">' + data[i].dni + '</td>'
         tableName = '</td><td class="td1">' + data[i].last_name + ', ' + data[i].first_name + '</td>'
-        tableEmail = '<td class="td1">' + data[i].email + '</td>'
+        tableEmail = '<td class="td1 td4">' + data[i].email + '</td>'
         tableGrade = '<td class="td1 ' + gradeClass + '">' + data[i].grade * 100 + '%</td>'
         tableSelect = checkIcon
         

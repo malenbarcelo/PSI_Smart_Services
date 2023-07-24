@@ -151,7 +151,7 @@ const coursesController = {
             const url = dominio + "courses/view-credential/" + idFormData
 
             const browser = await puppeteer.launch({
-                headless: "new",
+                headless: true,
                 printBackground: true 
                 })
             const page = await browser.newPage()
