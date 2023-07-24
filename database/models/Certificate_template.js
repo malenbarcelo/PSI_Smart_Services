@@ -48,15 +48,23 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
    },
+   theory_hours:{
+      type: DataTypes.INTEGER,
+      allowNull: false,
+   },
+   practice_hours:{
+      type: DataTypes.INTEGER,
+      allowNull: false,
+   },
+   course_name:{
+      type: DataTypes.STRING,
+      allowNull: false,
+   },
    text1:{
       type: DataTypes.STRING,
       allowNull: false,
    },
    text2:{
-      type: DataTypes.STRING,
-      allowNull: false,
-   },
-   text3:{
       type: DataTypes.STRING,
       allowNull: false,
    },

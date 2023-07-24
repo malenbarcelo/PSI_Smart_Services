@@ -68,9 +68,11 @@ CREATE TABLE psi_db.certificates_templates (
     signature1_line2 varchar(100) NOT NULL,
     signature2_line1 varchar(100) NOT NULL,
     signature2_line2 varchar(100) NOT NULL,
-    text1 varchar(100) NOT NULL,
+    theory_hours INT NOT NULL,
+    practice_hours INT NOT NULL,
+    course_name varchar(100) NOT NULL,
+    text1 varchar(1000) NOT NULL,
     text2 varchar(1000) NOT NULL,
-    text3 varchar(1000) NOT NULL,
     enabled INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (id_courses) REFERENCES courses(id)

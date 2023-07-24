@@ -4,9 +4,16 @@ const path = require('path');
 const { clearScreenDown } = require('readline');
 
 //Change dominio.js from 'http://localhost:3000' to 'https://psi-smart-services.wnpower.host'
-const dominio = path.resolve('./public/js/dominio.js')
-const devDominioFile = fs.readFileSync(dominio, 'utf-8')
-const prdDominioFile = devDominioFile.replaceAll('https://psi-smart-services.wnpower.host','http://localhost:3000')
+//public
+var dominio = path.resolve('./public/js/dominio.js')
+var devDominioFile = fs.readFileSync(dominio, 'utf-8')
+var prdDominioFile = devDominioFile.replaceAll('https://psi-smart-services.wnpower.host','http://localhost:3000')
+fs.writeFileSync(dominio,prdDominioFile)
+
+//controllers
+dominio = path.resolve('./src/functions/dominio.js')
+devDominioFile = fs.readFileSync(dominio, 'utf-8')
+prdDominioFile = devDominioFile.replaceAll('https://psi-smart-services.wnpower.host','http://localhost:3000')
 fs.writeFileSync(dominio,prdDominioFile)
 
 //Change config.js from DEV database to PRD database

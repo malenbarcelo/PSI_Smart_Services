@@ -9,6 +9,7 @@ const sequelize = require('sequelize')
 const puppeteer = require('puppeteer')
 const archiver = require('archiver')
 const fetch = require('cross-fetch')
+const dominio = require('../functions/dominio')
 
 const coursesController = {
     createCourse: async(req,res) => {
@@ -29,6 +30,7 @@ const coursesController = {
     myCourses: async(req,res) => {
         try{
             //get courses to show
+            
             let coursesData = []
             let company = ''
             let students = ''            
@@ -146,7 +148,7 @@ const coursesController = {
             const name = studentDataFiltered.last_name + ' ' + studentDataFiltered.first_name
             const fileName = name + ' - ' + dni            
 
-            const url = "http://localhost:3000/courses/view-credential/" + idFormData
+            const url = dominio + "courses/view-credential/" + idFormData
 
             const browser = await puppeteer.launch({
                 headless: "new",
@@ -200,7 +202,7 @@ const coursesController = {
                 const name = student.last_name + ' ' + student.first_name;
                 const fileName = name + ' - ' + dni;
         
-                const url = "http://localhost:3000/courses/view-credential/" + student.id;
+                const url = dominio +  "courses/view-credential/" + student.id;
         
                 const page = await browser.newPage()
         
@@ -250,7 +252,7 @@ const coursesController = {
                 const name = data.last_name + ' ' + data.first_name;
                 const fileName = name + ' - ' + dni;
         
-                const url = "http://localhost:3000/courses/view-credential/" + data.id;
+                const url = dominio + "courses/view-credential/" + data.id;
         
                 const page = await browser.newPage()
         
@@ -382,7 +384,31 @@ const coursesController = {
             const month = certificateData.date.getMonth()
             const issueMonth = months[month]
 
-            return res.render('courses/certificates',{title:'Certificado',certificateCode,certificateTemplate,certificateData,issueMonth,issueDateString,expirationDateString,studentImage})
+            //get header Line 1 depending on the type of course
+            var headerLine1 = ''
+            if (certificateTemplate.theory_hours != 0 && certificateTemplate.practice_hours != 0) {
+                headerLine1 = 'Certificado de aprobación curso teórico-práctico'
+            }else{
+                if (certificateTemplate.theory_hours == 0) {
+                    headerLine1 = 'Certificado de aprobación curso práctico'
+                }else{
+                    headerLine1 = 'Certificado de aprobación curso teórico'
+                }
+            }
+
+            //get certificate Line 1 depending on the type of course
+            var certificateLine1 = ''
+            if (certificateTemplate.theory_hours != 0 && certificateTemplate.practice_hours != 0) {
+                certificateLine1 = 'Aprobó el curso teórico (' + certificateTemplate.theory_hours + 'hs) / práctico (' + certificateTemplate.practice_hours + 'hs)'
+            }else{
+                if (certificateTemplate.theory_hours == 0) {
+                    certificateLine1 = 'Aprobó el curso práctico (' + certificateTemplate.practice_hours + 'hs)'
+                }else{
+                    certificateLine1 = 'Aprobó el curso teórico (' + certificateTemplate.theory_hours + 'hs)'
+                }
+            }
+
+            return res.render('courses/certificates',{title:'Certificado',headerLine1,certificateLine1,certificateCode,certificateTemplate,certificateData,issueMonth,issueDateString,expirationDateString,studentImage})
             
         }catch(error){
             console.log(error)
