@@ -1,0 +1,69 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/userLogged') %>
+
+<div class="divStudentPhoto">
+    <img src="/images/studentsPhotos/templateUserPicture.jpg" class="studentPhoto">
+</div>
+
+<div class="divCertificateTemplate">
+    <div class="headerCertTemplate">
+        <div class="divCertTemplateLogo">
+            <div class="titleLogoHeader">Logo 1 encabezado</div>
+            <input type="file" class="fileHeader">
+        </div>
+        <div class="divCertTemplateLogo">
+            <div class="titleLogoHeader">Logo 2 encabezado</div>
+            <input type="file" class="fileHeader">
+        </div>
+        <div class="headerDataCertTemplate">
+            <div class="headerDataLineCertTemplate">Certificado de aprobación curso <select name="selectCompany" class="selectType <%= locals.errors && errors.selectTypeOfCourse ? 'isInvalid' : null %>" id="selectTypeOfCourse">
+                <option value="default" selected>--Seleccione el tipo de curso--</option>
+                <option value="theoretical" <%= locals.oldData && oldData.selectCompany == company.company ? 'selected' : null %>>teórico</option>
+                <option value="practical" <%= locals.oldData && oldData.selectCompany == company.company ? 'selected' : null %>>práctico</option>
+                <option value="theoretical-practical" <%= locals.oldData && oldData.selectCompany == company.company ? 'selected' : null %>>teórico-práctico</option>
+
+            </select></div>
+            <div class="headerDataLineCertTemplate">ARGENTINA, Neuquén XX/XX/XXXX</div>
+            <div class="headerDataLineCertTemplate">Código: XXX-XXXXXXXX-XX</div>
+        </div>
+    </div>
+
+    <div class="certTextTemplate">
+        <div class="studentNameCertTemplate">APELLIDO NOMBRE</div>
+        <div class="studentDniCertTemplate">DNI: XXXXXXXX</div>
+        <div class="text1CertTemplate" id="text1">Aprobó el curso teórico ( <input type="number" class="hours" placeholder="horas"> hs) / práctico ( <input type="number" class="hours" placeholder="horas"> hs) <b><input type="text" placeholder="Nombre del curso" class="courseName"></b></div>
+        <div class="validityCertTemplate">Vigente hasta el XX/XX/XXXX</div>
+        <div class="text2"><textarea placeholder="Texto 1" class="textarea1"></textarea></div>
+        <div class="text3CertTemplate">El día XX de XXXX, </div>
+        <div class="text2"><textarea placeholder="Texto 2" class="textarea2"></textarea></div>
+    </div>
+
+    <div class="certificateTemplateFooter">
+        <div class="divCertTemplateSignature">
+            <div class="titleLogoHeader">Firma 1</div>
+            <div><input type="file" class="fileHeader"></div>
+            <div class="divCertTemplateTextSignature"><input type="text" placeholder="Aclaración firma 1" class="signatureLine1"></div>
+            <div class="divCertTemplateTextSignature"><input type="text" placeholder="Texto firma 1" class="signatureLine2"></div>
+        </div>
+        <div class="divCertTemplateSignature">
+            <div class="titleLogoHeader">Firma 2</div>
+            <div><input type="file" class="fileHeader"></div>
+            <div class="divCertTemplateTextSignature"><input type="text" placeholder="Aclaración firma 2" class="signatureLine1"></div>
+            <div class="divCertTemplateTextSignature"><input type="text" placeholder="Texto firma 1" class="signatureLine2"></div>
+        </div>
+        <div class="divCertTemplateLogo">
+            <div class="titleLogoHeader">Logo pie de página</div>
+            <input type="file" class="fileHeader">
+        </div>
+    </div>
+
+    
+</div>
+
+<script type="module" src="/js/certificateTemplate.js"></script>
+    
+
+
+
+

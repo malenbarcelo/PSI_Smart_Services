@@ -7,7 +7,7 @@
     <h3 class="title1 title3" id="course"><%= course %></h3>
 
     <div class="div45">
-        <i class="fa-solid fa-triangle-exclamation"></i> Se muestran datos de los últimos 90 días. Si desea ver datos anteriores o períodos más acotados debe utilizar los <span class="span3" id="dateFilter">Filtros <i class="fa-solid fa-filter"></i></span>
+        <i class="fa-solid fa-triangle-exclamation"></i> Se muestran datos del último año. Si desea ver datos anteriores o períodos más acotados debe utilizar los <span class="span3" id="dateFilter">Filtros <i class="fa-solid fa-filter"></i></span>
 
         <div class="div46 notVisible" id="divDateFilter">
             <div class="div47"><b>Filtrar por fecha</b></div>
@@ -16,13 +16,13 @@
             <label for="dateUntill" class="label2">Hasta</label>
             <input type="date" name="dateUntill" class="input8" id="dateUntil">
             <div class="div48" id="acceptBtn">Aceptar</div>
+            <div class="divError1 divError3" id="divError"></div>
         </div>
         
-        <div class="divError1 divError3 divError4" id="divError"></div>
-
+        
     </div>
 
-    <h3 class="title2 title3" id="formTitle">Resultados del formulario (Últimos 3 meses)</h3>    
+    <h3 class="title2 title3" id="formTitle">Resultados del formulario (Último año)</h3>    
 
     <form action="/courses/students-results/<%= userLogged.company %>/<%= course %>" method="POST" class="form1">
 
@@ -35,20 +35,31 @@
             </div>
             
             <div class="div31" id="tableTitle">Todos los resultados</div>
-            <a href="<%= '/courses/print-credentials/' + userLogged.company + '/' + course  %>" class="a4" id="downloadAll">
-                <div class="divFlex11">
-                    <div class="div39"><i class="fa-solid fa-download"></i></div>
-                    <div class="div39">Descargar todas las credenciales</div>
+            
+            <div class="divFlex17">
+                <div class="divFlex16 <%= locals.errors && errors.credentials ? 'isInvalid' : null %>" id="divCredentials">
+                    <input type="checkbox" name="certificates" id="certificates" class="checkbox2" <%= locals.oldData && oldData.certificates ? 'checked' : null %>>
+                    <label for="credentials" class="label3">Certificados</label>
                 </div>
-            </a>
-            <div class="divFlex11" id="downloadSelected">
-                <div class="div39"><i class="fa-solid fa-download"></i></div>
-                <button type="submit" class="div39 button3">Descargar credenciales seleccionadas</button>
+                <div class="divFlex16 <%= locals.errors && errors.credentials ? 'isInvalid' : null %>" id="divCertificates">
+                    <input type="checkbox" name="credentials" id="credentials" class="checkbox2" <%= locals.oldData && oldData.credentials ? 'checked' : null %>>
+                    <label for="credentials" class="label3">Credenciales</label>
+                </div>
+                <div class="divFlex11" id="downloadSelected">
+                    <div class="div39"><i class="fa-solid fa-download"></i></div>
+                    <button type="submit" class="div39 button3">Descargar</button>
+                </div>
             </div>
-            <div class="divFlex11" id="downloadSelected">
-                <div class="div39"><i class="fa-solid fa-download"></i></div>
-                <button type="submit" class="div39 button3">Descargar certificados seleccionados</button>
-            </div>            
+            <div class="divError1 divError4 <%= locals.errors && errors.credentials ? 'visible' : 'notVisible' %>" id="error1">
+                <% if (locals.errors && errors.credentials) { %>
+                    <%= errors.credentials.msg %>
+                <% } %>
+            </div>
+            <div class="divError1 divError4 <%= locals.errors && errors.selectAll ? 'visible' : 'notVisible' %>" id="error2">
+                <% if (locals.errors && errors.selectAll) { %>
+                    <%= errors.selectAll.msg %>
+                <% } %>
+            </div>
             
             <div id="tableStudentsResults">
                 <table class="table1">
@@ -59,6 +70,7 @@
                             <th class="tableTitle1 tableTitle2 tableTitle3">Apellido y nombre<i class="fa-solid fa-arrow-down-long orderName notVisible" id="orderNameAsc"></i><i class="fa-solid fa-arrow-up orderName"  id="orderNameDesc"></i></th>
                             <th class="tableTitle1 tableTitle5">Email</th>
                             <th class="tableTitle1">Nota</th>
+                            <th class="tableTitle1 <%= locals.errors && errors.selectAll ? 'isInvalid' : null %>" id="thSelectAll"><input type="checkbox" name="selectAll" id="selectAll" class="checkbox2"></th>
                         </tr>
                     </thead>
                     <tbody id="tableRows"></tbody>

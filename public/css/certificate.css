@@ -1,13 +1,13 @@
 .certificateText{
     width: 95%;
     margin: auto;
+    margin-top:60px
 
 }
 
 .divCertificate{
-    border: black solid 1px;
-    width: 90%;
     margin: auto;
+    margin-top: 30px;
     font-family: arial;
     position: relative;
 }
@@ -23,8 +23,8 @@
 
 .divStudentPhoto{
     position: absolute;
-    right:180px;
-    top: 150px
+    right:110px;
+    top: 160px
 }
 
 .header{
@@ -36,7 +36,7 @@
 
 .headerData{
     text-align: right;
-    width: 600px;
+    width: 500px;
 }
 
 .headerDataLine{
@@ -45,11 +45,11 @@
 }
 
 .headerLogo1{
-    height: 45px;
+    height: 40px;
 }
 
 .headerLogo2{
-    height: 80px;
+    height: 75px;
 }
 
 .imgSignature{
@@ -90,7 +90,7 @@
 }
 
 .signatures{
-    margin-top: 50px;
+    margin-top: 80px;
     display: flex;
     justify-content: center;
     column-gap: 5px;

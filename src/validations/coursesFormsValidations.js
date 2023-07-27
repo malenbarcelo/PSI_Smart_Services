@@ -50,6 +50,30 @@ const coursesFormsValidations = {
             }
             return true}),
     ],
+    printDocuments: [
+        body('credentials')
+            .custom(async(value,{ req }) => {
+                const body = Object.keys(req.body)
+                if (!body.includes('credentials') && !body.includes('certificates')) {
+                    throw new Error('Debe seleccionar al menos un tipo de documento')
+                }
+                return true
+            }),
+        body('selectAll')
+        .custom(async(value,{ req }) => {
+            const body = Object.keys(req.body)
+            let selectedKeys = 0
+            for (let i = 0; i < body.length; i++) {
+                if (body[i] != 'credentials' && body[i] != 'certificates') {
+                    selectedKeys += 1
+                }
+            }
+            if (selectedKeys == 0) {
+                throw new Error('Debe seleccionar al menos un alumno')
+            }
+            return true
+        }),
+    ],
 }
 
 module.exports = coursesFormsValidations

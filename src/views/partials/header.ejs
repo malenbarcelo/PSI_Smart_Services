@@ -26,6 +26,7 @@
             <% if (locals.isLogged && userLogged.id_user_categories == 1 ) { %>
                 <div class = "a1SideNavBar">CURSOS</div>
                 <a class = "a2SideNavBar" href="/courses/create-course">Crear curso</a>
+                <a class = "a2SideNavBar" href="/courses/create-certificate">Diseñar certificado</a>
                 <a class = "a2SideNavBar" href="/courses/start-course">Iniciar curso</a>
                 <a class = "a2SideNavBar" href="/courses/my-courses">Mis cursos</a>
                 <a class = "a2SideNavBar" href="/courses/view-courses">Ver formularios</a>                
@@ -64,6 +65,7 @@
                         <% if (locals.isLogged && userLogged.id_user_categories == 1 ) { %>
                             <div class = "a1SideNavBar">CURSOS</div>
                             <a class = "a2SideNavBar" href="/courses/create-course">Crear curso</a>
+                            <a class = "a2SideNavBar" href="/courses/create-certificate">Diseñar certificado</a>
                             <a class = "a2SideNavBar" href="/courses/start-course">Iniciar curso</a>
                             <a class = "a2SideNavBar" href="/courses/my-courses">Mis cursos</a>
                             <a class = "a2SideNavBar" href="/courses/view-courses">Ver formularios</a>                
@@ -71,7 +73,7 @@
                     </div>
 
                     <div class="divMenuMobile">
-                        <% if (locals.isLogged && userLogged.id_user_categories == 1 ) { %>
+                        <% if (locals.isLogged) { %>
                             <div class = "a1SideNavBar">USUARIOS</div>
                             <a class = "a2SideNavBar" href="/users/logout">Cerrar sesión</a>                
                         <% } %>

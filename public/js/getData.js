@@ -1,6 +1,6 @@
 import { dominio } from "./dominio.js"
 
-export async function getData(course,company,filter,order) {
+export async function getData(course,company,filter,order,dateFrom,dateUntil) {
 
     let tableDate = ''
     let tableDni = ''
@@ -38,15 +38,18 @@ export async function getData(course,company,filter,order) {
         data.sort((a, b) => b.last_name.localeCompare(a.last_name))
     }
 
+    data = data.filter(item => new Date(item.date).getTime() > dateFrom && new Date(item.date).getTime() < dateUntil)
+    
     //define de table lines
     for (let i = 0; i < data.length; i++) {
 
         let gradeClass = ''
-        let checkIcon = ''
+        let checkIcon = '<td class="td1 td3"></td>'
 
         if (data[i].grade > 0.78) {
             gradeClass = 'span1'
-            checkIcon = '<td class="td3"><input type="checkbox" name="' + data[i].id + '" class="checkbox1"></td>'
+            checkIcon = '<td class="td1 td3"><input type="checkbox" name="' + data[i].id + '" class="checkbox1"></td>'
+
         }else{
             gradeClass = 'span2'
         }

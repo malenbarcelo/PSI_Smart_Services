@@ -12,7 +12,6 @@ window.addEventListener('load',async()=>{
     const viewPassed = document.getElementById('viewPassed')
     const viewNotPassed = document.getElementById('viewNotPassed')
     const tableTitle = document.getElementById('tableTitle')
-    const downloadAll = document.getElementById('downloadAll')
     const downloadSelected = document.getElementById('downloadSelected')
     const orderDateAsc = document.getElementById('orderDateAsc')
     const orderDateDesc = document.getElementById('orderDateDesc')
@@ -23,12 +22,18 @@ window.addEventListener('load',async()=>{
     const acceptBtn = document.getElementById('acceptBtn')
     const divError = document.getElementById('divError')
     const formTitle = document.getElementById('formTitle')
+    const selectAll = document.getElementById('selectAll')
+    const certificates = document.getElementById('divCertificates')
+    const credentials = document.getElementById('divCredentials')
+    const error1 = document.getElementById('error1')
+    const error2 = document.getElementById('error2')
+    const thSelectAll = document.getElementById('thSelectAll')   
     
     //get last 90 days to filter data
-    let dateUntil = new Date().getTime() //today as timestamp
-    let dateFrom = dateUntil - (90 * 24 * 60 * 60 * 1000) //remove 90 days in millisecs
-        
-    tableRows.innerHTML = await getData(course,company,filter)
+    var dateUntil = new Date().getTime() //today as timestamp
+    var dateFrom = dateUntil - (365 * 24 * 60 * 60 * 1000) //remove 90 days in millisecs
+
+    tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
     
     //Add events listeners
     viewPassed.addEventListener("click",async(e)=>{
@@ -37,12 +42,11 @@ window.addEventListener('load',async()=>{
         viewAllData.classList.remove('underlined')
         viewPassed.classList.add('underlined')
         viewNotPassed.classList.remove('underlined')
-        downloadAll.classList.remove('notVisible')
         downloadSelected.classList.remove('notVisible')
         filter = 'passed'
         order = 'noOrder'
 
-        tableRows.innerHTML = await getData(course,company,filter,order)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
 
     })
     viewNotPassed.addEventListener("click",async(e)=>{
@@ -50,13 +54,12 @@ window.addEventListener('load',async()=>{
         viewAllData.classList.remove('underlined')
         viewPassed.classList.remove('underlined')
         viewNotPassed.classList.add('underlined')
-        downloadAll.classList.add('notVisible')
         downloadSelected.classList.add('notVisible')
         tableTitle.classList.add('enabled')
         filter = 'notPassed'
         order = 'noOrder'
 
-        tableRows.innerHTML = await getData(course,company,filter,order)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
 
     })
     viewAllData.addEventListener("click",async(e)=>{
@@ -64,61 +67,86 @@ window.addEventListener('load',async()=>{
         viewAllData.classList.add('underlined')
         viewPassed.classList.remove('underlined')
         viewNotPassed.classList.remove('underlined')
-        downloadAll.classList.remove('notVisible')
         downloadSelected.classList.remove('notVisible')
         filter = 'allData'
         order = 'noOrder'
 
-        tableRows.innerHTML = await getData(course,company,filter,order)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
     })
     orderDateAsc.addEventListener("click",async(e)=>{
         order = 'orderDateAsc'
         orderDateAsc.classList.add('notVisible')
         orderDateDesc.classList.remove('notVisible')
-        tableRows.innerHTML = await getData(course,company,filter,order)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
     })
     orderDateDesc.addEventListener("click",async(e)=>{
         order = 'orderDateDesc'
         orderDateAsc.classList.remove('notVisible')
         orderDateDesc.classList.add('notVisible')
-        tableRows.innerHTML = await getData(course,company,filter,order)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
     })
     orderNameAsc.addEventListener("click",async(e)=>{
         order = 'orderNameAsc'
         orderNameAsc.classList.add('notVisible')
         orderNameDesc.classList.remove('notVisible')
-        tableRows.innerHTML = await getData(course,company,filter,order)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
     })
     orderNameDesc.addEventListener("click",async(e)=>{
         order = 'orderNameDesc'
         orderNameAsc.classList.remove('notVisible')
         orderNameDesc.classList.add('notVisible')
-        tableRows.innerHTML = await getData(course,company,filter,order)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
+    })
+    selectAll.addEventListener("click",async(e)=>{
+        const checkboxes = document.querySelectorAll('.checkbox1')
+        checkboxes.forEach(checkbox => {
+            if (selectAll.checked == true) {
+                checkbox.checked = true
+            }else{
+                checkbox.checked = false
+            }
+            
+          })
     })
     dateFilter.addEventListener("click",async(e)=>{
         divDateFilter.classList.toggle('notVisible')
     })
+    downloadSelected.addEventListener("click",async(e)=>{
+        
+        credentials.classList.remove('isInvalid')
+        certificates.classList.remove('isInvalid')
+        error1.classList.remove('visible')
+        error2.classList.remove('visible')
+        error1.classList.add('notVisible')
+        error2.classList.add('notVisible')
+        thSelectAll.classList.remove('isInvalid')
+    })
     acceptBtn.addEventListener("click",async(e)=>{
 
-        const dateFrom = document.getElementById('dateFrom')
-        const dateUntil = document.getElementById('dateUntil')
+        var dateFromFiltered = document.getElementById('dateFrom')
+        var dateUntilFiltered = document.getElementById('dateUntil')
         
-        if (dateFrom.value == '' || dateUntil.value == 'Invalid Date') {
+        if (dateFromFiltered.value == '' || dateUntilFiltered.value == 'Invalid Date') {
             divError.innerHTML = '<b>!Debe completar las fechas</b>'
         }else{
-            if (dateFrom.value > dateUntil.value) {
+            if (dateFromFiltered.value > dateUntilFiltered.value) {
                 divError.innerHTML = '<b>!La fecha "Desde" debe ser menor a la fecha "Hasta"</b>'
             }else{
 
                 divError.innerHTML = ''
 
-                const dateFromArray = dateFrom.value.split('-')
-                const dateUntilArray = dateUntil.value.split('-')
+                const dateFromArray = dateFromFiltered.value.split('-')
+                const dateUntilArray = dateUntilFiltered.value.split('-')
                 
                 const dateFromString = dateFromArray[2] + '/' + dateFromArray[1] + '/' + dateFromArray[0]
                 const dateUntilString = dateUntilArray[2] + '/' + dateUntilArray[1] + '/' + dateUntilArray[0]
 
                 formTitle.innerHTML = 'Resultados del formulario (' + dateFromString + ' - ' + dateUntilString + ')'
+
+                dateFrom = new Date(dateFromFiltered.value).getTime()
+                dateUntil = new Date(dateUntilFiltered.value).getTime()
+
+                tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
             }
         }
     })

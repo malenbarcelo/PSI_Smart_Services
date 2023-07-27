@@ -21,9 +21,8 @@ const upload = multer({storage: storage})
 
 router.get('/my-courses',coursesController.myCourses)
 router.get('/students-results/:company/:courseName',coursesController.studentsResults)
-router.post('/students-results/:company/:courseName',coursesController.printSelectedCredentials)
+router.post('/students-results/:company/:courseName',coursesFormsValidations.printDocuments,coursesController.printSelected)
 router.get('/view-credential/:idFormData',coursesController.viewCredential)
-router.get('/print-credential/:idFormData',coursesController.printCredential)
 router.get('/print-credentials/:company/:course',coursesController.printCredentials)
 router.get('/view-courses',coursesController.viewCourses)
 router.get('/create-course',coursesController.createCourse)
@@ -33,6 +32,7 @@ router.get('/start-course/:courseName',coursesController.entryData)
 router.post('/start-course/:courseName',upload.single('image'),coursesFormsValidations.entryData,coursesController.openForm)
 router.get('/view-students',coursesController.viewStudents)
 router.get('/view-certificate/:idFormData',coursesController.viewCertificate)
+router.get('/create-certificate',coursesController.createCertificate)
 
 module.exports = router
 

@@ -1,0 +1,131 @@
+.certificateTemplateFooter{
+    display: flex;
+    align-items: center;
+    margin: 15px;
+    column-gap: 20px;
+    justify-content: center;
+
+}
+
+.certTextTemplate{
+    margin-top: 30px;
+    text-align: center;
+}
+
+.courseName{
+    width: 300px;
+}
+
+.divCertificateTemplate{
+    border: black solid 1px;
+    margin: auto;
+    margin-top: 30px;
+    font-family: arial;
+    position: relative;
+    width: 65%;
+    margin-right: 120px;
+    margin-top: 50px;
+}
+
+.divCertTemplateLogo{
+    border:rgb(241, 241, 130) solid 2px;
+    padding:8px;
+    width: 170px;
+}
+
+.divCertTemplateSignature{
+    border:rgb(241, 241, 130) solid 2px;
+    padding:8px
+}
+
+.divCertTemplateTextSignature{
+    text-align: center;
+}
+
+.fileHeader{
+    font-size: 11px;
+    text-align: center;
+    width: 180px;
+}
+.headerCertTemplate{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+}
+
+.headerDataCertTemplate{
+    margin-top: 15px;
+    text-align: right;
+}
+
+.headerDataLineCertTemplate{
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.hours{
+    width: 50px;
+}
+
+.selectType, .courseName, .hours, .textarea1, .textarea2, .signatureLine1, .signatureLine2{
+    border-radius: 0px;
+    padding-top:3px;
+    padding-bottom:3px;
+    text-align: center;
+    background-color:rgb(241, 241, 130);
+    border:none
+}
+
+.textarea1{
+    width: 700px;
+    height: 2rem;
+}
+
+.textarea2{
+    width: 700px;
+    height: 3rem;
+}
+
+.titleLogoHeader{
+    font-size: 13px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.selectType{
+    font-size: 12px;
+}
+
+.selectType, .courseName, .hours, .textarea2, .textarea1,.signatureLine1, .signatureLine2{
+    outline:none
+}
+
+.signatureLine1, .signatureLine2{
+    margin-top: 10px;
+    width: 250px;
+    font-size: 12px;
+}
+
+.studentNameCertTemplate{
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.text1CertTemplate{
+    font-size: 13px;
+    margin: auto;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.validityCertTemplate, .text3CertTemplate{
+    font-size: 13px;
+    margin: auto;
+    text-align: center;
+    margin-top: 15px;
+}
+

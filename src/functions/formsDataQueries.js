@@ -79,13 +79,13 @@ const formsDataQueries = {
             return res.send('Ha ocurrido un error')
         }
     },
-    dataCredentialsToPrint: async(credentialsToPrint) => {
+    dataToPrint: async(idsFormsData) => {
 
-        const dataCredentialsToPrint = await db.Forms_data.findAll({
-            where:{id:credentialsToPrint},
+        const dataToPrint = await db.Forms_data.findAll({
+            where:{id:idsFormsData},
         })
 
-        return dataCredentialsToPrint        
+        return dataToPrint        
     },
     studentData: async(company,dni) => {
 

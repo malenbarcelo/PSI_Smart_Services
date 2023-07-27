@@ -19,6 +19,13 @@ const coursesController = {
             return res.send('Ha ocurrido un error')
         }
     },
+    createCertificate: async(req,res) => {
+        try{
+            return res.render('courses/certificateTemplate',{title:'Diseño de certificado'})
+        }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },
     entryData: async(req,res) => {
         try{
             const course = req.params.courseName
@@ -138,45 +145,6 @@ const coursesController = {
             return res.send('Ha ocurrido un error')
         }
     },
-    printCredential: async(req,res) =>{
-        try{
-
-            const idFormData = req.params.idFormData
-
-            const studentDataFiltered = await formsDataQueries.studentDataFiltered(idFormData)
-            const dni = studentDataFiltered.dni
-            const name = studentDataFiltered.last_name + ' ' + studentDataFiltered.first_name
-            const fileName = name + ' - ' + dni            
-
-            const url = dominio + "courses/view-credential/" + idFormData
-
-            const browser = await puppeteer.launch({
-                headless: true,
-                printBackground: true 
-                })
-            const page = await browser.newPage()
-    
-            await page.goto(url, { waitUntil: 'networkidle0' })
-
-            await new Promise((resolve) => setTimeout(resolve, 2000))
-            
-            //make sure that css colors are taken in the exact way of styles.css
-            await page.emulateMediaFeatures([{ name: 'color-gamut', value: 'srgb' }])
-    
-            const pdf = await page.pdf({printBackground: true})
-    
-            await browser.close()
-    
-            res.setHeader('Content-Disposition', 'attachment; filename=' + fileName + '.pdf');
-            res.setHeader('Content-Type', 'application/pdf');
-    
-            res.send(pdf)
-
-        }catch(error){
-            console.log(error)
-            return res.send(error)
-        }
-    },
     printCredentials: async(req,res) =>{
         try{
 
@@ -192,7 +160,7 @@ const coursesController = {
             archive.pipe(res)
 
             const browser = await puppeteer.launch({
-                headless: true, // to avoid open windows
+                headless: "new", // to avoid open windows
                 printBackground: true,
                 args: ['--no-sandbox', '--disable-setuid-sandbox'] // to avoid errors
               });
@@ -219,6 +187,115 @@ const coursesController = {
 
             await browser.close();
             archive.finalize();
+
+        }catch(error){
+            console.log(error)
+            return res.send(error)
+        }
+    },
+    printSelected: async(req,res) =>{
+        try{
+            //get course and company
+            const course = req.params.courseName
+            const company = req.params.company
+
+            const resultValidation = validationResult(req)
+
+            //get course students
+            let studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+                
+            let datesStrings = []
+
+            for (let i = 0; i < studentsData.length; i++) {
+                let dateString = await datesFunctions.dateToString(studentsData[i].date)
+                datesStrings.push({"dateString":dateString})
+            }
+
+            if (resultValidation.errors.length > 0){
+
+                return res.render('courses/studentsResults',{title:'Resultados',course,studentsData,datesStrings,errors:resultValidation.mapped(),
+                oldData: req.body,})
+            }
+
+            const body = Object.keys(req.body)
+
+            //get idFormsData to print and documents to print
+            var idsFormsData = []
+            var documents = []
+            
+            for (let i = 0; i < body.length; i++) {
+                if (body[i] == "certificates" || body[i] == "credentials") {
+                    documents.push(body[i])
+                }else{
+                    if (body[i] != "selectAll") {
+                        idsFormsData.push(body[i])
+                    }
+                }
+            }
+
+            //get dataToPrint to print
+            const dataToPrint = await formsDataQueries.dataToPrint(idsFormsData)
+
+            //create .zip
+
+            const archive = archiver('zip')
+            res.attachment('credentials.zip')
+            archive.pipe(res)
+
+            const browser = await puppeteer.launch({
+                headless: "new", // to avoid open windows
+                printBackground: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox'] // to avoid errors
+              });
+
+            //print credentials if necessary
+            if (documents.includes('credentials')) {
+                for (const data of dataToPrint) {
+                    const dni = data.dni;
+                    const name = data.last_name + ' ' + data.first_name;
+                    const fileName = 'Credencial ' + name + ' - ' + dni;
+            
+                    const url = dominio + "courses/view-credential/" + data.id;
+            
+                    const page = await browser.newPage()
+            
+                    await page.goto(url, { waitUntil: 'networkidle0' })
+                    await page.emulateMediaFeatures([{ name: 'color-gamut', value: 'srgb' }])
+            
+                    const pdf = await page.pdf({ printBackground: true })
+            
+                    await page.close();
+            
+                    // Agregar el archivo PDF al archivo zip
+                    archive.append(pdf, { name: fileName + '.pdf' });
+                }
+            }
+
+            //print certificates if necessary
+            if (documents.includes('certificates')) {
+                for (const data of dataToPrint) {
+                    const dni = data.dni;
+                    const name = data.last_name + ' ' + data.first_name;
+                    const fileName = 'Certificado ' + name + ' - ' + dni;
+            
+                    const url = dominio + "courses/view-certificate/" + data.id;
+            
+                    const page = await browser.newPage()
+            
+                    await page.goto(url, { waitUntil: 'networkidle0' })
+                    await page.emulateMediaFeatures([{ name: 'color-gamut', value: 'srgb' }])
+            
+                    const pdf = await page.pdf({ printBackground: true, landscape: true })
+            
+                    await page.close();
+            
+                    // Agregar el archivo PDF al archivo zip
+                    archive.append(pdf, { name: fileName + '.pdf' });
+                }
+            }
+            
+            await browser.close()
+            archive.finalize()
 
         }catch(error){
             console.log(error)
@@ -281,7 +358,7 @@ const coursesController = {
             const resultValidation = validationResult(req)
 
             if (resultValidation.errors.length > 0){
-                console.log(req.body)
+                
                 return res.render('courses/createCourse',{
                     errors:resultValidation.mapped(),
                     oldData: req.body,
@@ -322,7 +399,6 @@ const coursesController = {
 
             //get course students
             let studentsData = await formsDataQueries.studentsDataFiltered(company,course)
-
             
             let datesStrings = []
 
