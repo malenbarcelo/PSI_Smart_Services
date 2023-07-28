@@ -10,6 +10,9 @@ const puppeteer = require('puppeteer')
 const archiver = require('archiver')
 const fetch = require('cross-fetch')
 const dominio = require('../functions/dominio')
+const ejs = require('ejs')
+const { chromium } = require('playwright')
+const fs = require('fs/promises')
 
 const coursesController = {
     createCourse: async(req,res) => {
@@ -185,8 +188,9 @@ const coursesController = {
                 archive.append(pdf, { name: fileName + '.pdf' });
             }
 
-            await browser.close();
-            archive.finalize();
+            archive.finalize()
+            res.end()
+            await browser.close()
 
         }catch(error){
             console.log(error)
@@ -194,6 +198,148 @@ const coursesController = {
         }
     },
     printSelected: async(req,res) =>{
+        try{
+            //get course and company
+            const course = req.params.courseName
+            const company = req.params.company
+
+            const resultValidation = validationResult(req)
+
+            //get course students
+            let studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+                
+            let datesStrings = []
+
+            for (let i = 0; i < studentsData.length; i++) {
+                let dateString = await datesFunctions.dateToString(studentsData[i].date)
+                datesStrings.push({"dateString":dateString})
+            }
+
+            if (resultValidation.errors.length > 0){
+
+                return res.render('courses/studentsResults',{title:'Resultados',course,studentsData,datesStrings,errors:resultValidation.mapped(),
+                oldData: req.body,})
+            }
+
+            const body = Object.keys(req.body)
+            const promises = []
+
+            //get idFormsData to print and documents to print
+            var idsFormsData = []
+            var documents = []
+            
+            for (let i = 0; i < body.length; i++) {
+                if (body[i] == "certificates" || body[i] == "credentials") {
+                    documents.push(body[i])
+                }else{
+                    if (body[i] != "selectAll") {
+                        idsFormsData.push(body[i])
+                    }
+                }
+            }
+
+            //get dataToPrint to print
+            const dataToPrint = await formsDataQueries.dataToPrint(idsFormsData)
+
+            //create .zip
+
+            const archive = archiver('zip')
+            res.attachment('credentials.zip')
+            archive.pipe(res)
+
+            const browser = await chromium.launch()
+
+            //print credentials if necessary
+            if (documents.includes('credentials')) {
+                for (const data of dataToPrint) {
+                    const dni = data.dni;
+                    const name = data.last_name + ' ' + data.first_name;
+                    const fileName = 'Credencial ' + name + ' - ' + dni;
+            
+                    const url = dominio + "courses/view-credential/" + data.id;
+            
+                    const page = await browser.newPage()            
+                    await page.goto(url, { waitUntil: 'domcontentloaded' })
+                    
+            
+                    const pdf = await page.pdf({
+                        format: 'A4',
+                        printBackground: true, 
+                      });
+            
+                    await page.close();
+            
+                    // Agregar el archivo PDF al archivo zip
+                    //archive.append(pdf, { name: fileName + '.pdf' });
+
+                    // Agregar el archivo PDF al archivo zip desde el buffer
+                    const pdfPromise = new Promise((resolve, reject) => {
+                        archive.append(pdf, { name: fileName }, (err) => {
+                            if (err) {
+                                reject(err)
+                            } else {
+                                resolve()
+                            }
+                        });
+                    });
+                    promises.push(pdfPromise)
+                }
+            }
+
+            //print certificates if necessary
+            if (documents.includes('certificates')) {
+                for (const data of dataToPrint) {
+                    const dni = data.dni;
+                    const name = data.last_name + ' ' + data.first_name;
+                    const fileName = 'Certificado ' + name + ' - ' + dni;
+            
+                    const url = dominio + "courses/view-certificate/" + data.id;
+            
+                    const page = await browser.newPage()            
+                    await page.goto(url, { waitUntil: 'domcontentloaded' })
+                                
+                    const pdf = await page.pdf({
+                        format: 'A4',
+                        printBackground: true, 
+                      });
+            
+                    await page.close();
+            
+                    // Agregar el archivo PDF al archivo zip
+                    //archive.append(pdf, { name: fileName + '.pdf' });
+
+                    // Agregar el archivo PDF al archivo zip desde el buffer
+                    const pdfPromise = new Promise((resolve, reject) => {
+                        archive.append(pdf, { name: fileName }, (err) => {
+                            if (err) {
+                                reject(err)
+                            } else {
+                                resolve()
+                            }
+                        });
+                    });
+                    promises.push(pdfPromise)
+                }
+            }
+            
+            archive.finalize()            
+            await browser.close()
+
+            res.on('close', () => {
+                console.log('Respuesta HTTP cerrada');
+            })
+
+            archive.on('end', () => {
+                console.log('Archivo ZIP completado');
+                res.end(); // Finalizar la respuesta HTTP una vez que el archivo ZIP esté completo
+              })
+            
+        }catch(error){
+            console.log(error)
+            return res.send(error)
+        }
+    },
+    printSelected2: async(req,res) =>{
         try{
             //get course and company
             const course = req.params.courseName

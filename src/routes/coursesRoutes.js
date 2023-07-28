@@ -34,5 +34,6 @@ router.get('/view-students',coursesController.viewStudents)
 router.get('/view-certificate/:idFormData',coursesController.viewCertificate)
 router.get('/create-certificate',coursesController.createCertificate)
 
+
 module.exports = router
 
