@@ -150,39 +150,32 @@ const usersController = {
             const formsData = await db.Forms_data.findAll({raw:true})
             const firstRowToAdd =  formsData.length + 1 // add one row because data includes titles
 
-            //googlesheets data qty
-            let lastRowToAdd = 0
-            for (let i = 0; i < mdbData.length; i++) {
-                if (mdbData[i].length < 10) {
-                    break
-                }
-                lastRowToAdd += 1
-            }
-
-            lastRowToAdd = lastRowToAdd - 1
-
+            //find last row to add to database
+            const lastRowToAdd = mdbData.length - 1 
 
             //add data to database
-            for (let i = firstRowToAdd; i <= lastRowToAdd; i++) {
+            for (let i = firstRowToAdd; i < lastRowToAdd; i++) {
                 //get the date as string and complete with zeros if necessary
-                const dateString = mdbData[i][1].split(' ')[0]
+                const dateString = mdbData[i][0].split(' ')[0]
                 const dateArray = dateString.split('/')
                 const date = new Date( dateArray[2], dateArray[1] - 1, dateArray[0])
                 const dateTimestamp = date.getTime()
 
-                //const dateString = await datesFunctions.certificateDate(date)
+                //get student code
+                const courseCode = mdbData[i][3] == '' ? 0 : parseInt(mdbData[i][3])
+                const studentCode = await formsDataQueries.studentCode(courseCode)
 
                 await db.Forms_data.create({
                     date:dateTimestamp,
-                    email:mdbData[i][2],
-                    grade:parseFloat(mdbData[i][4]).toFixed(2),
-                    last_name:mdbData[i][5],
-                    first_name:mdbData[i][6],
-                    company:mdbData[i][8],
-                    dni:mdbData[i][7],
-                    form_name:mdbData[i][9],
-                    course_code:999,
-                    student_code:'01'
+                    email:mdbData[i][1],
+                    grade:parseFloat(mdbData[i][2]).toFixed(2),
+                    last_name:mdbData[i][4],
+                    first_name:mdbData[i][5],
+                    company:mdbData[i][7],
+                    dni:mdbData[i][6] == '' ? 0 : parseInt(mdbData[i][6]),
+                    form_name:mdbData[i][8],
+                    course_code:courseCode,
+                    student_code:studentCode
                 })
             }
 

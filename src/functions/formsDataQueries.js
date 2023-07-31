@@ -87,6 +87,19 @@ const formsDataQueries = {
 
         return dataToPrint        
     },
+    studentCode: async(courseCode) => {
+        const courseCodeQty = await db.Forms_data.count({
+            where:{course_code:courseCode}
+        })
+
+        var studentCode = (courseCodeQty + 1).toString()
+
+        if (studentCode.length == 1) {
+            studentCode = '0' + studentCode
+        }
+
+        return studentCode
+    },
     studentData: async(company,dni) => {
 
         const studentCourses = await db.Forms_data.findAll({

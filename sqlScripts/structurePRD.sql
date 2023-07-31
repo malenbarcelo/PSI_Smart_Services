@@ -89,12 +89,12 @@ CREATE TABLE psismart_psi_db.forms_data (
     company VARCHAR(50) NOT NULL,
     dni BIGINT NOT NULL,
     form_name VARCHAR(50) NOT NULL,
-    course_code INT NOT NULL,
+    course_code BIGINT NOT NULL,
     student_code VARCHAR(10) NOT NULL,
     PRIMARY KEY (id)
 );
 
-/*Create table profila_images*/
+/*Create table profile_images*/
 CREATE TABLE psismart_psi_db.profile_images (
     id INT NOT NULL AUTO_INCREMENT,
     dni BIGINT NOT NULL,
