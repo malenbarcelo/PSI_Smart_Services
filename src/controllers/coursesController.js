@@ -11,8 +11,8 @@ const archiver = require('archiver')
 const fetch = require('cross-fetch')
 const dominio = require('../functions/dominio')
 const ejs = require('ejs')
-const { chromium } = require('playwright')
-const fs = require('fs/promises')
+const fs = require('fs')
+const pdfcrowd = require('pdfcrowd')
 
 const coursesController = {
     createCourse: async(req,res) => {
@@ -197,149 +197,48 @@ const coursesController = {
             return res.send(error)
         }
     },
-    printSelected2: async(req,res) =>{
+    printSelected: async(req,res) =>{
         try{
-            //get course and company
-            const course = req.params.courseName
-            const company = req.params.company
+            // create the API client instance of pdfcrowd
+            const client = new pdfcrowd.HtmlToPdfClient("malenbarcelo", "4860525fc1028878b17e8a70aae9f493")
 
-            const resultValidation = validationResult(req)
+            const data = { title: 'Credencial', name: 'Malen' }
 
-            //get course students
-            let studentsData = await formsDataQueries.studentsDataFiltered(company,course)
-                
-            let datesStrings = []
+            // Read the CSS file
+            const cssFilePath = path.resolve('./public/css/styles.css');
+            const cssContent = fs.readFileSync(cssFilePath, 'utf-8');
+            
+            const ejsFilePath = path.resolve('./src/views/courses/credential.ejs');
+            const html = await ejs.renderFile(ejsFilePath, data);
 
-            for (let i = 0; i < studentsData.length; i++) {
-                let dateString = await datesFunctions.dateToString(studentsData[i].date)
-                datesStrings.push({"dateString":dateString})
+            // Combine the HTML with the CSS
+            const finalHtml = `<html><head><style>${cssContent}</style></head><body>${html}</body></html>`;
+
+            const pdfFilePath = path.resolve('./result.pdf');
+            client.convertStringToFile(finalHtml, pdfFilePath, (err) => {
+            if (err) {
+                console.error('Error al generar el PDF:', err);
+                return res.status(500).send('Error al generar el PDF');
             }
 
-            if (resultValidation.errors.length > 0){
+            res.set('Content-Disposition', 'attachment; filename=result.pdf');
+            res.set('Content-Type', 'application/pdf');
+            const pdfStream = fs.createReadStream(pdfFilePath);
+            pdfStream.pipe(res);
 
-                return res.render('courses/studentsResults',{title:'Resultados',course,studentsData,datesStrings,errors:resultValidation.mapped(),
-                oldData: req.body,})
-            }
-
-            const body = Object.keys(req.body)
-            const promises = []
-
-            //get idFormsData to print and documents to print
-            var idsFormsData = []
-            var documents = []
-            
-            for (let i = 0; i < body.length; i++) {
-                if (body[i] == "certificates" || body[i] == "credentials") {
-                    documents.push(body[i])
-                }else{
-                    if (body[i] != "selectAll") {
-                        idsFormsData.push(body[i])
-                    }
-                }
-            }
-
-            //get dataToPrint to print
-            const dataToPrint = await formsDataQueries.dataToPrint(idsFormsData)
-
-            //create .zip
-
-            const archive = archiver('zip')
-            res.attachment('credentials.zip')
-            archive.pipe(res)
-
-            const browser = await chromium.launch()
-
-            //print credentials if necessary
-            if (documents.includes('credentials')) {
-                for (const data of dataToPrint) {
-                    const dni = data.dni;
-                    const name = data.last_name + ' ' + data.first_name;
-                    const fileName = 'Credencial ' + name + ' - ' + dni;
-            
-                    const url = dominio + "courses/view-credential/" + data.id;
-            
-                    const page = await browser.newPage()            
-                    await page.goto(url, { waitUntil: 'domcontentloaded' })
-                    
-            
-                    const pdf = await page.pdf({
-                        format: 'A4',
-                        printBackground: true, 
-                      });
-            
-                    await page.close();
-            
-                    // Agregar el archivo PDF al archivo zip
-                    //archive.append(pdf, { name: fileName + '.pdf' });
-
-                    // Agregar el archivo PDF al archivo zip desde el buffer
-                    const pdfPromise = new Promise((resolve, reject) => {
-                        archive.append(pdf, { name: fileName }, (err) => {
-                            if (err) {
-                                reject(err)
-                            } else {
-                                resolve()
-                            }
-                        });
-                    });
-                    promises.push(pdfPromise)
-                }
-            }
-
-            //print certificates if necessary
-            if (documents.includes('certificates')) {
-                for (const data of dataToPrint) {
-                    const dni = data.dni;
-                    const name = data.last_name + ' ' + data.first_name;
-                    const fileName = 'Certificado ' + name + ' - ' + dni;
-            
-                    const url = dominio + "courses/view-certificate/" + data.id;
-            
-                    const page = await browser.newPage()            
-                    await page.goto(url, { waitUntil: 'domcontentloaded' })
-                                
-                    const pdf = await page.pdf({
-                        format: 'A4',
-                        printBackground: true, 
-                      });
-            
-                    await page.close();
-            
-                    // Agregar el archivo PDF al archivo zip
-                    //archive.append(pdf, { name: fileName + '.pdf' });
-
-                    // Agregar el archivo PDF al archivo zip desde el buffer
-                    const pdfPromise = new Promise((resolve, reject) => {
-                        archive.append(pdf, { name: fileName }, (err) => {
-                            if (err) {
-                                reject(err)
-                            } else {
-                                resolve()
-                            }
-                        });
-                    });
-                    promises.push(pdfPromise)
-                }
-            }
-            
-            archive.finalize()            
-            await browser.close()
-
-            res.on('close', () => {
-                console.log('Respuesta HTTP cerrada');
+            /*pdfStream.on('end', () => {
+                fs.unlinkSync(pdfFilePath);
+              });*/
             })
 
-            archive.on('end', () => {
-                console.log('Archivo ZIP completado');
-                res.end(); // Finalizar la respuesta HTTP una vez que el archivo ZIP esté completo
-              })
+            
             
         }catch(error){
             console.log(error)
             return res.send(error)
         }
     },
-    printSelected: async(req,res) =>{
+    printSelected2: async(req,res) =>{
         try{
             //get course and company
             const course = req.params.courseName
