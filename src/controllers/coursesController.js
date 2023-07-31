@@ -278,7 +278,7 @@ const coursesController = {
             return res.send('Ha ocurrido un error')
         }
     },
-    printSelected: async(req,res) =>{
+    printSelected9: async(req,res) =>{
         try{            
             //get course and company
             const course = req.params.courseName
@@ -491,7 +491,7 @@ const coursesController = {
             return res.send(error)
         }
     },
-    printSelected2: async(req,res) =>{
+    printSelected: async(req,res) =>{
         try{
             //get course and company
             const course = req.params.courseName
