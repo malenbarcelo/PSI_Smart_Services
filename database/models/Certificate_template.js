@@ -18,11 +18,15 @@ module.exports = (sequelize, DataTypes) => {
    },
    logo2:{
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
    },
    logo3:{
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+   },
+   type_of_course:{
+      type: DataTypes.STRING,
+      allowNull: true,
    },
    signature1_image:{
       type: DataTypes.STRING,

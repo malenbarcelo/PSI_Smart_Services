@@ -1,3 +1,18 @@
+.btnSubmit{
+    border-radius:3px;
+    border:none;
+    background-color: rgb(95, 93, 93);
+    padding:6px 8px;
+    width: 70px;
+    font-weight: bold;
+    color: white;
+}
+
+.btnSubmit:hover{
+    background-color:black;
+    cursor: pointer;
+}
+
 .certificateTemplateFooter{
     display: flex;
     align-items: center;
@@ -19,12 +34,10 @@
 .divCertificateTemplate{
     border: black solid 1px;
     margin: auto;
-    margin-top: 30px;
     font-family: arial;
-    position: relative;
     width: 65%;
     margin-right: 120px;
-    margin-top: 50px;
+    position: relative;
 }
 
 .divCertTemplateLogo{
@@ -38,10 +51,66 @@
     padding:8px
 }
 
+
+
+
 .divCertTemplateTextSignature{
     text-align: center;
 }
 
+.divSelectCourse{
+    margin: auto;
+    margin-top: 15px;
+    font-family: arial;
+    width: 65%;
+    margin-right: 120px;
+    text-align: center;
+}
+
+.divStudentPhotoCert{
+    position: absolute;
+    right:130px;
+    top: 95px
+}
+
+.divTitle{
+    margin: auto;
+    width: 65%;
+    margin-right: 120px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.divSubmit{
+    margin: auto;
+    margin-top: 10px;
+    width: 65%;
+    margin-right: 120px;
+    text-align: center;
+}
+
+.divCertificateTemplate{
+    border: black solid 1px;
+    margin: auto;
+    font-family: arial;
+    width: 65%;
+    margin-right: 120px;
+    margin-top: 30px;
+    position: relative;
+}
+
+
+.errors{
+    margin: auto;
+    width: 65%;
+    margin-right: 120px;
+    color: rgb(221, 7, 7);
+    font-size: 12px;
+    text-align: left;
+    margin-top:-10px;
+    margin-bottom: -20px;
+    
+}
 .fileHeader{
     font-size: 11px;
     text-align: center;
@@ -69,6 +138,11 @@
     width: 50px;
 }
 
+.redBorders{
+    border: rgb(221, 7, 7) solid 2px;
+}
+
+
 .selectType, .courseName, .hours, .textarea1, .textarea2, .signatureLine1, .signatureLine2{
     border-radius: 0px;
     padding-top:3px;
@@ -93,6 +167,10 @@
     text-align: center;
     font-weight: bold;
     margin-bottom: 10px;
+}
+
+.selectCourseCertTemplate{
+    width: 400px;
 }
 
 .selectType{

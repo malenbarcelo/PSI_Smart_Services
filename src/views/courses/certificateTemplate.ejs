@@ -2,64 +2,171 @@
 <%- include('../partials/header') %>
 <%- include('../partials/userLogged') %>
 
-<div class="divStudentPhoto">
-    <img src="/images/studentsPhotos/templateUserPicture.jpg" class="studentPhoto">
+<div class="divRelative">
+    <h3 class="divTitle">Diseño de certificado</h3>
+
+    <form action="/courses/create-certificate" enctype="multipart/form-data" method="POST" class="form1">
+        <div class="divSelectCourse">
+            <select name="selectCourse" id ="selectCourse" class="input1 select1 selectCourseCertTemplate <%= locals.errors && errors.selectCourse ? 'isInvalid' : null %>">
+                <option value="default" selected>--Seleccione un curso--</option>
+                <% courses.forEach(course => { %>
+                    <option value="<%= course.id %>"><%= course.course_name %></option>
+                <% }) %>
+            </select>
+            <div class="divError1">
+                <% if (locals.errors && errors.selectCourse) { %>
+                    <%= errors.selectCourse.msg %>
+                <% } %>
+            </div>
+        </div>
+        
+        <div class="errors">        
+            <div>
+                <% if (locals.errors && errors.certLogo1) { %>
+                    <%= '- ' + errors.certLogo1.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.certLogo2) { %>
+                    <%= '- ' + errors.certLogo2.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.selectTypeOfCourse) { %>
+                    <%= '- ' + errors.selectTypeOfCourse.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.courseName) { %>
+                    <%= '- ' + errors.courseName.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.theoryHours) { %>
+                    <%= '- ' + errors.theoryHours.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.practicelHours) { %>
+                    <%= '- ' + errors.practiceHours.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.text1) { %>
+                    <%= '- ' + errors.text1.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.text2) { %>
+                    <%= '- ' + errors.text2.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.signature1) { %>
+                    <%= '- ' + errors.signature1.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.signature1Line1) { %>
+                    <%= '- ' + errors.signature1Line1.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.signature1Line2) { %>
+                    <%= '- ' + errors.signature1Line2.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.signature2) { %>
+                    <%= '- ' + errors.signature2.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.signature2Line1) { %>
+                    <%= '- ' + errors.signature2Line1.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.signature2Line2) { %>
+                    <%= '- ' + errors.signature2Line2.msg %>
+                <% } %>
+            </div>
+            <div>
+                <% if (locals.errors && errors.certLogo3) { %>
+                    <%= '- ' + errors.certLogo3.msg %>
+                <% } %>
+            </div>
+        </div>
+        <div class="divCertificateTemplate">
+            <div class="divStudentPhotoCert">
+                <img src="/images/studentsPhotos/templateUserPicture.jpg" class="studentPhoto">
+            </div>
+            <div class="headerCertTemplate">
+                <div class="divCertTemplateLogo <%= locals.errors && errors.certLogo1 ? 'redBorders' : null %>">
+                    <div class="titleLogoHeader">Logo 1 encabezado</div>
+                    <input type="file" name="certLogo1" class="fileHeader">
+                </div>
+                <div class="divCertTemplateLogo <%= locals.errors && errors.certLogo2 ? 'redBorders' : null %>">
+                    <div class="titleLogoHeader">Logo 2 encabezado</div>
+                    <input type="file" name="certLogo2" class="fileHeader">
+                </div>
+                <div class="headerDataCertTemplate">
+                    <div class="headerDataLineCertTemplate">Certificado de aprobación curso 
+                        <select name="selectTypeOfCourse" class="selectType <%= locals.errors && errors.selectTypeOfCourse ? 'isInvalid' : null %>" id="selectTypeOfCourse">
+                        <option value="default" selected>--Seleccione el tipo de curso--</option>
+                        <option value="theoretical" <%= locals.oldData && oldData.selectTypeOfCourse == 'theoretical' ? 'selected' : null %>>teórico</option>
+                        <option value="practical" <%= locals.oldData && oldData.selectTypeOfCourse == 'practical' ? 'selected' : null %>>práctico</option>
+                        <option value="theoretical-practical" <%= locals.oldData && oldData.selectTypeOfCourse == 'theoretical-practical' ? 'selected' : null %>>teórico-práctico</option>
+                        </select>                    
+                    </div>
+                    <div class="headerDataLineCertTemplate">ARGENTINA, Neuquén XX/XX/XXXX</div>
+                    <div class="headerDataLineCertTemplate">Código: XXX-XXXXXXXX-XX</div>
+                </div>
+            </div>
+        
+            <div class="certTextTemplate">
+                <div class="studentNameCertTemplate">APELLIDO NOMBRE</div>
+                <div class="studentDniCertTemplate">DNI: XXXXXXXX</div>
+                <div class="text1CertTemplate" id="text1">Aprobó el curso teórico ( 
+                    <input type="number" class="hours <%= locals.errors && errors.theoryHours ? 'isInvalid' : null %>" placeholder="horas" name="theoryHours">
+                     hs) / práctico ( 
+                    <input type="number" class="hours <%= locals.errors && errors.practiceHours ? 'isInvalid' : null %>" placeholder="horas" name="practiceHours" placeholder="horas">
+                    hs) 
+                    <b><input type="text" name="courseName" placeholder="Nombre del curso" class="courseName <%= locals.errors && errors.courseName ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.courseName : null %>"></b>
+                </div>
+                <div class="validityCertTemplate">Vigente hasta el XX/XX/XXXX</div>
+                <div class="text2"><textarea placeholder="Texto 1" class="textarea1 <%= locals.errors && errors.text1 ? 'isInvalid' : null %>" name="text1"></textarea></div>
+                <div class="text3CertTemplate">El día XX de XXXX, </div>
+                <div class="text2"><textarea placeholder="Texto 2" name="text2" class="textarea2 <%= locals.errors && errors.text2 ? 'isInvalid' : null %>"></textarea></div>
+            </div>
+        
+            <div class="certificateTemplateFooter">
+                <div class="divCertTemplateSignature <%= locals.errors && errors.signature1 ? 'redBorders' : null %>">
+                    <div class="titleLogoHeader">Firma 1</div>
+                    <div><input type="file" class="fileHeader" name="signature1"></div>
+                    <div class="divCertTemplateTextSignature"><input type="text" placeholder="Aclaración firma 1" class="signatureLine1 <%= locals.errors && errors.signature1Line1 ? 'isInvalid' : null %>" name="signature1Line1"></div>
+                    <div class="divCertTemplateTextSignature"><input type="text" placeholder="Texto firma 1" class="signatureLine2 <%= locals.errors && errors.signature1Line2 ? 'isInvalid' : null %>" name="signature1Line2"></div>
+                </div>
+                <div class="divCertTemplateSignature <%= locals.errors && errors.signature1 ? 'redBorders' : null %>">
+                    <div class="titleLogoHeader">Firma 2</div>
+                    <div><input type="file" class="fileHeader" name="signature2"></div>
+                    <div class="divCertTemplateTextSignature"><input type="text" placeholder="Aclaración firma 2" class="signatureLine1 <%= locals.errors && errors.signature2Line1 ? 'isInvalid' : null %>" name="signature2Line1"></div>
+                    <div class="divCertTemplateTextSignature"><input type="text" placeholder="Texto firma 1" class="signatureLine2 <%= locals.errors && errors.signature2Line2 ? 'isInvalid' : null %>" name="signature2Line2"></div>
+                </div>
+                <div class="divCertTemplateLogo <%= locals.errors && errors.certLogo3 ? 'redBorders' : null %>">
+                    <div class="titleLogoHeader">Logo pie de página</div>
+                    <input type="file" class="fileHeader" name="certLogo3">
+                </div>
+            </div>
+        </div>
+
+        <div class="divSubmit"><button type="submit" class="btnSubmit">Aceptar</button></div>  
+    </form>
 </div>
 
-<div class="divCertificateTemplate">
-    <div class="headerCertTemplate">
-        <div class="divCertTemplateLogo">
-            <div class="titleLogoHeader">Logo 1 encabezado</div>
-            <input type="file" class="fileHeader">
-        </div>
-        <div class="divCertTemplateLogo">
-            <div class="titleLogoHeader">Logo 2 encabezado</div>
-            <input type="file" class="fileHeader">
-        </div>
-        <div class="headerDataCertTemplate">
-            <div class="headerDataLineCertTemplate">Certificado de aprobación curso <select name="selectCompany" class="selectType <%= locals.errors && errors.selectTypeOfCourse ? 'isInvalid' : null %>" id="selectTypeOfCourse">
-                <option value="default" selected>--Seleccione el tipo de curso--</option>
-                <option value="theoretical" <%= locals.oldData && oldData.selectCompany == company.company ? 'selected' : null %>>teórico</option>
-                <option value="practical" <%= locals.oldData && oldData.selectCompany == company.company ? 'selected' : null %>>práctico</option>
-                <option value="theoretical-practical" <%= locals.oldData && oldData.selectCompany == company.company ? 'selected' : null %>>teórico-práctico</option>
 
-            </select></div>
-            <div class="headerDataLineCertTemplate">ARGENTINA, Neuquén XX/XX/XXXX</div>
-            <div class="headerDataLineCertTemplate">Código: XXX-XXXXXXXX-XX</div>
-        </div>
-    </div>
 
-    <div class="certTextTemplate">
-        <div class="studentNameCertTemplate">APELLIDO NOMBRE</div>
-        <div class="studentDniCertTemplate">DNI: XXXXXXXX</div>
-        <div class="text1CertTemplate" id="text1">Aprobó el curso teórico ( <input type="number" class="hours" placeholder="horas"> hs) / práctico ( <input type="number" class="hours" placeholder="horas"> hs) <b><input type="text" placeholder="Nombre del curso" class="courseName"></b></div>
-        <div class="validityCertTemplate">Vigente hasta el XX/XX/XXXX</div>
-        <div class="text2"><textarea placeholder="Texto 1" class="textarea1"></textarea></div>
-        <div class="text3CertTemplate">El día XX de XXXX, </div>
-        <div class="text2"><textarea placeholder="Texto 2" class="textarea2"></textarea></div>
-    </div>
 
-    <div class="certificateTemplateFooter">
-        <div class="divCertTemplateSignature">
-            <div class="titleLogoHeader">Firma 1</div>
-            <div><input type="file" class="fileHeader"></div>
-            <div class="divCertTemplateTextSignature"><input type="text" placeholder="Aclaración firma 1" class="signatureLine1"></div>
-            <div class="divCertTemplateTextSignature"><input type="text" placeholder="Texto firma 1" class="signatureLine2"></div>
-        </div>
-        <div class="divCertTemplateSignature">
-            <div class="titleLogoHeader">Firma 2</div>
-            <div><input type="file" class="fileHeader"></div>
-            <div class="divCertTemplateTextSignature"><input type="text" placeholder="Aclaración firma 2" class="signatureLine1"></div>
-            <div class="divCertTemplateTextSignature"><input type="text" placeholder="Texto firma 1" class="signatureLine2"></div>
-        </div>
-        <div class="divCertTemplateLogo">
-            <div class="titleLogoHeader">Logo pie de página</div>
-            <input type="file" class="fileHeader">
-        </div>
-    </div>
-
-    
-</div>
 
 <script type="module" src="/js/certificateTemplate.js"></script>
     

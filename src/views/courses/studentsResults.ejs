@@ -18,8 +18,6 @@
             <div class="div48" id="acceptBtn">Aceptar</div>
             <div class="divError1 divError3" id="divError"></div>
         </div>
-        
-        
     </div>
 
     <h3 class="title2 title3" id="formTitle">Resultados del formulario (Último año)</h3>    
@@ -58,6 +56,16 @@
             <div class="divError1 divError4 <%= locals.errors && errors.selectAll ? 'visible' : 'notVisible' %>" id="error2">
                 <% if (locals.errors && errors.selectAll) { %>
                     <%= errors.selectAll.msg %>
+                <% } %>
+            </div>
+            <div class="divError1 divError4 <%= locals.errors && errors.certificateTemplate ? 'visible' : 'notVisible' %>" id="error2">
+                <% if (locals.errors && errors.certificateTemplate) { %>
+                    <%= errors.certificateTemplate.msg %>
+                <% } %>
+            </div>
+            <div class="divError1 divError4 <%= locals.errors && errors.credentialTemplate ? 'visible' : 'notVisible' %>" id="error2">
+                <% if (locals.errors && errors.credentialTemplate) { %>
+                    <%= errors.credentialTemplate.msg %>
                 <% } %>
             </div>
             

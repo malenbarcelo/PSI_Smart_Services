@@ -37,6 +37,26 @@ const formsDataQueries = {
             return res.send('Ha ocurrido un error')
         }
     },
+    certificateTemplate: async(courseId) => {
+        try{
+            const template = await db.Certificates_templates.findOne({
+                where:{id_courses:courseId}
+            })
+            return template
+        }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },
+    credentialTemplate: async(courseId) => {
+        try{
+            const template = await db.Credentials_templates.findOne({
+                where:{id_courses:courseId}
+            })
+            return template
+        }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },
     courseUrl: async(courseName) => {
         try{
             const courseUrl = await db.Courses.findOne({

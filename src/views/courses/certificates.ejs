@@ -1,7 +1,7 @@
 <%- include('../partials/head') %>
 
 <div class="divStudentPhoto">
-    <img src="/images/studentsPhotos/<%= studentImage %>" class="studentPhoto">
+    <img src="/images/studentsPhotos/<%= studentImage %>" class="studentPhoto" alt="<%= certificateData.last_name + ' ' + certificateData.first_name %>">
 </div>
 
 <div class="divCertificate">
@@ -9,7 +9,7 @@
         <div class="divHeaderLogo"><img src="/images/certificateImages/<%= certificateTemplate.logo1 %>" alt="Logo1" class="headerLogo1"></div>
         <div class="divHeaderLogo"><img src="/images/certificateImages/<%= certificateTemplate.logo2 %>" alt="Logo2" class="headerLogo2"></div>
         <div class="headerData">
-            <div class="headerDataLine"><%= headerLine1 %></div>
+            <div class="headerDataLine">Certificado de aprobación curso <%= certificateTemplate.type_of_course %></div>
             <div class="headerDataLine">ARGENTINA, Neuquén <%= issueDateString %></div>
             <div class="headerDataLine">Código: <%= certificateCode %></div>
         </div>
@@ -18,7 +18,19 @@
     <div class="certificateText">
         <div class="studentName"><%= certificateData.last_name.toUpperCase() + ' ' + certificateData.first_name.toUpperCase() %></div>
         <div class="studentDni">DNI: <%= certificateData.dni %></div>
-        <div class="text1"><%= certificateLine1 %> <b><%= certificateTemplate.course_name %></b></div>
+        <div class="text1">
+            <% if (certificateTemplate.type_of_course == 'teórico-práctico') { %>
+                <%= 'Aprobó el curso teórico (' + certificateTemplate.theory_hours + 'hs) / práctico (' + certificateTemplate.practice_hours + 'hs)'  %>
+            <% } %>
+            <% if (certificateTemplate.type_of_course == 'teórico') { %>
+                <%= 'Aprobó el curso teórico (' + certificateTemplate.theory_hours + 'hs)'  %>
+            <% } %>
+            <% if (certificateTemplate.type_of_course == 'práctico') { %>
+                <%= 'Aprobó el curso práctico (' + certificateTemplate.practice_hours + 'hs)'  %>
+            <% } %>
+             
+            <b><%= certificateTemplate.course_name %></b>
+        </div>
         <div class="validity">Vigente hasta el <%= expirationDateString %></div>
         <div class="text2"><%= certificateTemplate.text1 %></div>
         <div class="text3">El día <%= certificateData.date.getDate() + ' de ' + issueMonth + ', ' + certificateTemplate.text2 %></div>

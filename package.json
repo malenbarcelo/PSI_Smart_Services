@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ilovepdf/ilovepdf-nodejs": "^0.2.2",
+    "adm-zip": "^0.5.10",
     "alertifyjs": "^1.13.1",
     "archiver": "^5.3.1",
     "babel-cli": "^6.26.0",

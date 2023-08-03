@@ -5,8 +5,6 @@ const formsDataQueries = require('../functions/formsDataQueries')
 const coursesQueries = require('../functions/coursesQueries')
 const datesFunctions = require('../functions/datesFunctions')
 const profileImagesQueries = require('../functions/profileImagesQueries')
-const credentialData = require('../functions/credentialData')
-const printPdf = require('../functions/printPdf')
 const sequelize = require('sequelize')
 const puppeteer = require('puppeteer')
 const archiver = require('archiver')
@@ -14,7 +12,6 @@ const fetch = require('cross-fetch')
 const dominio = require('../functions/dominio')
 const ejs = require('ejs')
 const fs = require('fs')
-const pdfcrowd = require('pdfcrowd')
 
 const coursesController = {
     createCourse: async(req,res) => {
@@ -26,8 +23,57 @@ const coursesController = {
     },
     createCertificate: async(req,res) => {
         try{
-            return res.render('courses/certificateTemplate',{title:'Diseño de certificado'})
+            const courses = await coursesQueries.allCourses()
+
+            return res.render('courses/certificateTemplate',{title:'Diseño de certificado',courses})
         }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },
+    createCertificateProcess: async(req,res) => {
+        try{
+            const courses = await coursesQueries.allCourses()
+
+            const resultValidation = validationResult(req)
+
+            if (resultValidation.errors.length > 0){                
+                return res.render('courses/certificateTemplate',{
+                    courses,
+                    errors:resultValidation.mapped(),
+                    oldData: req.body,
+                    title:'Diseño de certificado'
+                })
+            }
+
+            //create certificate
+            await db.Certificates_templates.create({
+                id_courses: req.body.selectCourse,
+                logo1: 'logo1',
+                logo2: 'logo2',
+                logo3: 'logo3',
+                type_of_course: req.body.selectTypeOfCourse,
+                signature1_image: 'firma1',
+                signature2_image: 'firma2',
+                signature1_line1: req.body.signature1Line1,
+                signature1_line2: erq.body.signature1Line2,
+                signature2_line1: req.body.signature2Line1,
+                signature2_line2: erq.body.signature2Line2,
+                theory_hours:req.body.theoryHours,
+                practice_hours:req.body.practiceHours,
+                course_name: 'nombre del curso',
+                text1: req.body.text1,
+                text2: req.body.text2,
+                enabled: 1
+            })
+
+            const successMessage = true
+
+            return res.render('courses/certificateTemplate',{title:'Diseño de certificado',courses, successMessage})
+            
+            return res.render('courses/certificateTemplate',{title:'Diseño de certificado',courses})
+
+        }catch(error){
+            console.log(error)
             return res.send('Ha ocurrido un error')
         }
     },
@@ -199,298 +245,6 @@ const coursesController = {
             return res.send(error)
         }
     },
-    printSelected6: async(req,res) =>{
-        try{
-            // create the API client instance of pdfcrowd
-            const client = new pdfcrowd.HtmlToPdfClient("malenbarcelo", "4860525fc1028878b17e8a70aae9f493")
-
-            const data = { title: 'Credencial', name: 'Malen' }
-
-            // Read the CSS file
-            const cssFilePath = path.resolve('./public/css/styles.css');
-            const cssContent = fs.readFileSync(cssFilePath, 'utf-8')
-            
-            const ejsFilePath = path.resolve('./src/views/courses/credential.ejs')
-
-            const html = await ejs.renderFile(ejsFilePath, data);
-
-            // Combine the HTML with the CSS
-            const finalHtml = `<html><head><style>${cssContent}</style></head><body>${html}</body></html>`
-
-            const pdfFilePath2 = path.resolve('./result.pdf')
-
-            /*client.convertStringToFile(finalHtml, pdfFilePath, () => {
-                res.set('Content-Disposition', 'attachment; filename=result.pdf')
-                res.set('Content-Type', 'application/pdf')
-                const pdfStream = fs.createReadStream(pdfFilePath)
-                pdfStream.pipe(res)
-
-                pdfStream.on('end', () => {
-                    fs.unlinkSync(pdfFilePath)
-                })
-            })*/
-
-            const tempDir = './temp'
-
-            const pdfFileName = 'result.pdf';
-            const zipFileName = 'result.zip';
-
-            const pdfFilePath = `${tempDir}/${pdfFileName}`;
-            const zipFilePath = `${tempDir}/${zipFileName}`;
-
-            const zipStream = fs.createWriteStream(zipFilePath);
-            const archive = archiver('zip', {
-                zlib: { level: 9 } // Nivel de compresión
-            });
-
-            zipStream.on('error', (err) => {
-                res.status(500).send({ error: 'Error al crear el archivo ZIP' });
-            });
-
-            archive.on('end', () => {
-                // Eliminar el archivo PDF una vez que se haya incluido en el archivo ZIP
-                fs.unlinkSync(pdfFilePath);
-        
-                // Enviar el archivo ZIP como respuesta
-                res.set('Content-Disposition', `attachment; filename=${zipFileName}`);
-                res.set('Content-Type', 'application/zip');
-                const zipFileStream = fs.createReadStream(zipFilePath);
-                zipFileStream.pipe(res);
-        
-                // Eliminar el archivo ZIP después de enviarlo
-                zipFileStream.on('end', () => {
-                    fs.unlinkSync(zipFilePath);
-                });
-            });
-        
-            // Añadir el archivo PDF al archivo ZIP con el nombre 'result.pdf'
-            archive.append(fs.createReadStream(pdfFilePath), { name: pdfFileName });
-        
-            // Finalizar la creación del archivo ZIP
-            archive.finalize();
-
-            
-
-          
-
-        }catch(error){
-            console.log(error)
-            return res.send('Ha ocurrido un error')
-        }
-    },
-    printSelected9: async(req,res) =>{
-        try{            
-            //get course and company
-            const course = req.params.courseName
-            const company = req.params.company
-
-            //get course students
-            var studentsData = await formsDataQueries.studentsDataFiltered(company,course)
-
-            //get dates as strings
-            let datesStrings = []
-
-            for (let i = 0; i < studentsData.length; i++) {
-                let dateString = await datesFunctions.dateToString(studentsData[i].date)
-                datesStrings.push({"dateString":dateString})
-            }
-
-            //findout if there are any errors
-            const resultValidation = validationResult(req)
-
-            if (resultValidation.errors.length > 0){
-
-                return res.render('courses/studentsResults',{title:'Resultados',course,studentsData,datesStrings,errors:resultValidation.mapped(),
-                oldData: req.body,})
-            }
-
-            //get data to print
-            const body = Object.keys(req.body)
-
-            //get idFormsData to print and documents to print
-            var idsFormsData = []
-            var documents = []
-            
-            for (let i = 0; i < body.length; i++) {
-                if (body[i] == "certificates" || body[i] == "credentials") {
-                    documents.push(body[i])
-                }else{
-                    if (body[i] != "selectAll") {
-                        idsFormsData.push(body[i])
-                    }
-                }
-            }
-
-            const dataToPrint = await formsDataQueries.dataToPrint(idsFormsData)
-
-            // create the API client instance of pdfcrowd
-            const client = new pdfcrowd.HtmlToPdfClient("malenbarcelo", "4860525fc1028878b17e8a70aae9f493")
-
-            // set ejs file
-            const ejsFilePath = path.resolve('./src/views/courses/credentials.ejs')
-
-            // read CSS file
-            const cssFilePath = path.resolve('./public/css/styles.css')
-            const cssContent = fs.readFileSync(cssFilePath, 'utf-8')
-
-            //print credentials if necessary
-            if (documents.includes('credentials')) {
-                for (const data of dataToPrint) {
-                    const dni = data.dni
-                    const name = data.last_name + ' ' + data.first_name
-                    const fileName = 'Credencial ' + name + ' - ' + dni
-
-                    //render ejs file
-                    const allCredentialData = await credentialData.allCredentialData(data.id)
-
-                    const credentialEjs = await ejs.renderFile(ejsFilePath, {title:'Credencial',allCredentialData})
-
-                    // Combine the HTML with the CSS
-                    const credentialEjsWithCss = `<html><head><style>${cssContent}</style></head><body>${credentialEjs}</body></html>`;
-
-                    const pdfFilePath = path.resolve('./result.pdf');
-
-                    const pdf = client.convertStringToFile(credentialEjsWithCss, pdfFilePath, (err) => {
-                        if (err) {
-                        console.error('Error al generar el PDF:', err);
-                        return res.status(500).send('Error al generar el PDF')
-                        }
-                        res.set('Content-Disposition', 'attachment; filename=' + fileName + '.pdf')
-                        res.set('Content-Type', 'application/pdf')
-                        const pdfStream = fs.createReadStream(pdfFilePath)
-                        pdfStream.pipe(res);
-
-                        pdfStream.on('end', () => {
-                            fs.unlinkSync(pdfFilePath);
-                        })
-                })
-            }
-        }
-        }catch(error){
-            console.log(error)
-            return res.send(error)
-        }
-    },
-    printSelected3: async(req,res) =>{
-        try{
-            
-            //get course and company
-            const course = req.params.courseName
-            const company = req.params.company
-
-            //get course students
-            var studentsData = await formsDataQueries.studentsDataFiltered(company,course)
-
-            //get dates as strings
-            let datesStrings = []
-
-            for (let i = 0; i < studentsData.length; i++) {
-                let dateString = await datesFunctions.dateToString(studentsData[i].date)
-                datesStrings.push({"dateString":dateString})
-            }
-
-            //findout if there are any errors
-            const resultValidation = validationResult(req)
-
-            if (resultValidation.errors.length > 0){
-
-                return res.render('courses/studentsResults',{title:'Resultados',course,studentsData,datesStrings,errors:resultValidation.mapped(),
-                oldData: req.body,})
-            }
-
-            //get data to print
-            const body = Object.keys(req.body)
-
-            //get idFormsData to print and documents to print
-            var idsFormsData = []
-            var documents = []
-            
-            for (let i = 0; i < body.length; i++) {
-                if (body[i] == "certificates" || body[i] == "credentials") {
-                    documents.push(body[i])
-                }else{
-                    if (body[i] != "selectAll") {
-                        idsFormsData.push(body[i])
-                    }
-                }
-            }
-
-            const dataToPrint = await formsDataQueries.dataToPrint(idsFormsData)
-
-            // create the API client instance of pdfcrowd
-            const pdfCroudClient = new pdfcrowd.HtmlToPdfClient("malenbarcelo", "4860525fc1028878b17e8a70aae9f493")
-
-            // read CSS file
-            const cssFilePath = path.resolve('./public/css/styles.css')
-            const cssContent = fs.readFileSync(cssFilePath, 'utf-8')
-
-            //set ejs file
-            const ejsFilePath = path.resolve('./src/views/courses/credentials.ejs')
-
-            //print credentials if necessary
-            if (documents.includes('credentials')) {
-                const zipFilePath = path.resolve('./credentials.zip');
-                const zipStream = fs.createWriteStream(zipFilePath);
-                const archive = archiver('zip', {
-                    zlib: { level: 9 } // Maximum compression
-                })
-
-                archive.pipe(zipStream)
-
-                for (const data of dataToPrint) {
-                    const dni = data.dni
-                    const name = data.last_name + ' ' + data.first_name
-                    const fileName = 'Credencial ' + name + ' - ' + dni
-
-                    //render ejs file
-                    const allCredentialData = await credentialData.allCredentialData(data.id)
-
-                    const credentialEjs = await ejs.renderFile(ejsFilePath, {title:'Credencial',allCredentialData})
-
-                    // Combine the HTML with the CSS
-                    const credentialEjsWithCss = `<html><head><style>${cssContent}</style></head><body>${credentialEjs}</body></html>`;
-
-                    //const pdfFilePath = path.resolve('./result.pdf');
-                    // Create a temporary file path for the PDF
-                    const pdfFilePath = path.resolve('./' + fileName + '.pdf')
-                    //const pdfFilePath = path.resolve('./temp', fileName)
-                    
-                    // Convert the EJS + CSS to a PDF file and save it temporarily
-                    await new Promise((resolve, reject) => {
-                        pdfCroudClient.convertStringToFile(credentialEjsWithCss, pdfFilePath, (err) => {
-                            if (err) {
-                                console.error('Error al generar el PDF:', err);
-                                reject(err);
-                            }
-                            resolve();
-                        });
-                    })
-
-                    // Add the generated PDF to the archive
-                    archive.file(pdfFilePath, { name: fileName });
-
-                    // Cleanup: remove temporary PDF file
-                    fs.unlinkSync(pdfFilePath)
-
-                    // Finalize the archive
-                archive.finalize()
-
-                res.set('Content-Disposition', 'attachment; filename=' + fileName + '.pdf');
-                res.set('Content-Type', 'application/pdf');
-                const pdfStream = fs.createReadStream(pdfFilePath);
-                pdfStream.pipe(res);
-
-                pdfStream.on('end', async() => {
-                    await fs.promises.unlink(pdfFilePath)
-                })
-                }
-            }
-            
-        }catch(error){
-            console.log(error)
-            return res.send(error)
-        }
-    },
     printSelected: async(req,res) =>{
         try{
             //get course and company
@@ -543,7 +297,7 @@ const coursesController = {
                 headless: "new", // to avoid open windows
                 printBackground: true,
                 args: ['--no-sandbox', '--disable-setuid-sandbox'] // to avoid errors
-              });
+            });
 
             //print credentials if necessary
             if (documents.includes('credentials')) {
@@ -594,57 +348,6 @@ const coursesController = {
             await browser.close()
             archive.finalize()
 
-        }catch(error){
-            console.log(error)
-            return res.send(error)
-        }
-    },
-    printSelectedCredentials: async(req,res) =>{
-        try{
-
-            let credentialsToPrint = req.body
-            credentialsToPrint = Object.keys(credentialsToPrint)
-
-            const company = req.params.company
-            const course = req.params.course
-            
-            //get credentials to print
-            const dataCredentialsToPrint = await formsDataQueries.dataCredentialsToPrint(credentialsToPrint)
-
-            const archive = archiver('zip')
-            res.attachment('credentials.zip')
-            archive.pipe(res)
-
-            const browser = await puppeteer.launch({
-                headless: true, // to avoid open windows
-                printBackground: true,
-                args: ['--no-sandbox', '--disable-setuid-sandbox'] // to avoid errors
-              });
-
-            for (const data of dataCredentialsToPrint) {
-                const dni = data.dni;
-                const name = data.last_name + ' ' + data.first_name;
-                const fileName = name + ' - ' + dni;
-        
-                const url = dominio + "courses/view-credential/" + data.id;
-        
-                const page = await browser.newPage()
-        
-                await page.goto(url, { waitUntil: 'networkidle0' })
-                await page.emulateMediaFeatures([{ name: 'color-gamut', value: 'srgb' }])
-        
-                const pdf = await page.pdf({ printBackground: true })
-        
-                await page.close();
-        
-                // Agregar el archivo PDF al archivo zip
-                archive.append(pdf, { name: fileName + '.pdf' });
-            }
-
-            await browser.close()
-            archive.finalize()
-  
-            
         }catch(error){
             console.log(error)
             return res.send(error)
@@ -722,7 +425,7 @@ const coursesController = {
             const courseName = certificateData.form_name
 
             //get course
-            const courseData = await coursesQueries.filtrateCourse(courseName) 
+            const courseData = await coursesQueries.filtrateCourse(courseName)
 
             //get course id
             const courseId = courseData.id
