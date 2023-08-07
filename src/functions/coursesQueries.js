@@ -25,6 +25,18 @@ const formsDataQueries = {
             return res.send('Ha ocurrido un error')
         }
     },
+    courseName: async(idCourse) => {
+        try{
+            const courseName = await db.Courses.findOne({
+                where:{id:idCourse},
+                attributes:['course_name'],
+                raw:true,
+            })
+            return courseName.course_name
+        }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },
     courses: async() => {
         try{
             const courses = await db.Courses.findAll({
@@ -57,10 +69,10 @@ const formsDataQueries = {
             return res.send('Ha ocurrido un error')
         }
     },
-    courseUrl: async(courseName) => {
+    courseUrl: async(idCourse) => {
         try{
             const courseUrl = await db.Courses.findOne({
-                where:{course_name:courseName},
+                where:{id:idCourse},
                 attributes:['url'],
                 raw:true,
             })

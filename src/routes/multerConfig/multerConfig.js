@@ -9,7 +9,7 @@ const studentPhoto = multer.diskStorage({
     },
     filename: function (req, file, cb) {
       const fileExtension = path.extname(file.originalname)   
-      const fileName = req.body.dni + '-' + req.params.courseName      
+      const fileName = req.body.dni + '_' + req.params.idCourse      
       cb(null, fileName + fileExtension)
     }
 })

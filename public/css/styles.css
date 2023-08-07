@@ -6,6 +6,10 @@ body{
     background-color: rgb(165, 165, 169) solid 1px;
 }
 
+.btnEntryData{
+    margin-top: 30px;
+}
+
 .a1{
     text-decoration: none;
     color:blue
@@ -254,19 +258,6 @@ color:rgb(2, 2, 83)
     color:rgb(79, 77, 77)
 }
 
-.div27{
-    border:rgb(8, 8, 103) solid 2px;
-    width: 320px;
-    height: 210px;
-    border-radius: 30px;
-}
-
-.div28{
-    margin-top:45px;
-    margin-left:5px;
-    font-size: 12px;
-}
-
 .div29{
     font-size: 12px;
     text-align: center;
@@ -291,38 +282,14 @@ color:rgb(2, 2, 83)
     margin-top: 10px;
 }
 
-.div32{
-    width:320px;
-    text-align: center;
-}
-
 .div33{
     margin-top: 50px;
-}
-
-.div34{
-    margin-bottom: 5px;
-}
-
-.div35{
-    border-bottom:black dashed 1.5px;
-    padding-left:5px;
-    padding-right: 5px;
-    margin-left: 3px;
 }
 
 .div36{
     font-size: 8px;
     text-align: center;
     margin-top: 3px;
-}
-
-.div37{
-    font-size: 9px;
-    text-align: center;
-    padding-top: 2px;
-    padding-bottom: 8px;
-    font-style: italic;
 }
 
 .div38{
@@ -529,14 +496,6 @@ color:rgb(2, 2, 83)
     row-gap: 3px;
 }
 
-.divFlex9{
-    display: flex;
-    justify-content: center;
-    margin-top:0px;
-    column-gap: 5px;
-    position: relative;
-}
-
 .divFlex10{
     display: flex;
     flex-direction: row;
@@ -556,29 +515,6 @@ color:rgb(2, 2, 83)
     justify-content: center;
     align-items: center;
     column-gap: 20px;
-}
-
-.divFlex13{
-    display: flex;
-    background-color:rgb(8, 8, 103);
-    color: white;
-    font-size: 13px;
-    font-weight: bold;
-    width: 645px;
-    margin: auto;
-    column-gap: 5px;
-    padding-top: 1px;
-    padding-bottom: 1px;
-    position: relative;
-    top:43px;
-    border-left:rgb(8, 8, 103) solid 2px;
-    border-right:rgb(8, 8, 103) solid 2px;
-}
-
-.divFlex15{
-    display: flex;
-    border-bottom:rgb(8, 8, 103) solid 1.5px;
-    padding-bottom: 3px;
 }
 
 .divFlex16{
@@ -639,10 +575,6 @@ color:rgb(2, 2, 83)
 
 .img3{
     height: 65px;
-}
-
-.img4{
-    height: 48px;
 }
 
 .img6{
@@ -716,6 +648,12 @@ input::-webkit-inner-spin-button {
 input[type="checkbox"]:checked {
     accent-color: black
   }
+
+.inputEntryData{
+    text-align: center;
+    width: 200px;
+    margin-bottom: 0px;
+}
 
 .isInvalid{
     border:rgb(221, 7, 7) solid 1.5px !important
@@ -820,10 +758,6 @@ input[type="checkbox"]:checked {
     color: #042d9f;
 }
 
-.studentImageCredential{
-    height: 70px;
-}
-
 .table1{
     margin: auto;
 }
@@ -899,6 +833,11 @@ input[type="checkbox"]:checked {
     width: 250px;
 }
 
+.titleEntryData{
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
 .underlined{
     text-decoration: underline;
 }
@@ -957,6 +896,12 @@ input[type="checkbox"]:checked {
     }
     .title2{
         font-size: 13px;
+    }
+    .titleEntryData{
+        font-size: 15px;
+    }
+    .img6{
+        height: 30px;
     }
 
 

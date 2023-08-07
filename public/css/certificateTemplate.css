@@ -1,3 +1,190 @@
+
+.certTempDivError1{    
+    font-size: 12px;
+    color: rgb(221, 7, 7);
+    margin: auto;
+    margin-bottom: 15px;
+    margin-top:3px;
+    width:300px;
+}
+
+.certTempDiv{
+    border: black solid 1px;
+    margin: auto;
+    font-family: arial;
+    width: 65%;
+    margin-right: 120px;
+    position: relative;
+}
+
+.certTempDivError2{
+    margin: auto;
+    width: 65%;
+    margin-right: 120px;
+    color: rgb(221, 7, 7);
+    font-size: 12px;
+    text-align: left;
+    margin-top:-10px;
+    margin-bottom: -20px;
+    
+}
+
+.certTempDivSelectCourse{
+    margin: auto;
+    margin-top: 15px;
+    font-family: arial;
+    width: 65%;
+    margin-right: 120px;
+    text-align: center;
+}
+
+.certTempDivStudentPhoto{
+    position: absolute;
+    right:130px;
+    top: 95px
+}
+
+.certTempForm{
+    text-align: center;
+}
+
+.certTempHeader{
+    display: flex;
+    align-items: center;    
+    justify-content: space-between;
+}
+
+.certTemSelectCourse{
+    width: 400px;
+    background-color: rgb(240, 240, 247);
+    border-radius:0px;
+    border: none;
+    font-size: 12px;
+    height: 30px;
+    padding-left: 10px;
+    text-align: center;
+}
+
+.certTemSelectCourse:focus{
+    outline:none
+}
+
+.certTempStudentPhoto{
+    height: 100px;
+}
+
+.certTempTitle{
+    margin: auto;
+    width: 65%;
+    margin-right: 120px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.certTempHeaderLogo{
+    margin-left:30px;
+    width: 170px;
+}
+
+.certTempLogoPsi{
+    height: 50px;
+}
+
+.certTempHeaderData{
+    margin-top: 15px;
+    margin-right: 15px;
+    text-align: right;
+}
+
+.certTempHeaderDataLine{
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.certTempText{
+    margin-top: 30px;
+    text-align: center;
+}
+
+.certTempStudentName{
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-top: 30px;
+}
+
+.certTempStudentDni{
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.certTempDivCourseName{
+    margin-top: 30px;
+}
+
+.certTempCourseName{
+    width: 500px;
+    border-radius: 0px;
+    padding-top:3px;
+    padding-bottom:3px;
+    text-align: center;
+    background-color:rgb(241, 241, 130);
+    border:none
+}
+
+.certTempValidity{
+    font-size: 13px;
+    margin: auto;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.certTempNormatives{
+    width: 1700px;
+    height: 2rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .btnSubmit{
     border-radius:3px;
     border:none;
@@ -22,29 +209,12 @@
 
 }
 
-.certTextTemplate{
-    margin-top: 30px;
-    text-align: center;
-}
 
-.courseName{
-    width: 300px;
-}
 
-.divCertificateTemplate{
-    border: black solid 1px;
-    margin: auto;
-    font-family: arial;
-    width: 65%;
-    margin-right: 120px;
-    position: relative;
-}
 
-.divCertTemplateLogo{
-    border:rgb(241, 241, 130) solid 2px;
-    padding:8px;
-    width: 170px;
-}
+
+
+
 
 .divCertTemplateSignature{
     border:rgb(241, 241, 130) solid 2px;
@@ -58,28 +228,10 @@
     text-align: center;
 }
 
-.divSelectCourse{
-    margin: auto;
-    margin-top: 15px;
-    font-family: arial;
-    width: 65%;
-    margin-right: 120px;
-    text-align: center;
-}
 
-.divStudentPhotoCert{
-    position: absolute;
-    right:130px;
-    top: 95px
-}
 
-.divTitle{
-    margin: auto;
-    width: 65%;
-    margin-right: 120px;
-    margin-top: 30px;
-    text-align: center;
-}
+
+
 
 .divSubmit{
     margin: auto;
@@ -100,39 +252,17 @@
 }
 
 
-.errors{
-    margin: auto;
-    width: 65%;
-    margin-right: 120px;
-    color: rgb(221, 7, 7);
-    font-size: 12px;
-    text-align: left;
-    margin-top:-10px;
-    margin-bottom: -20px;
-    
-}
+
 .fileHeader{
     font-size: 11px;
     text-align: center;
     width: 180px;
 }
-.headerCertTemplate{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    column-gap: 10px;
-}
 
-.headerDataCertTemplate{
-    margin-top: 15px;
-    text-align: right;
-}
 
-.headerDataLineCertTemplate{
-    font-size: 12px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+
+
+
 
 .hours{
     width: 50px;
@@ -152,10 +282,7 @@
     border:none
 }
 
-.textarea1{
-    width: 700px;
-    height: 2rem;
-}
+
 
 .textarea2{
     width: 700px;
@@ -169,9 +296,7 @@
     margin-bottom: 10px;
 }
 
-.selectCourseCertTemplate{
-    width: 400px;
-}
+
 
 .selectType{
     font-size: 12px;
@@ -187,11 +312,7 @@
     font-size: 12px;
 }
 
-.studentNameCertTemplate{
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+
 
 .text1CertTemplate{
     font-size: 13px;

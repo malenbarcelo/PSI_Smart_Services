@@ -1,10 +1,11 @@
 //Route middleware
 function admMiddleware(req,res,next){
     if(!req.session.userLogged){
-        return res.redirect('/users/login')
+        return res.redirect('/')
     }else{
-        if(req.session.userLogged.id_user_categories !=1){
-            return res.redirect('/users/profile')
+        console.log('hola')
+        if(req.session.userLogged.id_user_categories != 1){
+            return res.redirect('/courses/my-courses')
         }
     }
 

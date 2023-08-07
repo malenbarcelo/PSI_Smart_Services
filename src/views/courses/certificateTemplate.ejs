@@ -3,62 +3,33 @@
 <%- include('../partials/userLogged') %>
 
 <div class="divRelative">
-    <h3 class="divTitle">Diseño de certificado</h3>
 
-    <form action="/courses/create-certificate" enctype="multipart/form-data" method="POST" class="form1">
-        <div class="divSelectCourse">
-            <select name="selectCourse" id ="selectCourse" class="input1 select1 selectCourseCertTemplate <%= locals.errors && errors.selectCourse ? 'isInvalid' : null %>">
+    <h3 class="certTempTitle">Diseño de certificado</h3>
+
+    <form action="/courses/create-certificate" enctype="multipart/form-data" method="POST" class="certTempForm">
+        <div class="certTempDivSelectCourse">
+            <select name="selectCourse" id ="selectCourse" class="certTemSelectCourse <%= locals.errors && errors.selectCourse ? 'isInvalid' : null %>">
                 <option value="default" selected>--Seleccione un curso--</option>
                 <% courses.forEach(course => { %>
                     <option value="<%= course.id %>"><%= course.course_name %></option>
                 <% }) %>
             </select>
-            <div class="divError1">
+            <div class="certTemDivError1">
                 <% if (locals.errors && errors.selectCourse) { %>
                     <%= errors.selectCourse.msg %>
                 <% } %>
             </div>
         </div>
         
-        <div class="errors">        
-            <div>
-                <% if (locals.errors && errors.certLogo1) { %>
-                    <%= '- ' + errors.certLogo1.msg %>
-                <% } %>
-            </div>
-            <div>
-                <% if (locals.errors && errors.certLogo2) { %>
-                    <%= '- ' + errors.certLogo2.msg %>
-                <% } %>
-            </div>
-            <div>
-                <% if (locals.errors && errors.selectTypeOfCourse) { %>
-                    <%= '- ' + errors.selectTypeOfCourse.msg %>
-                <% } %>
-            </div>
+        <div class="certTemDivError2">
             <div>
                 <% if (locals.errors && errors.courseName) { %>
                     <%= '- ' + errors.courseName.msg %>
                 <% } %>
             </div>
             <div>
-                <% if (locals.errors && errors.theoryHours) { %>
-                    <%= '- ' + errors.theoryHours.msg %>
-                <% } %>
-            </div>
-            <div>
-                <% if (locals.errors && errors.practicelHours) { %>
-                    <%= '- ' + errors.practiceHours.msg %>
-                <% } %>
-            </div>
-            <div>
                 <% if (locals.errors && errors.text1) { %>
                     <%= '- ' + errors.text1.msg %>
-                <% } %>
-            </div>
-            <div>
-                <% if (locals.errors && errors.text2) { %>
-                    <%= '- ' + errors.text2.msg %>
                 <% } %>
             </div>
             <div>
@@ -76,68 +47,42 @@
                     <%= '- ' + errors.signature1Line2.msg %>
                 <% } %>
             </div>
-            <div>
-                <% if (locals.errors && errors.signature2) { %>
-                    <%= '- ' + errors.signature2.msg %>
-                <% } %>
-            </div>
-            <div>
-                <% if (locals.errors && errors.signature2Line1) { %>
-                    <%= '- ' + errors.signature2Line1.msg %>
-                <% } %>
-            </div>
-            <div>
-                <% if (locals.errors && errors.signature2Line2) { %>
-                    <%= '- ' + errors.signature2Line2.msg %>
-                <% } %>
-            </div>
-            <div>
-                <% if (locals.errors && errors.certLogo3) { %>
-                    <%= '- ' + errors.certLogo3.msg %>
-                <% } %>
-            </div>
         </div>
-        <div class="divCertificateTemplate">
-            <div class="divStudentPhotoCert">
-                <img src="/images/studentsPhotos/templateUserPicture.jpg" class="studentPhoto">
+        <div class="certTempDiv">
+            <div class="certTempDivStudentPhoto">
+                <img src="/images/studentsPhotos/templateUserPicture.jpg" class="certTempStudentPhoto">
             </div>
-            <div class="headerCertTemplate">
-                <div class="divCertTemplateLogo <%= locals.errors && errors.certLogo1 ? 'redBorders' : null %>">
-                    <div class="titleLogoHeader">Logo 1 encabezado</div>
-                    <input type="file" name="certLogo1" class="fileHeader">
-                </div>
-                <div class="divCertTemplateLogo <%= locals.errors && errors.certLogo2 ? 'redBorders' : null %>">
-                    <div class="titleLogoHeader">Logo 2 encabezado</div>
-                    <input type="file" name="certLogo2" class="fileHeader">
-                </div>
-                <div class="headerDataCertTemplate">
-                    <div class="headerDataLineCertTemplate">Certificado de aprobación curso 
-                        <select name="selectTypeOfCourse" class="selectType <%= locals.errors && errors.selectTypeOfCourse ? 'isInvalid' : null %>" id="selectTypeOfCourse">
-                        <option value="default" selected>--Seleccione el tipo de curso--</option>
-                        <option value="theoretical" <%= locals.oldData && oldData.selectTypeOfCourse == 'theoretical' ? 'selected' : null %>>teórico</option>
-                        <option value="practical" <%= locals.oldData && oldData.selectTypeOfCourse == 'practical' ? 'selected' : null %>>práctico</option>
-                        <option value="theoretical-practical" <%= locals.oldData && oldData.selectTypeOfCourse == 'theoretical-practical' ? 'selected' : null %>>teórico-práctico</option>
-                        </select>                    
-                    </div>
-                    <div class="headerDataLineCertTemplate">ARGENTINA, Neuquén XX/XX/XXXX</div>
-                    <div class="headerDataLineCertTemplate">Código: XXX-XXXXXXXX-XX</div>
+            <div class="certTempHeader">
+                <div class="certTempHeaderLogo">
+                    <img src="/images/certificateImages/psiLogo.jpg" class="certTempLogoPsi" alt="Logo PSI">
+                </div>                
+                <div class="certTempHeaderData">
+                    <div class="certTempHeaderDataLine">Certificado de aprobación curso teórico-práctico</div>
+                    <div class="certTempHeaderDataLine">ARGENTINA, Neuquén XX/XX/XXXX</div>
+                    <div class="certTempHeaderDataLine">Código: XXX-XXXXXXXX-XX</div>
                 </div>
             </div>
         
             <div class="certTextTemplate">
-                <div class="studentNameCertTemplate">APELLIDO NOMBRE</div>
-                <div class="studentDniCertTemplate">DNI: XXXXXXXX</div>
-                <div class="text1CertTemplate" id="text1">Aprobó el curso teórico ( 
-                    <input type="number" class="hours <%= locals.errors && errors.theoryHours ? 'isInvalid' : null %>" placeholder="horas" name="theoryHours">
-                     hs) / práctico ( 
-                    <input type="number" class="hours <%= locals.errors && errors.practiceHours ? 'isInvalid' : null %>" placeholder="horas" name="practiceHours" placeholder="horas">
-                    hs) 
-                    <b><input type="text" name="courseName" placeholder="Nombre del curso" class="courseName <%= locals.errors && errors.courseName ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.courseName : null %>"></b>
+                <div class="certTempStudentName">APELLIDO NOMBRE</div>
+                <div class="certTempStudentDni">DNI: XXXXXXXX</div>
+                <div class="certTempDivCourseName">
+                    <input type="text" name="courseName" placeholder="Nombre del curso" class="certTempCourseName <%= locals.errors && errors.courseName ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.courseName : null %>"></b>
                 </div>
-                <div class="validityCertTemplate">Vigente hasta el XX/XX/XXXX</div>
-                <div class="text2"><textarea placeholder="Texto 1" class="textarea1 <%= locals.errors && errors.text1 ? 'isInvalid' : null %>" name="text1"></textarea></div>
-                <div class="text3CertTemplate">El día XX de XXXX, </div>
-                <div class="text2"><textarea placeholder="Texto 2" name="text2" class="textarea2 <%= locals.errors && errors.text2 ? 'isInvalid' : null %>"></textarea></div>
+                
+                <div class="certTempValidity">Vigente hasta el XX/XX/XXXX</div>
+                
+                <div>
+                    <% if (locals.oldData) { %>
+                        <textarea class="certTempNormatives <%= locals.errors && errors.text1 ? 'isInvalid' : null %>" name="normtive">
+                            <%= locals.oldData.normtive %>
+                        </textarea>
+                    <% } else { %>
+                        <textarea class="textarea1 <%= locals.errors && errors.text1 ? 'isInvalid' : null %>" name="text1" placeholder="Texto 1"></textarea>
+                    <% } %>
+                </div>
+
+                
             </div>
         
             <div class="certificateTemplateFooter">
@@ -166,10 +111,6 @@
 
 
 
-
-
-<script type="module" src="/js/certificateTemplate.js"></script>
-    
 
 
 

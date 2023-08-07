@@ -8,7 +8,9 @@ const admMiddleware = require('../middlewares/admMiddleware.js')
 router.get('/',usersController.login)
 router.post('/login',userFormsValidations.loginFormValidations,usersController.processLogin)
 router.get('/logout',usersController.logout)
-router.get('/create-administrator',usersController.createAdministrator)
+
+
+router.get('/create-administrator',admMiddleware,usersController.createAdministrator)
 router.post('/create-administrator',userFormsValidations.createAdmFormValidations,usersController.processCreateAdministrator)
 router.post('/change-password',userFormsValidations.changePswFormValidations,usersController.processChangePassword)
 router.get('/delete-administrator',usersController.deleteAdministrator)

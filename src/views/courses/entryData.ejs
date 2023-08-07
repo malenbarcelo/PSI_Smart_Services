@@ -5,11 +5,11 @@
 </div>
 
 <div>
-    <h3 class="title1"><%= course %></h3>
-    <form action="/courses/start-course/<%= course %>" enctype="multipart/form-data" method="POST" class="form1">
+    <h3 class="title1 titleEntryData"><%= course %></h3>
+    <form action="/courses/start-course/<%= idCourse %>" enctype="multipart/form-data" method="POST" class="form1">
 
         <div>
-            <input type="text" name="dni" placeholder="DNI" class="input1 <%= locals.errors && errors.dni ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.dni : null %>">
+            <input type="text" name="dni" placeholder="Ingrese su DNI" class="input1 inputEntryData <%= locals.errors && errors.dni ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.dni : null %>">
             <div class="divError1">
                 <% if (locals.errors && errors.dni) { %>
                     <%= errors.dni.msg %>
@@ -28,7 +28,7 @@
         </div>
 
         <div>
-            <button type="submit" class="button1">Aceptar</button>
+            <button type="submit" class="button1 btnEntryData">Aceptar</button>
         </div>    
     </form>
 </div>

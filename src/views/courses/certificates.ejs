@@ -1,55 +1,79 @@
 <%- include('../partials/head') %>
 
-<div class="divStudentPhoto">
-    <img src="/images/studentsPhotos/<%= studentImage %>" class="studentPhoto" alt="<%= certificateData.last_name + ' ' + certificateData.first_name %>">
+<div class="certDiv1">
+    <div class="certDiv2">
+
+        <% if (documentTemplate.id_courses == 4 || documentTemplate.id_courses == 5) { %>
+            <div class="certDivStudentPhoto">
+                <img src="/images/studentsPhotos/<%= documentData.dni + '-' + documentData.form_name + '.jpg' %>" class="certStudentPhoto" alt="<%= documentData.last_name + ' ' + documentData.first_name %>">
+            </div>
+        <% } %>
+        
+        <div class="certTriangle"></div>
+        <div class="certDivHeader">
+            <div class="certDivHeaderLogo">
+                <img src="/images/documentsImages/psiLogo.png" alt="Logo PSI" class="certPsiLogo">
+            </div>
+            <% if (documentTemplate.id_courses == 4 || documentTemplate.id_courses == 5) { %>
+                <div class="certDivHeaderLogo">
+                    <img src="/images/documentsImages/elVientoBlanco.jpg" alt="Logo El viento blanco" class="certVientoLogo">
+                </div>
+            <% } %>
+            
+            <div class="certHeaderData">
+                <div class="certHeaderDataLine">Certificado de aprobación curso teórico-práctico</div>
+                <div class="certHeaderDataLine">ARGENTINA, Neuquén <%= issueDateString %></div>
+                <div class="certHeaderDataLine">Código: <%= documentCode %></div>
+            </div>
+        </div>
+    
+        <div class="certDivText">
+            <div class="certStudentName"><%= documentData.last_name.toUpperCase() + ' ' + documentData.first_name.toUpperCase() %></div>
+            <div class="certStudentDni">DNI: <%= documentData.dni %></div>
+            <% if (documentTemplate.id_courses == 4 || documentTemplate.id_courses == 5) { %>
+                <div class="certDrivingText">
+                    Aprobó el curso teórico (6hs) / práctico (2hs) <b><%= documentData.form_name.toUpperCase() %> </b>
+                </div>
+                <% } else { %>
+                    <div class="certCourseName">
+                        <%= documentTemplate.course_name %>
+                    </div>
+            <% } %>
+            
+            <div class="certValidity <%= expirationDateString == '00/00/0000' ? 'certTransparent' : null %>">
+                Vigente hasta el <%= expirationDateString %>
+            </div>
+
+            <div class="certNormatives <%=  documentTemplate.certificate_normatives == '' ? 'certTransparent' : null %>">
+                <%= documentTemplate.certificate_normatives == '' ? 'Sin normativas' : documentTemplate.certificate_normatives %>
+            </div>
+
+            <% if (documentTemplate.id_courses == 4 || documentTemplate.id_courses == 5) { %>
+                <div class="certDrivingText2">
+                    El dia <%= documentData.date.getDate() + ' de ' + issueMonth + ' de ' + documentData.date.getFullYear() %>, en FUNDACION EL VIENTO BLANCO y PSI SMART SERVICES SA; Registro
+                    Nacional de Antecedentes en Educación y Capacitación Vial; Inscripción N° 650 - Disposición N°
+                    380/12 - Disposición Nº 865/2021
+                </div>
+            <% } %>
+        </div>
+    
+        <div class="certDivFooter">
+            <div class="certDivSignature">
+                <img src="/images/documentsImages/<%= documentTemplate.signature1_image %>" alt="Firma1" class="certImgSignature">
+            </div>
+    
+            <% if (documentTemplate.signature2_image) { %>
+                <div class="certDivSignature">
+                    <img src="/images/documentsImages/<%= documentTemplate.signature2_image %>" alt="Firma2" class="certImgSignature">
+                </div>
+            <% } %>
+            
+            <div class="certDivFooterLogo"><img src="/images/documentsImages/<%= documentTemplate.certificate_logo %>" alt="Logo pie de página" class="certFooterLogo <%= documentTemplate.id_courses == 4 || documentTemplate.id_courses == 5 ? 'certDivDrivingFooterLogo' : null %>"></div>
+        </div>
+    </div>
 </div>
 
-<div class="divCertificate">
-    <div class="header">
-        <div class="divHeaderLogo"><img src="/images/certificateImages/<%= certificateTemplate.logo1 %>" alt="Logo1" class="headerLogo1"></div>
-        <div class="divHeaderLogo"><img src="/images/certificateImages/<%= certificateTemplate.logo2 %>" alt="Logo2" class="headerLogo2"></div>
-        <div class="headerData">
-            <div class="headerDataLine">Certificado de aprobación curso <%= certificateTemplate.type_of_course %></div>
-            <div class="headerDataLine">ARGENTINA, Neuquén <%= issueDateString %></div>
-            <div class="headerDataLine">Código: <%= certificateCode %></div>
-        </div>
-    </div>
 
-    <div class="certificateText">
-        <div class="studentName"><%= certificateData.last_name.toUpperCase() + ' ' + certificateData.first_name.toUpperCase() %></div>
-        <div class="studentDni">DNI: <%= certificateData.dni %></div>
-        <div class="text1">
-            <% if (certificateTemplate.type_of_course == 'teórico-práctico') { %>
-                <%= 'Aprobó el curso teórico (' + certificateTemplate.theory_hours + 'hs) / práctico (' + certificateTemplate.practice_hours + 'hs)'  %>
-            <% } %>
-            <% if (certificateTemplate.type_of_course == 'teórico') { %>
-                <%= 'Aprobó el curso teórico (' + certificateTemplate.theory_hours + 'hs)'  %>
-            <% } %>
-            <% if (certificateTemplate.type_of_course == 'práctico') { %>
-                <%= 'Aprobó el curso práctico (' + certificateTemplate.practice_hours + 'hs)'  %>
-            <% } %>
-             
-            <b><%= certificateTemplate.course_name %></b>
-        </div>
-        <div class="validity">Vigente hasta el <%= expirationDateString %></div>
-        <div class="text2"><%= certificateTemplate.text1 %></div>
-        <div class="text3">El día <%= certificateData.date.getDate() + ' de ' + issueMonth + ', ' + certificateTemplate.text2 %></div>
-    </div>
-
-    <div class="signatures">
-        <div class="signature">
-            <img src="/images/certificateImages/<%= certificateTemplate.signature1_image %>" alt="Firma1" class="imgSignature">
-            <div class="signatureAclaration1"><%= certificateTemplate.signature1_line1 %></div>
-            <div class="signatureAclaration2"><%= certificateTemplate.signature1_line2 %></div>
-        </div>
-        <div class="signature">
-            <img src="/images/certificateImages/<%= certificateTemplate.signature2_image %>" alt="Firma2" class="imgSignature">
-            <div class="signatureAclaration1"><%= certificateTemplate.signature2_line1 %></div>
-            <div class="signatureAclaration2"><%= certificateTemplate.signature2_line2 %></div>
-        </div>
-        <div class="divLogo3"><img src="/images/certificateImages/<%= certificateTemplate.logo3 %>" alt="Logo3" class="logo3"></div>
-    </div>
-</div>
 
 
 

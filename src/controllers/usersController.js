@@ -151,7 +151,7 @@ const usersController = {
             const firstRowToAdd =  formsData.length + 1 // add one row because data includes titles
 
             //find last row to add to database
-            const lastRowToAdd = mdbData.length - 1 
+            const lastRowToAdd = mdbData.length
 
             //add data to database
             for (let i = firstRowToAdd; i < lastRowToAdd; i++) {

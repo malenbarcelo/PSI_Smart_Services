@@ -28,7 +28,7 @@ CREATE TABLE psismart_psi_db.users (
 /*Create table courses*/
 CREATE TABLE psismart_psi_db.courses (
     id INT NOT NULL AUTO_INCREMENT,
-    course_name VARCHAR(50) NOT NULL UNIQUE,
+    course_name VARCHAR(200) NOT NULL UNIQUE,
     url VARCHAR(500) NOT NULL,
     validity INT NOT NULL,
     enabled INT NOT NULL,

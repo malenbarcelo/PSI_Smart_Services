@@ -36,6 +36,8 @@ const coursesController = {
 
             const resultValidation = validationResult(req)
 
+            console.log(req.body)
+
             if (resultValidation.errors.length > 0){                
                 return res.render('courses/certificateTemplate',{
                     courses,
@@ -79,8 +81,9 @@ const coursesController = {
     },
     entryData: async(req,res) => {
         try{
-            const course = req.params.courseName
-            return res.render('courses/entryData',{title:'Iniciar cuestionario',course})
+            const idCourse = req.params.idCourse
+            const course = await coursesQueries.courseName(idCourse) 
+            return res.render('courses/entryData',{title:'Iniciar cuestionario',course,idCourse})
         }catch(error){
             return res.send('Ha ocurrido un error')
         }
@@ -148,7 +151,10 @@ const coursesController = {
     },
     openForm: async(req,res) => {
         try{
-            const course = req.params.courseName
+
+            const idCourse = req.params.idCourse
+            const course = await coursesQueries.courseName(idCourse)
+
             const resultValidation = validationResult(req)
 
             if (resultValidation.errors.length > 0){
@@ -157,16 +163,17 @@ const coursesController = {
                     errors:resultValidation.mapped(),
                     oldData: req.body,
                     title:'Iniciar cuestionario',
-                    course:course
+                    course:course,
+                    idCourse
                 })
             }
 
-            const courseUrl = await coursesQueries.courseUrl(req.params.courseName)
+            const courseUrl = await coursesQueries.courseUrl(idCourse)
 
             const image = await db.Profile_images.findOne({
                 where:{
                     dni:req.body.dni,
-                    course:req.params.courseName
+                    id_courses: req.params.idCourse
                 },
                 raw:true
             })
@@ -174,14 +181,14 @@ const coursesController = {
             if (!image) {
                 await db.Profile_images.create({
                     dni: req.body.dni,
-                    course: req.params.courseName,
+                    id_courses: req.params.idCourse,
                     image: req.file.filename
                 })
             }else{
                 await db.Profile_images.update(
                     {
                       dni: req.body.dni,
-                      course: req.params.courseName,
+                      id_courses: req.params.idCourse,
                       image: req.file.filename
                     },
                     {
@@ -290,7 +297,7 @@ const coursesController = {
 
             //create .zip
             const archive = archiver('zip')
-            res.attachment('credentials.zip')
+            res.attachment('Documentación del Curso.zip')
             archive.pipe(res)
 
             const browser = await puppeteer.launch({
@@ -414,15 +421,16 @@ const coursesController = {
             return res.send('Ha ocurrido un error')
         }
     },
-    viewCertificate: async(req,res) => {
+    viewDocument: async(req,res) => {
         try{
-            const idFormData = req.params.idFormData                        
+            const idFormData = req.params.idFormData
+            const typeOfDocument = req.params.typeOfDocument
 
-            //get certificate data
-            const certificateData = await formsDataQueries.studentDataFiltered(idFormData)
-
+            //get documents data
+            const documentData = await formsDataQueries.studentDataFiltered(idFormData)
+            
             //get course name
-            const courseName = certificateData.form_name
+            const courseName = documentData.form_name
 
             //get course
             const courseData = await coursesQueries.filtrateCourse(courseName)
@@ -431,115 +439,50 @@ const coursesController = {
             const courseId = courseData.id
 
             //get certificate template
-            const certificateTemplate = await db.Certificates_templates.findOne({
+            const documentTemplate = await db.Documents_templates.findOne({
                 where:{id_courses:courseId},
                 raw:true
             })
-
+            
             //get validity
             const validity =  courseData.validity
 
             //get expiration date
-            const issueDate = certificateData.date
+            const issueDate = documentData.date
             const issueDateString = await datesFunctions.dateToString(issueDate)
-            const expirationDateTimestamp =  issueDate.setMonth(issueDate.getMonth() + validity)
-            const expirationDate = new Date(expirationDateTimestamp)
-            const expirationDateString = await datesFunctions.dateToString(expirationDate)
+            var expirationDateString = '00/00/0000'
 
+           if (validity != 0) {
+                
+                const expirationDate = new Date(issueDate)
+                expirationDate.setMonth(expirationDate.getMonth() + validity)
+                expirationDateString = await datesFunctions.dateToString(expirationDate);
+            }
+            
             //get student image
-            const studentImage = await profileImagesQueries.imageName(certificateData.dni,courseName)
+            const studentImage = await profileImagesQueries.imageName(documentData.dni,courseName)
             
             //get certificate code
-            const courseCode = certificateData.course_code
-            const date = issueDateString.split('/')[0] + issueDateString.split('/')[1] + issueDateString.split('/')[2]
-            const studentCode = certificateData.student_code
-            const certificateCode = courseCode + '-' + date + '-' + studentCode
+            const courseCode = documentData.course_code
+            const date2 = issueDateString.split('/')[0] + issueDateString.split('/')[1] + issueDateString.split('/')[2]
+            const studentCode = documentData.student_code
+            const documentCode = courseCode + '-' + date2 + '-' + studentCode
 
             //get month name
             const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Nomviembre','Diciembre']
-            const month = certificateData.date.getMonth()
+            const month = documentData.date.getMonth()
             const issueMonth = months[month]
-
-            //get header Line 1 depending on the type of course
-            var headerLine1 = ''
-            if (certificateTemplate.theory_hours != 0 && certificateTemplate.practice_hours != 0) {
-                headerLine1 = 'Certificado de aprobación curso teórico-práctico'
-            }else{
-                if (certificateTemplate.theory_hours == 0) {
-                    headerLine1 = 'Certificado de aprobación curso práctico'
-                }else{
-                    headerLine1 = 'Certificado de aprobación curso teórico'
-                }
-            }
-
-            //get certificate Line 1 depending on the type of course
-            var certificateLine1 = ''
-            if (certificateTemplate.theory_hours != 0 && certificateTemplate.practice_hours != 0) {
-                certificateLine1 = 'Aprobó el curso teórico (' + certificateTemplate.theory_hours + 'hs) / práctico (' + certificateTemplate.practice_hours + 'hs)'
-            }else{
-                if (certificateTemplate.theory_hours == 0) {
-                    certificateLine1 = 'Aprobó el curso práctico (' + certificateTemplate.practice_hours + 'hs)'
-                }else{
-                    certificateLine1 = 'Aprobó el curso teórico (' + certificateTemplate.theory_hours + 'hs)'
-                }
-            }
-
-            return res.render('courses/certificates',{title:'Certificado',headerLine1,certificateLine1,certificateCode,certificateTemplate,certificateData,issueMonth,issueDateString,expirationDateString,studentImage})
             
+            if (typeOfDocument == 'certificates') {
+                return res.render('courses/certificates',{title:'Certificado',documentCode,documentTemplate,documentData,issueMonth,issueDateString,expirationDateString,studentImage})
+            }else{
+                return res.render('courses/credentials',{title:'Credencial',documentCode,documentTemplate,documentData,issueDateString,expirationDateString,studentImage})
+            }
         }catch(error){
             console.log(error)
             return res.send('Ha ocurrido un error')
         }
-    },
-    viewCredential: async(req,res) => {
-        try{
-            const idFormData = req.params.idFormData                        
-
-            //get credential data
-            const credentialData = await formsDataQueries.studentDataFiltered(idFormData)
-
-            //get course name
-            const courseName = credentialData.form_name
-
-            //get course
-            const courseData = await coursesQueries.filtrateCourse(courseName) 
-
-            //get course id
-            const courseId = courseData.id
-
-            //get credential template
-            const credentialTemplate = await db.Credentials_templates.findOne({
-                where:{id_courses:courseId},
-                raw:true
-            })
-
-            //get validity
-            const validity =  courseData.validity
-
-            //get expiration date
-            const issueDate = credentialData.date
-            const issueDateString = await datesFunctions.dateToString(issueDate)
-            const expirationDateTimestamp =  issueDate.setMonth(issueDate.getMonth() + validity)
-            const expirationDate = new Date(expirationDateTimestamp)
-            const expirationDateString = await datesFunctions.dateToString(expirationDate)
-
-            //get student image
-            const studentImage = await profileImagesQueries.imageName(credentialData.dni,courseName)
-            
-            //get credential code
-            const courseCode = credentialData.course_code
-            const date = issueDateString.split('/')[0] + issueDateString.split('/')[1] + issueDateString.split('/')[2]
-            const studentCode = credentialData.student_code
-            const credentialCode = courseCode + '-' + date + '-' + studentCode
-            
-            return res.render('courses/credentials',{title:'Credencial',credentialCode,credentialTemplate,credentialData,issueDateString,expirationDateString,studentImage})
-
-            
-        }catch(error){
-            console.log(error)
-            return res.send('Ha ocurrido un error')
-        }
-    },
+    },    
     viewCourses: async(req,res) => {
         try{
 

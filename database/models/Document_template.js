@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 
-   const alias = "Certificates_templates"
+   const alias = "Documents_templates"
    const cols = {
    id:{
       type : DataTypes.INTEGER,
@@ -12,19 +12,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
    },
-   logo1:{
-      type: DataTypes.STRING,
-      allowNull: false,
-   },
-   logo2:{
+   certificate_logo:{
       type: DataTypes.STRING,
       allowNull: true,
    },
-   logo3:{
-      type: DataTypes.STRING,
-      allowNull: true,
-   },
-   type_of_course:{
+   credential_logo:{
       type: DataTypes.STRING,
       allowNull: true,
    },
@@ -34,43 +26,27 @@ module.exports = (sequelize, DataTypes) => {
    },
    signature2_image:{
       type: DataTypes.STRING,
-      allowNull: false,
-   },
-   signature1_line1:{
-      type: DataTypes.STRING,
-      allowNull: false,
-   },
-   signature1_line2:{
-      type: DataTypes.STRING,
-      allowNull: false,
-   },
-   signature2_line1:{
-      type: DataTypes.STRING,
-      allowNull: false,
-   },
-   signature2_line2:{
-      type: DataTypes.STRING,
-      allowNull: false,
-   },
-   theory_hours:{
-      type: DataTypes.INTEGER,
-      allowNull: false,
-   },
-   practice_hours:{
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
    },
    course_name:{
       type: DataTypes.STRING,
       allowNull: false,
    },
-   text1:{
+   credential_forehead:{
       type: DataTypes.STRING,
       allowNull: false,
    },
-   text2:{
+   credential_back:{
       type: DataTypes.STRING,
       allowNull: false,
+   },
+   certificate_normatives:{
+      type: DataTypes.STRING,
+      allowNull: true,
+   },
+   credential_normatives:{
+      type: DataTypes.STRING,
+      allowNull: true,
    },
    enabled:{
       type: DataTypes.INTEGER,
@@ -78,11 +54,11 @@ module.exports = (sequelize, DataTypes) => {
    }
    }
    const config = {
-   tableName : 'certificates_templates',
+   tableName : 'documents_templates',
    timestamps : false
    }
-   const Certificate_template = sequelize.define(alias, cols, config)
+   const Document_template = sequelize.define(alias, cols, config)
 
    
-   return Certificate_template
+   return Document_template
 }
