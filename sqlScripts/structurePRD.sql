@@ -35,45 +35,19 @@ CREATE TABLE psismart_psi_db.courses (
     PRIMARY KEY (id)
 );
 
-/*Create table certificate templates*/
-CREATE TABLE psismart_psi_db.credentials_templates (
+/*Create table documents_templates*/
+CREATE TABLE psismart_psi_db.documents_templates (
     id INT NOT NULL AUTO_INCREMENT,
     id_courses INT NOT NULL,
-    title1 varchar(100) NOT NULL,
-    title2 varchar(100) NOT NULL,
-    logo1 varchar(100) NOT NULL,
-    logo2 varchar(100) NOT NULL,
-    logo3 varchar(100) NOT NULL,
+    certificate_logo varchar(100),
+    credential_logo varchar(100),
     signature1_image varchar(100) NOT NULL,
-    signature2_image varchar(100) NOT NULL,
-    signature1_line1 varchar(100) NOT NULL,
-    signature1_line2 varchar(100) NOT NULL,
-    signature2_line1 varchar(100) NOT NULL,
-    signature2_line2 varchar(100) NOT NULL,    
-    enabled INT NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (id_courses) REFERENCES courses(id)
-);
-
-/*Create table certificate templates*/
-CREATE TABLE psismart_psi_db.certificates_templates (
-    id INT NOT NULL AUTO_INCREMENT,
-    id_courses INT NOT NULL,
-    logo1 varchar(100) NOT NULL,
-    logo2 varchar(100),
-    logo3 varchar(100),
-    type_of_course varchar(50) NOT NULL,
-    signature1_image varchar(100) NOT NULL,
-    signature2_image varchar(100) NOT NULL,
-    signature1_line1 varchar(100) NOT NULL,
-    signature1_line2 varchar(100) NOT NULL,
-    signature2_line1 varchar(100) NOT NULL,
-    signature2_line2 varchar(100) NOT NULL,
-    theory_hours INT NOT NULL,
-    practice_hours INT NOT NULL,
+    signature2_image varchar(100),
     course_name varchar(100) NOT NULL,
-    text1 varchar(1000) NOT NULL,
-    text2 varchar(1000) NOT NULL,
+    credential_forehead varchar(100) NOT NULL,
+    credential_back varchar(100) NOT NULL,
+    certificate_normatives varchar(1000),
+    credential_normatives varchar(1000),    
     enabled INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (id_courses) REFERENCES courses(id)
@@ -83,13 +57,13 @@ CREATE TABLE psismart_psi_db.certificates_templates (
 CREATE TABLE psismart_psi_db.forms_data (
     id INT NOT NULL AUTO_INCREMENT,
     date TIMESTAMP NOT NULL,
-    email VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
     grade DECIMAL(5,2) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    company VARCHAR(50) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    company VARCHAR(100) NOT NULL,
     dni BIGINT NOT NULL,
-    form_name VARCHAR(50) NOT NULL,
+    form_name VARCHAR(300) NOT NULL,
     course_code BIGINT NOT NULL,
     student_code VARCHAR(10) NOT NULL,
     PRIMARY KEY (id)
@@ -100,6 +74,7 @@ CREATE TABLE psismart_psi_db.profile_images (
     id INT NOT NULL AUTO_INCREMENT,
     dni BIGINT NOT NULL,
     image VARCHAR(200) NOT NULL,
-    course VARCHAR(200) NOT NULL,
-    PRIMARY KEY (id)
+    id_courses INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_courses) REFERENCES courses(id)
 );
