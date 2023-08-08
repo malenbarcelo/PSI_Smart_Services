@@ -142,6 +142,9 @@ const usersController = {
                 })
             }
 
+            //delete all info from database (This step is provisional, so the stage of seeing the first and last record to add is not eliminated.)
+            await db.Forms_data.destroy({where:{}})
+
             //Add new data to dataBase
             const mdbData = await readGoogleSheets.mdbData()
 
@@ -165,15 +168,20 @@ const usersController = {
                 const courseCode = mdbData[i][3] == '' ? 0 : parseInt(mdbData[i][3])
                 const studentCode = await formsDataQueries.studentCode(courseCode)
 
+                let grade = 0
+                if (!isNaN(parseFloat(mdbData[i][2]))) {
+                    grade = parseFloat(mdbData[i][2]).toFixed(2)
+                }
+
                 await db.Forms_data.create({
                     date:dateTimestamp,
                     email:mdbData[i][1],
-                    grade:parseFloat(mdbData[i][2]).toFixed(2),
+                    grade:grade,
                     last_name:mdbData[i][4],
                     first_name:mdbData[i][5],
                     company:mdbData[i][7],
                     dni:mdbData[i][6] == '' ? 0 : parseInt(mdbData[i][6]),
-                    form_name:mdbData[i][8],
+                    form_name:mdbData[i][8] == '' || mdbData[i][8] == null ? 'Sin Form' : mdbData[i][8],
                     course_code:courseCode,
                     student_code:studentCode
                 })

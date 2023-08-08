@@ -43,6 +43,8 @@ window.addEventListener('load',async()=>{
         viewPassed.classList.add('underlined')
         viewNotPassed.classList.remove('underlined')
         downloadSelected.classList.remove('notVisible')
+        credentials.classList.remove('notVisible')
+        certificates.classList.remove('notVisible')
         filter = 'passed'
         order = 'noOrder'
 
@@ -55,6 +57,8 @@ window.addEventListener('load',async()=>{
         viewPassed.classList.remove('underlined')
         viewNotPassed.classList.add('underlined')
         downloadSelected.classList.add('notVisible')
+        credentials.classList.add('notVisible')
+        certificates.classList.add('notVisible')
         tableTitle.classList.add('enabled')
         filter = 'notPassed'
         order = 'noOrder'
@@ -143,7 +147,6 @@ window.addEventListener('load',async()=>{
 
                 formTitle.innerHTML = 'Resultados del formulario (' + dateFromString + ' - ' + dateUntilString + ')'
 
-                
                 var dateFromAsDate =  new Date(dateFromArray[0],dateFromArray[1]-1,dateFromArray[2])
                 var dateUntilAsDate =  new Date(dateUntilArray[0],dateUntilArray[1]-1,dateUntilArray[2])
 
