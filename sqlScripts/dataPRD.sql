@@ -38,4 +38,14 @@ INSERT INTO psismart_psi_db.documents_templates (id_courses,certificate_logo,cre
 INSERT INTO psismart_psi_db.documents_templates (id_courses,certificate_logo,credential_logo,signature1_image,signature2_image,course_name,credential_forehead,credential_back,certificate_normatives,credential_normatives,enabled) VALUES(13,'','psiLogo.jpg','lugano.png','sardot3,jpg','CONCIENCIA SITUACIONAL Y PERCEPCIÓN DEL RIESGO','CONCIENCIA SITUACIONAL','PERCEPCIÓN DEL RIESGO','','',1);
 INSERT INTO psismart_psi_db.documents_templates (id_courses,certificate_logo,credential_logo,signature1_image,signature2_image,course_name,credential_forehead,credential_back,certificate_normatives,credential_normatives,enabled) VALUES(14,'','psiLogo.jpg','lugano.png','sardot3,jpg','CONCIENCIA SITUACIONAL Y PERCEPCIÓN DEL RIESGO','CONCIENCIA SITUACIONAL','PERCEPCIÓN DEL RIESGO','','',1);
 
+/*profile_images*/
+INSERT INTO psismart_psi_db.profile_images (dni,image,id_courses) VALUES('41479082','41479082_4.jpg',4);
+INSERT INTO psismart_psi_db.profile_images (dni,image,id_courses) VALUES('44041892','44041892_4.jpg',4);
+INSERT INTO psismart_psi_db.profile_images (dni,image,id_courses) VALUES('36434618','36434618_5.jpg',5);
+INSERT INTO psismart_psi_db.profile_images (dni,image,id_courses) VALUES('33495275','33495275_5.jpg',5);
+INSERT INTO psismart_psi_db.profile_images (dni,image,id_courses) VALUES('22474765','22474765_5.jpg',5);
+INSERT INTO psismart_psi_db.profile_images (dni,image,id_courses) VALUES('34293415','34293415_5.jpg',5);
+INSERT INTO psismart_psi_db.profile_images (dni,image,id_courses) VALUES('24095627','24095627_5.jpg',5);
+INSERT INTO psismart_psi_db.profile_images (dni,image,id_courses) VALUES('24908582','24908582_5.jpg',5);
+INSERT INTO psismart_psi_db.profile_images (dni,image,id_courses) VALUES('96189919','96189919_4.jpg',4);
 

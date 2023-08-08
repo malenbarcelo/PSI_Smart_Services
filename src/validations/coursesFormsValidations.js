@@ -187,8 +187,7 @@ const coursesFormsValidations = {
             }),
         body('certificateTemplate')
             .custom(async(value,{ req }) => {
-                const courseName = req.params.courseName
-                const courseId = await coursesQueries.courseId(courseName)
+                const courseId = req.params.idCourse
                 const certificateTemplate = await coursesQueries.certificateTemplate(courseId)
                 const body = Object.keys(req.body)
                 if (body.includes('certificates') && !certificateTemplate) {
@@ -198,8 +197,7 @@ const coursesFormsValidations = {
             }),
         body('credentialTemplate')
             .custom(async(value,{ req }) => {
-                const courseName = req.params.courseName
-                const courseId = await coursesQueries.courseId(courseName)
+                const courseId = req.params.idCourse
                 const credentialTemplate = await coursesQueries.credentialTemplate(courseId)
                 const body = Object.keys(req.body)
                 if (body.includes('credentials') && !credentialTemplate) {

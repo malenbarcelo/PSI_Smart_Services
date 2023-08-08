@@ -69,7 +69,12 @@ studentData: async(req,res) =>{
       const company = req.params.company
 
       //get course students
-      let studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+      let studentsData = []
+      if (req.session.userLogged.id_user_categories == 1) {
+        studentsData = await formsDataQueries.studentsData(course)
+      }else{
+        studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+      }
 
       //add date as string
       const newDataArray = await Promise.all(studentsData.map(async (element) => {
@@ -90,8 +95,15 @@ studentData: async(req,res) =>{
     try{
       const course = req.params.courseName
       const company = req.params.company
+      
       //get course students
-      const studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+      let studentsData = []
+      if (req.session.userLogged.id_user_categories == 1) {
+        studentsData = await formsDataQueries.studentsData(course)
+      }else{
+        studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+      }
+
       const studentsDataNotPassed = studentsData.filter(data => parseFloat(data.grade) <= 0.78)
 
       //add date as string
@@ -112,8 +124,15 @@ studentData: async(req,res) =>{
     try{
       const course = req.params.courseName
       const company = req.params.company
+
       //get course students
-      const studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+      let studentsData = []
+      if (req.session.userLogged.id_user_categories == 1) {
+        studentsData = await formsDataQueries.studentsData(course)
+      }else{
+        studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+      }
+      
       const studentsDataPassed = studentsData.filter(data => parseFloat(data.grade) > 0.78)
 
       //add date as string

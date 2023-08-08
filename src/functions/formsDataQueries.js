@@ -202,6 +202,25 @@ const formsDataQueries = {
 
         return studentsData        
     },
+    studentsData: async(course) => {
+
+        //get the max id of each student
+        const idsList = await db.Forms_data.findAll({
+            where:{form_name:course},
+            attributes: ['dni', [sequelize.fn('MAX', sequelize.col('id')), 'id']],
+            group: ['dni']
+        })
+
+        const idsArray = idsList.map(obj => obj.id)
+
+        //get studentsData
+        const studentsData = await db.Forms_data.findAll({
+            where:{id:idsArray},
+            order:[['last_name','ASC']]
+        })
+
+        return studentsData        
+    },
     studentsQty: async(course) => {
         try{
             const studentsQty = await db.Forms_data.findAll({

@@ -51,7 +51,7 @@ const formsDataQueries = {
     },
     certificateTemplate: async(courseId) => {
         try{
-            const template = await db.Certificates_templates.findOne({
+            const template = await db.Documents_templates.findOne({
                 where:{id_courses:courseId}
             })
             return template
@@ -61,7 +61,7 @@ const formsDataQueries = {
     },
     credentialTemplate: async(courseId) => {
         try{
-            const template = await db.Credentials_templates.findOne({
+            const template = await db.Documents_templates.findOne({
                 where:{id_courses:courseId}
             })
             return template

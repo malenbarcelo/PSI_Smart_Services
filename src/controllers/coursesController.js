@@ -90,8 +90,7 @@ const coursesController = {
     },
     myCourses: async(req,res) => {
         try{
-            //get courses to show
-            
+            //get courses to show            
             let coursesData = []
             let company = ''
             let students = ''            
@@ -104,7 +103,7 @@ const coursesController = {
                 coursesData = await formsDataQueries.coursesFiltered(company)
             }
 
-            //add students qty to coursesData
+            //add data to coursesData
             for (let i = 0; i < coursesData.length; i++) {
                 const course = coursesData[i].form_name
                 if (req.session.userLogged.id_user_categories == 1){
@@ -142,9 +141,14 @@ const coursesController = {
                     const companiesQty = await formsDataQueries.companiesFiltered(course)
                     coursesData[i].companiesQty = companiesQty.length
                 }
+
+                //add courseId
+                const courseId = await coursesQueries.courseId(course)
+                coursesData[i].courseId = courseId
             }
 
             return res.render('courses/myCourses',{title:'Mis cursos',coursesData})
+
         }catch(error){
             return res.send('Ha ocurrido un error')
         }
@@ -255,13 +259,19 @@ const coursesController = {
     printSelected: async(req,res) =>{
         try{
             //get course and company
-            const course = req.params.courseName
-            const company = req.params.company
+            const idCourse = req.params.idCourse
+            const course = await coursesQueries.courseName(idCourse)
+            const company = req.params.company  
 
             const resultValidation = validationResult(req)
 
             //get course students
-            let studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+            let studentsData = []
+            if (req.session.userLogged.id_user_categories == 1) {
+                studentsData = await formsDataQueries.studentsData(course)
+            }else{
+                studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+            }            
                 
             let datesStrings = []
 
@@ -272,7 +282,7 @@ const coursesController = {
 
             if (resultValidation.errors.length > 0){
 
-                return res.render('courses/studentsResults',{title:'Resultados',course,studentsData,datesStrings,errors:resultValidation.mapped(),
+                return res.render('courses/studentsResults',{title:'Resultados',course,idCourse,studentsData,datesStrings,errors:resultValidation.mapped(),
                 oldData: req.body,})
             }
 
@@ -297,7 +307,7 @@ const coursesController = {
 
             //create .zip
             const archive = archiver('zip')
-            res.attachment('Documentación del Curso.zip')
+            res.attachment(course + '.zip')
             archive.pipe(res)
 
             const browser = await puppeteer.launch({
@@ -311,9 +321,9 @@ const coursesController = {
                 for (const data of dataToPrint) {
                     const dni = data.dni;
                     const name = data.last_name + ' ' + data.first_name;
-                    const fileName = 'Credencial ' + name + ' - ' + dni;
+                    const fileName = data.company + '_Cred_ ' + name + '_' + dni;
             
-                    const url = dominio + "courses/view-credential/" + data.id;
+                    const url = dominio + "courses/credentials/" + data.id;
             
                     const page = await browser.newPage()
             
@@ -334,9 +344,9 @@ const coursesController = {
                 for (const data of dataToPrint) {
                     const dni = data.dni;
                     const name = data.last_name + ' ' + data.first_name;
-                    const fileName = 'Certificado ' + name + ' - ' + dni;
+                    const fileName = data.company + '_Cert_ ' + name + '_' + dni;
             
-                    const url = dominio + "courses/view-certificate/" + data.id;
+                    const url = dominio + "courses/certificates/" + data.id;
             
                     const page = await browser.newPage()
             
@@ -401,11 +411,17 @@ const coursesController = {
     },
     studentsResults: async(req,res) => {
         try{
-            const course = req.params.courseName
+            const idCourse = req.params.idCourse
             const company = req.params.company
+            const course = await coursesQueries.courseName(idCourse)
 
             //get course students
-            let studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+            let studentsData = []
+           if (req.session.userLogged.id_user_categories == 1) {
+            studentsData = await formsDataQueries.studentsData(course)
+           }else{
+            studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+           }
             
             let datesStrings = []
 
@@ -414,7 +430,7 @@ const coursesController = {
                 datesStrings.push({"dateString":dateString})
             }
 
-            return res.render('courses/studentsResults',{title:'Resultados',course,studentsData,datesStrings})
+            return res.render('courses/studentsResults',{title:'Resultados',course,idCourse,studentsData,datesStrings})
 
         }catch(error){
             console.log(error)
@@ -460,7 +476,7 @@ const coursesController = {
             }
             
             //get student image
-            const studentImage = await profileImagesQueries.imageName(documentData.dni,courseName)
+            const studentImage = await profileImagesQueries.imageName(documentData.dni,courseId)
             
             //get certificate code
             const courseCode = documentData.course_code

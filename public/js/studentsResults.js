@@ -130,21 +130,27 @@ window.addEventListener('load',async()=>{
             divError.innerHTML = '<b>!Debe completar las fechas</b>'
         }else{
             if (dateFromFiltered.value > dateUntilFiltered.value) {
-                divError.innerHTML = '<b>!La fecha "Desde" debe ser menor a la fecha "Hasta"</b>'
+                divError.innerHTML = '<b>!La fecha "Desde" debe ser menor o igual a la fecha "Hasta"</b>'
             }else{
 
                 divError.innerHTML = ''
 
                 const dateFromArray = dateFromFiltered.value.split('-')
                 const dateUntilArray = dateUntilFiltered.value.split('-')
-                
+
                 const dateFromString = dateFromArray[2] + '/' + dateFromArray[1] + '/' + dateFromArray[0]
                 const dateUntilString = dateUntilArray[2] + '/' + dateUntilArray[1] + '/' + dateUntilArray[0]
 
                 formTitle.innerHTML = 'Resultados del formulario (' + dateFromString + ' - ' + dateUntilString + ')'
 
-                dateFrom = new Date(dateFromFiltered.value).getTime()
-                dateUntil = new Date(dateUntilFiltered.value).getTime()
+                
+                var dateFromAsDate =  new Date(dateFromArray[0],dateFromArray[1]-1,dateFromArray[2])
+                var dateUntilAsDate =  new Date(dateUntilArray[0],dateUntilArray[1]-1,dateUntilArray[2])
+
+                dateUntilAsDate.setHours(23, 59, 59, 999)
+                
+                var dateFrom = new Date(dateFromAsDate).getTime()
+                var dateUntil = new Date(dateUntilAsDate).getTime()
 
                 tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
             }

@@ -5,7 +5,7 @@
 
         <% if (documentTemplate.id_courses == 4 || documentTemplate.id_courses == 5) { %>
             <div class="certDivStudentPhoto">
-                <img src="/images/studentsPhotos/<%= documentData.dni + '-' + documentData.form_name + '.jpg' %>" class="certStudentPhoto" alt="<%= documentData.last_name + ' ' + documentData.first_name %>">
+                <img src="/images/studentsPhotos/<%= documentData.dni + '_' + documentTemplate.id_courses + '.jpg' %>" class="certStudentPhoto" alt="<%= documentData.last_name + ' ' + documentData.first_name %>">
             </div>
         <% } %>
         

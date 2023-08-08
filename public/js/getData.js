@@ -38,9 +38,9 @@ export async function getData(course,company,filter,order,dateFrom,dateUntil) {
         data.sort((a, b) => b.last_name.localeCompare(a.last_name))
     }
 
-    data = data.filter(item => new Date(item.date).getTime() > dateFrom && new Date(item.date).getTime() < dateUntil)
+    data = data.filter(item => new Date(item.date).getTime() >= dateFrom && new Date(item.date).getTime() <= dateUntil)
     
-    //define de table lines
+    //define the table lines
     for (let i = 0; i < data.length; i++) {
 
         let gradeClass = ''
