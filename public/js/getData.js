@@ -40,12 +40,6 @@ export async function getData(course,company,filter,order,dateFrom,dateUntil) {
 
     data = data.filter(item => new Date(item.date).getTime() >= dateFrom && new Date(item.date).getTime() <= dateUntil)
     
-    for (let i = 0; i < data.length; i++) {
-        console.log(new Date(data[i].date).getTime())
-        console.log(dateFrom)
-        console.log(dateUntil)
-    }
-
     //define the table lines
     for (let i = 0; i < data.length; i++) {
 
