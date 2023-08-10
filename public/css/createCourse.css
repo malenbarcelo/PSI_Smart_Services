@@ -1,0 +1,21 @@
+.inputValidity{
+    width: 30px;
+    border-radius: 0px;
+    border: black solid 1px;
+    height: 20px;
+    text-align: center;
+    font-size: 12px;
+    background-color: rgb(240, 240, 247)
+}
+
+.inputValidity:focus{
+    outline:none
+}
+
+.validityLabel{
+    font-size: 12px;
+}
+
+.divInputValidity{
+
+}

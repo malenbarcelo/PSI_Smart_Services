@@ -4,6 +4,7 @@ INSERT INTO psismart_psi_db.user_categories (category_name) VALUES('Administrado
 
 /*users*/
 INSERT INTO psismart_psi_db.users (first_name,last_name,user_email,password,id_user_categories,company,enabled) VALUES('Juan','PSI','psi@gmail.com','$2a$10$.b3ued627Ub3QhoIlINYg.xVVMkAu17L5QQPwO7jKJqgjk9LqpEt.',1,'PSI Smart Services',1);
+INSERT INTO psismart_psi_db.users (first_name,last_name,user_email,password,id_user_categories,company,enabled) VALUES('Luciana','Carrasco','coordinacion@psiservices.com.ar','$2a$10$R5h76dVt9QgYCK/3.MWWXe/JgAS568LPZO.7PJfWVliGxHyQQDu82',1,'PSI Smart Services',1);
 
 /*courses*/
 INSERT INTO psismart_psi_db.courses (course_name,url,validity,enabled) VALUES('Uso Equipo Autónomo','https://docs.google.com/forms/d/e/1FAIpQLSeQzjZOuGH7xo3egYlT_A0e0BbEF8oH1BW2IB1H-keNh1ZQ6g/viewform',24,1);

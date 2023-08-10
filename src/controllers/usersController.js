@@ -24,6 +24,10 @@ const usersController = {
         }
     },
     login: (req,res) => {
+
+        if (req.session.userLogged) {
+            return res.redirect('/logout')
+        }
         return res.render('users/login',{title:'Iniciar Sesión'})
     },
     logout: (req,res) => {
@@ -56,7 +60,7 @@ const usersController = {
 
             req.session.userLogged = userToLogin
 
-            return res.redirect('/courses/my-courses')
+            return res.redirect('/courses/my-courses/' + req.session.userLogged.company)
 
         }catch(error){
             return res.send('Ha ocurrido un error')
@@ -192,7 +196,7 @@ const usersController = {
             delete userToLogin.password
             req.session.userLogged = userToLogin
 
-            return res.redirect('/courses/my-courses')
+            return res.redirect('/courses/my-courses/' + req.session.userLogged.company)
         }catch(error){
             console.log(error)
             res.send('Ha ocurrido un error')

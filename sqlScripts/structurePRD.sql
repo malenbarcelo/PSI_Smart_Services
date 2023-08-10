@@ -31,6 +31,8 @@ CREATE TABLE psismart_psi_db.courses (
     course_name VARCHAR(200) NOT NULL UNIQUE,
     url VARCHAR(500) NOT NULL,
     validity INT NOT NULL,
+    includes_certificate INT NOT NULL,
+    asociated_forms INT NOT NULL,
     enabled INT NOT NULL,
     PRIMARY KEY (id)
 );

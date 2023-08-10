@@ -1,9 +1,7 @@
-//Middleware de aplicación
+//app middleware
 const fs = require('fs');
 
 function userLoggedMiddleware(req,res,next){
-    
-    //res.locals.isLogged=false
     
     if(req.session.userLogged){
         res.locals.isLogged = true

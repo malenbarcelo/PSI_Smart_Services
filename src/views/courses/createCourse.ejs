@@ -32,8 +32,9 @@
             </div>
         </div>
 
-        <div>
-            <input type="text" name="validity" placeholder="Validez del certificado (meses)" class="input1 input7 <%= locals.errors && errors.validity ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.validity : null %>">
+        <div class="divInputValidity">
+            <label for="validity" class="validityLabel">Validez del certificado (meses):</label>
+            <input type="text" name="validity" class="inputValidity <%= locals.errors && errors.validity ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.validity : null %>">
             <div class="divError1">
                 <% if (locals.errors && errors.validity) { %>
                     <%= errors.validity.msg %>
@@ -41,6 +42,17 @@
             </div>
         </div>
 
+        <div>
+            <label for="includesCertificate">Habilita impresión de certificado:</label>
+            <input type="checkbox" id="includesCertificate" name="includesCertificate" value="true">
+        </div>
+
+        <div>
+            Formularios asociados:
+            <select name="selectAsociatedForms" class="input1 select1 <%= locals.errors && errors.selectAsociatedForms ? 'isInvalid' : null %>">
+                <option value="default" selected>--No posee formularios asociados--</option>
+            </select>
+        </div>
         <div>
             <button type="submit" class="button1">Crear</button>
         </div>    

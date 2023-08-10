@@ -134,7 +134,7 @@ const coursesFormsValidations = {
         body('url')
             .notEmpty().withMessage('Ingrese el enlace del formulario'),
         body('validity')
-            .notEmpty().withMessage('Ingrese la validez del formulario')
+            .notEmpty().withMessage('Ingrese la validez del formulario, si el certificado no tiene vencimiento colocar 0')
             .isNumeric().withMessage('La validez debe ser un número entero (cantidad de meses)')
         
     ],

@@ -842,8 +842,6 @@ input[type="checkbox"]:checked {
     text-decoration: underline;
 }
 
-
-
 @media (max-width:769px){
     .div1{
         width: 80%;
@@ -902,6 +900,11 @@ input[type="checkbox"]:checked {
     }
     .img6{
         height: 30px;
+    }
+
+    .divTitleEntryData{
+        width: 80%;
+        margin: auto;
     }
 
 
