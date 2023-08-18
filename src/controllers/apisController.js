@@ -2,6 +2,7 @@ const db = require('../../database/models')
 const sequelize = require('sequelize')
 const formsDataQueries = require('../functions/formsDataQueries')
 const coursesQueries = require('../functions/coursesQueries')
+const dateFunctions = require('../functions/datesFunctions')
 const { google } = require('googleapis')
 
 const apisController = {
