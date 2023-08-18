@@ -1,7 +1,5 @@
 //Route middleware
 function userMiddleware(req,res,next){
-    console.log(req.session.userLogged)
-    console.log(req.params.company)
     if(!req.session.userLogged){
         return res.redirect('/')
     }else{

@@ -128,9 +128,7 @@ const formsDataQueries = {
             for (let j = 0; j < studentCourses[i].data.length; j++) {
                 const dateString = await datesFunctions.dateToString(studentCourses[i].data[j].date)
                 studentCourses[i].data[j].dateString = dateString
-                
             }
-            
         }
 
         return studentCourses      

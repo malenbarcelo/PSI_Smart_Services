@@ -34,7 +34,7 @@
             
             <div class="div31" id="tableTitle">Todos los resultados</div>
             
-            <div class="divFlex17">
+            <div class="divFlex17 <%= courseData.includes_certificate == 0 ? 'notVisible' : null %>">
                 <div class="divFlex16 <%= locals.errors && errors.credentials ? 'isInvalid' : null %>" id="divCredentials">
                     <input type="checkbox" name="certificates" id="certificates" class="checkbox2" <%= locals.oldData && oldData.certificates ? 'checked' : null %>>
                     <label for="credentials" class="label3">Certificados</label>
@@ -78,7 +78,7 @@
                             <th class="tableTitle1 tableTitle2 tableTitle3">Apellido y nombre<i class="fa-solid fa-arrow-down-long orderName notVisible" id="orderNameAsc"></i><i class="fa-solid fa-arrow-up orderName"  id="orderNameDesc"></i></th>
                             <th class="tableTitle1 tableTitle5">Email</th>
                             <th class="tableTitle1">Nota</th>
-                            <th class="tableTitle1 <%= locals.errors && errors.selectAll ? 'isInvalid' : null %>" id="thSelectAll"><input type="checkbox" name="selectAll" id="selectAll" class="checkbox2"></th>
+                            <th class="tableTitle1 <%= locals.errors && errors.selectAll ? 'isInvalid' : null %> <%= courseData.includes_certificate == 0 ? 'notVisible' : null %>" id="thSelectAll"><input type="checkbox" name="selectAll" id="selectAll" class="checkbox2"></th>
                         </tr>
                     </thead>
                     <tbody id="tableRows"></tbody>

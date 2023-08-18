@@ -1,73 +1,31 @@
 const db = require('../../database/models')
 const sequelize = require('sequelize')
 const formsDataQueries = require('../functions/formsDataQueries')
+const coursesQueries = require('../functions/coursesQueries')
 const { google } = require('googleapis')
 
-//Google drive APIs configuration
-const credentials = require('../forms/credentials.json')
-const dateFunctions = require('../functions/datesFunctions')
-const clientID = credentials.web.client_id;
-const clientSecret = credentials.web.client_secret;
-const redirectURL = credentials.web.redirect_uris[0];
-const oAuth2Client = new google.auth.OAuth2(clientID, clientSecret, redirectURL);
-const authURL = oAuth2Client.generateAuthUrl({
-  access_type: 'offline',
-  scope: ['https://www.googleapis.com/auth/drive.readonly'] // Define los permisos necesarios según tus requisitos
-});
-
 const apisController = {
-  driveFiles: async(req,res) =>{
-    const code = req.query.code;
-  
-    if (code) {
-      try {
-        const { tokens } = await oAuth2Client.getToken(code);
-        oAuth2Client.setCredentials(tokens);
-  
-        const drive = google.drive({ version: 'v3', auth: oAuth2Client });
-  
-        const response = await drive.files.list({
-          q: `'1GLa6MTGbTfVgIwLXb_RPRLi0l40kX_qd' in parents`, //folderId
-          fields: 'files(id,name, mimeType, webViewLink)',
-        });
-  
-        const files = response.data.files.map(file => ({
-          id:file.id,
-          name: file.name,
-          mimeType: file.mimeType,
-          link: file.webViewLink,
-        }));
-  
-        res.status(200).json(files)
 
-      } catch (error) {
-        console.error('Error al obtener la lista de archivos:', error);
-        res.status(500).json({ error: 'Error al obtener la lista de archivos' });
-      }
-    } else {
-      res.redirect(authURL);
-    }        
-},
-studentData: async(req,res) =>{
-  try{
-    const company = req.params.company
-    const dni = req.params.dni
+  studentData: async(req,res) =>{
+    try{
+      const company = req.params.company
+      const dni = req.params.dni
 
-    //get student data
-    const studentData = await formsDataQueries.studentData(company,dni)
+      //get student data
+      const studentData = await formsDataQueries.studentData(company,dni)
 
-    return res.status(200).json(studentData)
+      return res.status(200).json(studentData)
 
-  }catch(error){
-    console.log(error)
-    return res.send('Ha ocurrido un error')
-  }
-},
+    }catch(error){
+      console.log(error)
+      return res.send('Ha ocurrido un error')
+    }
+  },
   studentsResults: async(req,res) =>{
     try{
       const course = req.params.courseName
       const company = req.params.company
-
+      
       //get course students
       let studentsData = []
       if (req.session.userLogged.id_user_categories == 1) {
@@ -85,7 +43,48 @@ studentData: async(req,res) =>{
         };
       }));
 
+      //get course associations
+      const courseId = await coursesQueries.courseId(course)
+      const courseAssociations = await coursesQueries.courseAssociations(courseId)
+
+      //get course associations names
+      for (let i = 0; i < courseAssociations.length; i++) {
+        const courseName = await coursesQueries.courseName(courseAssociations[i].id_associated_form)
+        courseAssociations[i].courseName = courseName
+      }
+
+      //add students data to associated forms data
+      const today = new Date()
+      today.setDate(today.getDate() - 180)
+      
+      for (let i = 0; i <courseAssociations.length; i++) {
+        const courseName2 = courseAssociations[i].courseName
+        var dataToAssociate = []
+        if (req.session.userLogged.id_user_categories == 1) {
+          dataToAssociate = await formsDataQueries.studentsData(courseName2)
+        }else{
+          dataToAssociate = await formsDataQueries.studentsDataFiltered(company,courseName2)
+        }
+        //filter las 6 months
+        const dataToAssociateFiltered = dataToAssociate.filter(data => data.date >= today)
+        courseAssociations[i].data = dataToAssociateFiltered
+      }
+
+      //add associated forms to data
+      for (let i = 0; i < newDataArray.length; i++) {
+        var dni = newDataArray[i].dni
+        newDataArray[i].associatedForms = []
+        for (let j = 0; j < courseAssociations.length; j++) {
+          const formName = courseAssociations[j].courseName
+          const formData = courseAssociations[j].data
+          var studentData = formData.filter(student => student.dni === dni)
+          var grade = studentData.length == 0 ? 'NA' : studentData[0].grade
+          newDataArray[i].associatedForms.push({'formName':formName,'grade':grade })
+        }
+      }      
+
       return res.status(200).json(newDataArray)
+
     }catch(error){
       console.log(error)
       return res.send('Ha ocurrido un error')
@@ -93,6 +92,7 @@ studentData: async(req,res) =>{
   },
   studentsResultsNotPassed: async(req,res) =>{
     try{
+
       const course = req.params.courseName
       const company = req.params.company
       
@@ -112,9 +112,49 @@ studentData: async(req,res) =>{
         return {
           ...element.dataValues,
           dateString: dateString, 
-        }
-      }))
+        };
+      }));
 
+      //get course associations
+      const courseId = await coursesQueries.courseId(course)
+      const courseAssociations = await coursesQueries.courseAssociations(courseId)
+
+      //get course associations names
+      for (let i = 0; i < courseAssociations.length; i++) {
+        const courseName = await coursesQueries.courseName(courseAssociations[i].id_associated_form)
+        courseAssociations[i].courseName = courseName
+      }
+
+      //add students data to associated forms data
+      const today = new Date()
+      today.setDate(today.getDate() - 180)
+      
+      for (let i = 0; i <courseAssociations.length; i++) {
+        const courseName2 = courseAssociations[i].courseName
+        var dataToAssociate = []
+        if (req.session.userLogged.id_user_categories == 1) {
+          dataToAssociate = await formsDataQueries.studentsData(courseName2)
+        }else{
+          dataToAssociate = await formsDataQueries.studentsDataFiltered(company,courseName2)
+        }
+        //filter las 6 months
+        const dataToAssociateFiltered = dataToAssociate.filter(data => data.date >= today)
+        courseAssociations[i].data = dataToAssociateFiltered
+      }
+
+      //add associated forms to data
+      for (let i = 0; i < newDataArray.length; i++) {
+        var dni = newDataArray[i].dni
+        newDataArray[i].associatedForms = []
+        for (let j = 0; j < courseAssociations.length; j++) {
+          const formName = courseAssociations[j].courseName
+          const formData = courseAssociations[j].data
+          var studentData = formData.filter(student => student.dni === dni)
+          var grade = studentData.length == 0 ? 'NA' : studentData[0].grade
+          newDataArray[i].associatedForms.push({'formName':formName,'grade':grade })
+        }
+      }
+      
       return res.status(200).json(newDataArray)
     }catch(error){
       return res.send('Ha ocurrido un error')
@@ -124,7 +164,7 @@ studentData: async(req,res) =>{
     try{
       const course = req.params.courseName
       const company = req.params.company
-
+      
       //get course students
       let studentsData = []
       if (req.session.userLogged.id_user_categories == 1) {
@@ -132,7 +172,7 @@ studentData: async(req,res) =>{
       }else{
         studentsData = await formsDataQueries.studentsDataFiltered(company,course)
       }
-      
+
       const studentsDataPassed = studentsData.filter(data => parseFloat(data.grade) > 0.78)
 
       //add date as string
@@ -141,9 +181,49 @@ studentData: async(req,res) =>{
         return {
           ...element.dataValues,
           dateString: dateString, 
-        }
-      }))
+        };
+      }));
 
+      //get course associations
+      const courseId = await coursesQueries.courseId(course)
+      const courseAssociations = await coursesQueries.courseAssociations(courseId)
+
+      //get course associations names
+      for (let i = 0; i < courseAssociations.length; i++) {
+        const courseName = await coursesQueries.courseName(courseAssociations[i].id_associated_form)
+        courseAssociations[i].courseName = courseName
+      }
+
+      //add students data to associated forms data
+      const today = new Date()
+      today.setDate(today.getDate() - 180)
+      
+      for (let i = 0; i <courseAssociations.length; i++) {
+        const courseName2 = courseAssociations[i].courseName
+        var dataToAssociate = []
+        if (req.session.userLogged.id_user_categories == 1) {
+          dataToAssociate = await formsDataQueries.studentsData(courseName2)
+        }else{
+          dataToAssociate = await formsDataQueries.studentsDataFiltered(company,courseName2)
+        }
+        //filter las 6 months
+        const dataToAssociateFiltered = dataToAssociate.filter(data => data.date >= today)
+        courseAssociations[i].data = dataToAssociateFiltered
+      }
+
+      //add associated forms to data
+      for (let i = 0; i < newDataArray.length; i++) {
+        var dni = newDataArray[i].dni
+        newDataArray[i].associatedForms = []
+        for (let j = 0; j < courseAssociations.length; j++) {
+          const formName = courseAssociations[j].courseName
+          const formData = courseAssociations[j].data
+          var studentData = formData.filter(student => student.dni === dni)
+          var grade = studentData.length == 0 ? 'NA' : studentData[0].grade
+          newDataArray[i].associatedForms.push({'formName':formName,'grade':grade })
+        }
+      }
+      
       return res.status(200).json(newDataArray)
     }catch(error){
       return res.send('Ha ocurrido un error')

@@ -32,32 +32,120 @@
             </div>
         </div>
 
-        <div class="divInputValidity">
-            <label for="validity" class="validityLabel">Validez del certificado (meses):</label>
-            <input type="text" name="validity" class="inputValidity <%= locals.errors && errors.validity ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.validity : null %>">
+        <div>
+            <input type="number" name="dniEntryId" placeholder="Id prellenado DNI" class="input1 input7 <%= locals.errors && errors.dniEntryId ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.dniEntryId : null %>">
             <div class="divError1">
-                <% if (locals.errors && errors.validity) { %>
-                    <%= errors.validity.msg %>
+                <% if (locals.errors && errors.dniEntryId) { %>
+                    <%= errors.dniEntryId.msg %>
                 <% } %>
             </div>
         </div>
 
-        <div>
-            <label for="includesCertificate">Habilita impresión de certificado:</label>
+        <div class="divCourseData">
+            <label for="validity" class="validityLabel">Validez del certificado (meses):</label>
+            <input type="text" name="validity" class="inputValidity <%= locals.errors && errors.validity ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.validity : null %>">
+        </div>
+        <div class="divError1">
+            <% if (locals.errors && errors.validity) { %>
+                <%= errors.validity.msg %>
+            <% } %>
+        </div>
+
+        <div class="divCourseData divIncludesCert">
             <input type="checkbox" id="includesCertificate" name="includesCertificate" value="true">
+            <label for="includesCertificate" class="labelIncludesCretificate">Habilita impresión de certificado</label>
         </div>
 
         <div>
-            Formularios asociados:
-            <select name="selectAsociatedForms" class="input1 select1 <%= locals.errors && errors.selectAsociatedForms ? 'isInvalid' : null %>">
-                <option value="default" selected>--No posee formularios asociados--</option>
-            </select>
+            <div class="associateForm" id="associateForm">Asociar formularios + </div>
+            <div class="divSelect">
+                <select name="selectAssociatedForms" class="input1 select1 selectAssociatedForm notVisible" id="associatedForm1">
+                    <option value="default" selected>Sin formulario asociado</option>
+                    <% forms.forEach(form => { %>
+                        <option value="<%= form.id %>"><%= form.course_name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="divSelect">
+                <select name="selectAssociatedForms" class="input1 select1 selectAssociatedForm notVisible" id="associatedForm2">
+                    <option value="default" selected>Sin formulario asociado</option>
+                    <% forms.forEach(form => { %>
+                        <option value="<%= form.id %>"><%= form.course_name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="divSelect">
+                <select name="selectAssociatedForms" class="input1 select1 selectAssociatedForm notVisible" id="associatedForm3">
+                    <option value="default" selected>Sin formulario asociado</option>
+                    <% forms.forEach(form => { %>
+                        <option value="<%= form.id %>"><%= form.course_name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="divSelect">
+                <select name="selectAssociatedForms" class="input1 select1 selectAssociatedForm notVisible" id="associatedForm4">
+                    <option value="default" selected>Sin formulario asociado</option>
+                    <% forms.forEach(form => { %>
+                        <option value="<%= form.id %>"><%= form.course_name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="divSelect">
+                <select name="selectAssociatedForms" class="input1 select1 selectAssociatedForm notVisible" id="associatedForm5">
+                    <option value="default" selected>Sin formulario asociado</option>
+                    <% forms.forEach(form => { %>
+                        <option value="<%= form.id %>"><%= form.course_name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="divSelect">
+                <select name="selectAssociatedForms" class="input1 select1 selectAssociatedForm notVisible" id="associatedForm6">
+                    <option value="default" selected>Sin formulario asociado</option>
+                    <% forms.forEach(form => { %>
+                        <option value="<%= form.id %>"><%= form.course_name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="divSelect">
+                <select name="selectAssociatedForms" class="input1 select1 selectAssociatedForm notVisible" id="associatedForm7">
+                    <option value="default" selected>Sin formulario asociado</option>
+                    <% forms.forEach(form => { %>
+                        <option value="<%= form.id %>"><%= form.course_name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="divSelect">
+                <select name="selectAssociatedForms" class="input1 select1 selectAssociatedForm notVisible" id="associatedForm8">
+                    <option value="default" selected>Sin formulario asociado</option>
+                    <% forms.forEach(form => { %>
+                        <option value="<%= form.id %>"><%= form.course_name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="divSelect">
+                <select name="selectAssociatedForms" class="input1 select1 selectAssociatedForm notVisible" id="associatedForm9">
+                    <option value="default" selected>Sin formulario asociado</option>
+                    <% forms.forEach(form => { %>
+                        <option value="<%= form.id %>"><%= form.course_name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="divSelect">
+                <select name="selectAssociatedForms" class="input1 select1 selectAssociatedForm notVisible" id="associatedForm10">
+                    <option value="default" selected>Sin formulario asociado</option>
+                    <% forms.forEach(form => { %>
+                        <option value="<%= form.id %>"><%= form.course_name %></option>
+                    <% }) %>
+                </select>
+            </div>
         </div>
         <div>
             <button type="submit" class="button1">Crear</button>
         </div>    
     </form>
 </div>
+
+<script type="module" src="/js/createCourse.js"></script>
 
 
 

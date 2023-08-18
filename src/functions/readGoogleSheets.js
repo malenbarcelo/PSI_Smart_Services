@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const credentials = require('../forms/credentialsGoogleSheets.json')
+const credentials = require('../credentials/credentialsGoogleSheets.json')
 
 // auth configuration 
 const auth = new google.auth.GoogleAuth({

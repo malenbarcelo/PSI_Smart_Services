@@ -5,7 +5,7 @@ const fs = require('fs')
 const coursesQueries = require('../functions/coursesQueries')
 
 const coursesFormsValidations = {
-    createCertificate: [
+    documentationTemplate: [
         body('selectCourse')
             .custom(async(value,{ req }) => {
                 if (req.body.selectCourse == 'default') {
@@ -13,106 +13,97 @@ const coursesFormsValidations = {
                 }
                 return true
             }),
-            body('certLogo1').custom((value, { req }) => {
-                let file = req.files.certLogo1
-                let acceptedExtensions = ['.jpg','.jpeg','.png','.gif']               
-                if(!file){
-                    throw new Error('Ingrese el logo principal del certificado')
-                }else{
-                    let fileExtension = req.files.certLogo1[0].originalname
-                    fileExtension = fileExtension.split('.')
-                    fileExtension = fileExtension[fileExtension.length - 1]
-                    
-                    if(!acceptedExtensions.includes(fileExtension)){
-                        throw new Error(`Las extensiones aceptadas para el Logo 1 son: ${acceptedExtensions.join(',')}`)
-                    }
-                }
-                return true}),
-            body('certLogo2').custom((value, { req }) => {
-                let file = req.files.certLogo2
-                let acceptedExtensions = ['.jpg','.jpeg','.png','.gif']               
-                if(file){
-                    let fileExtension = req.files.certLogo2[0].originalname
-                    fileExtension = fileExtension.split('.')
-                    fileExtension = fileExtension[fileExtension.length - 1]
-                    if(!acceptedExtensions.includes(fileExtension)){
-                        throw new Error(`Las extensiones aceptadas para el Logo 2 son: ${acceptedExtensions.join(',')}`)
-                    }
-                }
-                return true}),
-        body('selectTypeOfCourse')
+        body('certificateName')
+            .notEmpty().withMessage('Ingrese el nombre del curso tal como irá en el certificado'),
+        body('option1')
             .custom(async(value,{ req }) => {
-                if (req.body.selectTypeOfCourse == 'default') {
-                throw new Error('Seleccione un tipo de curso')
+                if (!req.body.option1) {
+                    throw new Error('Debe seleccionar una opción para el logo del certificado')
                 }
                 return true
             }),
-        body('courseName')
-            .notEmpty().withMessage('Ingrese el nombre del curso tal como irá en el certificado'),
-        body('theoryHours')
-            .custom((value, { req }) => {
-                if(req.body.theoryHours == undefined && (req.body.selectTypeOfCourse == 'theoretical' || req.body.selectTypeOfCourse == 'theoretical-practical')){
-                    throw new Error('Ingrese cantidad de horas de teoría')
+        body('option2')
+            .custom(async(value,{ req }) => {
+                if (!req.body.option2) {
+                    throw new Error('Debe seleccionar una opción para el logo de la credencial')
                 }
-                return true}),
-        body('practicalHours')
-            .custom((value, { req }) => {
-                if(req.body.practiceHours == undefined && (req.body.selectTypeOfCourse == 'practical' || req.body.selectTypeOfCourse == 'theoretical-practical')){
-                    throw new Error('Ingrese cantidad de horas de práctica')
+                return true
+            }),
+        body('option3')
+            .custom(async(value,{ req }) => {
+                if (!req.body.option3) {
+                    throw new Error('Debe seleccionar una opción para la firma 1')
                 }
-                return true}),
-        body('text1')
-            .notEmpty().withMessage('Ingrese el texto 1'),
-        body('text2')
-            .notEmpty().withMessage('Ingrese el texto 2'),
-        body('signature1')
-            .custom((value, { req }) => {
-                let file = req.files.signature1
-                let acceptedExtensions = ['.jpg','.jpeg','.png','.gif']               
+                return true
+            }),
+        body('option4')
+            .custom(async(value,{ req }) => {
+                if (!req.body.option4) {
+                    throw new Error('Debe seleccionar una opción para la firma 2')
+                }
+                return true
+            }),
+        body('logo1').custom((value, { req }) => {            
+            let file = req.files.logo1
+            let acceptedExtensions = ['.jpg','.jpeg','.png','.gif']
+            if(req.body.option1 == 'other'){
                 if(!file){
-                    throw new Error('Ingrese la imagen de la firma 1')
+                    throw new Error('Debe seleccionar una imagen para el logo del certificado')
+                }else{
+                    let fileExtension = req.files.logo1[0].originalname
+                    fileExtension = fileExtension.split('.')
+                    fileExtension = fileExtension[fileExtension.length - 1]
+                    if(!acceptedExtensions.includes('.' + fileExtension)){
+                        throw new Error(`Las extensiones aceptadas son: ${acceptedExtensions.join(',')}`)
+                    }
+                }
+            }
+            return true}),
+        body('logo2').custom((value, { req }) => {            
+            let file = req.files.logo2
+            let acceptedExtensions = ['.jpg','.jpeg','.png','.gif']
+            if(req.body.option2 == 'other'){
+                if(!file){
+                    throw new Error('Debe seleccionar una imagen para el logo de la credencial')
+                }else{
+                    let fileExtension = req.files.logo2[0].originalname
+                    fileExtension = fileExtension.split('.')
+                    fileExtension = fileExtension[fileExtension.length - 1]
+                    if(!acceptedExtensions.includes('.' + fileExtension)){
+                        throw new Error(`Las extensiones aceptadas son: ${acceptedExtensions.join(',')}`)
+                    }
+                }
+            }
+            return true}),
+        body('signature1').custom((value, { req }) => {            
+            let file = req.files.signature1
+            let acceptedExtensions = ['.jpg','.jpeg','.png','.gif']
+            if(req.body.option3 == 'other'){
+                if(!file){
+                    throw new Error('Debe seleccionar una imagen para la firma 1')
                 }else{
                     let fileExtension = req.files.signature1[0].originalname
                     fileExtension = fileExtension.split('.')
                     fileExtension = fileExtension[fileExtension.length - 1]
-                    
-                    if(!acceptedExtensions.includes(fileExtension)){
-                        throw new Error(`Las extensiones aceptadas para la firma 1 son: ${acceptedExtensions.join(',')}`)
+                    if(!acceptedExtensions.includes('.' + fileExtension)){
+                        throw new Error(`Las extensiones aceptadas son: ${acceptedExtensions.join(',')}`)
                     }
-                }
-                return true}),
-        body('signature1Line1')
-            .notEmpty().withMessage('Ingrese la aclaración de la firma 1'),
-        body('signature1Line2')
-            .notEmpty().withMessage('Ingrese la descripción de la firma 1'),
-        body('signature2').custom((value, { req }) => {
-            let file = req.files.signature2
-            let acceptedExtensions = ['.jpg','.jpeg','.png','.gif']               
-            if(!file){
-                throw new Error('Ingrese la imagen de la firma 2')
-            }else{
-                let fileExtension = req.files.signature2[0].originalname
-                fileExtension = fileExtension.split('.')
-                fileExtension = fileExtension[fileExtension.length - 1]
-                
-                if(!acceptedExtensions.includes(fileExtension)){
-                    throw new Error(`Las extensiones aceptadas para la firma 2 son: ${acceptedExtensions.join(',')}`)
                 }
             }
             return true}),
-        body('signature2Line1')
-            .notEmpty().withMessage('Ingrese la aclaración de la firma 2'),
-        body('signature2Line2')
-            .notEmpty().withMessage('Ingrese la descripción de la firma 2'),
-        body('certLogo3').custom((value, { req }) => {
-            let file = req.files.certLogo3
-            let acceptedExtensions = ['.jpg','.jpeg','.png','.gif']               
-            if(file){
-                let fileExtension = req.files.certLogo3[0].originalname
-                fileExtension = fileExtension.split('.')
-                fileExtension = fileExtension[fileExtension.length - 1]
-                if(!acceptedExtensions.includes(fileExtension)){
-                    throw new Error(`Las extensiones aceptadas para el logo del pie de página son: ${acceptedExtensions.join(',')}`)
+        body('signature2').custom((value, { req }) => {            
+            let file = req.files.signature2
+            let acceptedExtensions = ['.jpg','.jpeg','.png','.gif']
+            if(req.body.option4 == 'other'){
+                if(!file){
+                    throw new Error('Debe seleccionar una imagen para la firma 2')
+                }else{
+                    let fileExtension = req.files.signature2[0].originalname
+                    fileExtension = fileExtension.split('.')
+                    fileExtension = fileExtension[fileExtension.length - 1]
+                    if(!acceptedExtensions.includes('.' + fileExtension)){
+                        throw new Error(`Las extensiones aceptadas son: ${acceptedExtensions.join(',')}`)
+                    }
                 }
             }
             return true}),
@@ -133,6 +124,8 @@ const coursesFormsValidations = {
             }),
         body('url')
             .notEmpty().withMessage('Ingrese el enlace del formulario'),
+        body('dniEntryId')
+            .notEmpty().withMessage('Ingrese el id de prellenado del DNI'),
         body('validity')
             .notEmpty().withMessage('Ingrese la validez del formulario, si el certificado no tiene vencimiento colocar 0')
             .isNumeric().withMessage('La validez debe ser un número entero (cantidad de meses)')
@@ -189,6 +182,8 @@ const coursesFormsValidations = {
             .custom(async(value,{ req }) => {
                 const courseId = req.params.idCourse
                 const certificateTemplate = await coursesQueries.certificateTemplate(courseId)
+                const courseName = await coursesQueries.courseName(courseId)
+                
                 const body = Object.keys(req.body)
                 if (body.includes('certificates') && !certificateTemplate) {
                     throw new Error('El curso "' + courseName + '" no posee un modelo de certificado para imprimir')
@@ -199,6 +194,7 @@ const coursesFormsValidations = {
             .custom(async(value,{ req }) => {
                 const courseId = req.params.idCourse
                 const credentialTemplate = await coursesQueries.credentialTemplate(courseId)
+                const courseName = await coursesQueries.courseName(courseId)
                 const body = Object.keys(req.body)
                 if (body.includes('credentials') && !credentialTemplate) {
                     throw new Error('El curso "' + courseName + '" no posee un modelo de credencial para imprimir')

@@ -16,7 +16,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
    },
+   dni_entry_id:{
+      type: DataTypes.INTEGER,
+      allowNull: false,
+   },
    validity:{
+      type: DataTypes.INTEGER,
+      allowNull: false,
+   },
+   includes_certificate:{
+      type: DataTypes.INTEGER,
+      allowNull: false,
+   },
+   associated_forms:{
       type: DataTypes.INTEGER,
       allowNull: false,
    },

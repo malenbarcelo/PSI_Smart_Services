@@ -30,11 +30,22 @@ CREATE TABLE psi_db.courses (
     id INT NOT NULL AUTO_INCREMENT,
     course_name VARCHAR(200) NOT NULL UNIQUE,
     url VARCHAR(500) NOT NULL,
+    dni_entry_id BIGINT NOT NULL,
     validity INT NOT NULL,
     includes_certificate INT NOT NULL,
-    asociated_forms INT NOT NULL,
+    associated_forms INT NOT NULL,
     enabled INT NOT NULL,
     PRIMARY KEY (id)
+);
+
+/*Create table associated_forms*/
+CREATE TABLE psi_db.associated_forms (
+    id INT NOT NULL AUTO_INCREMENT,
+    id_forms INT NOT NULL,
+    id_associated_form INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_forms) REFERENCES courses(id),
+    FOREIGN KEY (id_associated_form) REFERENCES courses(id)
 );
 
 /*Create table documents_templates*/

@@ -22,8 +22,8 @@ router.get('/start-course/:idCourse',coursesController.entryData)
 router.post('/start-course/:idCourse',uploadStugentPhoto.single('image'),coursesFormsValidations.entryData,coursesController.openForm)
 router.get('/view-students/:company',userMiddleware,coursesController.viewStudents)
 router.get('/:typeOfDocument/:idFormData',coursesController.viewDocument)
-router.get('/create-certificate',admMiddleware,coursesController.createCertificate)
-router.post('/create-certificate',admMiddleware,uploadCertTemplate.fields([{ name: 'certLogo1', maxCount: 1 }, { name: 'certLogo2', maxCount: 1 },{ name: 'signature1', maxCount: 1 },{ name: 'signature2', maxCount: 1 },{ name: 'certLogo3', maxCount: 1 }]),coursesFormsValidations.createCertificate,coursesController.createCertificateProcess)
+router.get('/create-template',admMiddleware,coursesController.createTemplate)
+router.post('/create-template',admMiddleware,uploadCertTemplate.fields([{ name: 'logo1', maxCount: 1 }, { name: 'logo2', maxCount: 1 },{ name: 'signature1', maxCount: 1 },{ name: 'signature2', maxCount: 1}]),coursesFormsValidations.documentationTemplate,coursesController.createTemplateProcess)
 
 module.exports = router
 

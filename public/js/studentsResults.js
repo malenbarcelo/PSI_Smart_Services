@@ -27,13 +27,16 @@ window.addEventListener('load',async()=>{
     const credentials = document.getElementById('divCredentials')
     const error1 = document.getElementById('error1')
     const error2 = document.getElementById('error2')
-    const thSelectAll = document.getElementById('thSelectAll')   
-    
+    const thSelectAll = document.getElementById('thSelectAll') 
+
+    //deine if corresponds to download certificate
+    const certificate = !thSelectAll.classList.contains('notVisible')
+
     //get last 90 days to filter data
     var dateUntil = new Date().getTime() //today as timestamp
     var dateFrom = dateUntil - (365 * 24 * 60 * 60 * 1000) //remove 90 days in millisecs
 
-    tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
+    tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil,certificate)
     
     //Add events listeners
     viewPassed.addEventListener("click",async(e)=>{
@@ -48,7 +51,7 @@ window.addEventListener('load',async()=>{
         filter = 'passed'
         order = 'noOrder'
 
-        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil,certificate)
 
     })
     viewNotPassed.addEventListener("click",async(e)=>{
@@ -63,7 +66,7 @@ window.addEventListener('load',async()=>{
         filter = 'notPassed'
         order = 'noOrder'
 
-        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil,certificate)
 
     })
     viewAllData.addEventListener("click",async(e)=>{
@@ -72,34 +75,36 @@ window.addEventListener('load',async()=>{
         viewPassed.classList.remove('underlined')
         viewNotPassed.classList.remove('underlined')
         downloadSelected.classList.remove('notVisible')
+        credentials.classList.remove('notVisible')
+        certificates.classList.remove('notVisible')
         filter = 'allData'
         order = 'noOrder'
 
-        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil,certificate)
     })
     orderDateAsc.addEventListener("click",async(e)=>{
         order = 'orderDateAsc'
         orderDateAsc.classList.add('notVisible')
         orderDateDesc.classList.remove('notVisible')
-        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil,certificate)
     })
     orderDateDesc.addEventListener("click",async(e)=>{
         order = 'orderDateDesc'
         orderDateAsc.classList.remove('notVisible')
         orderDateDesc.classList.add('notVisible')
-        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil,certificate)
     })
     orderNameAsc.addEventListener("click",async(e)=>{
         order = 'orderNameAsc'
         orderNameAsc.classList.add('notVisible')
         orderNameDesc.classList.remove('notVisible')
-        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil,certificate)
     })
     orderNameDesc.addEventListener("click",async(e)=>{
         order = 'orderNameDesc'
         orderNameAsc.classList.remove('notVisible')
         orderNameDesc.classList.add('notVisible')
-        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
+        tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil,certificate)
     })
     selectAll.addEventListener("click",async(e)=>{
         const checkboxes = document.querySelectorAll('.checkbox1')
@@ -155,7 +160,7 @@ window.addEventListener('load',async()=>{
                 var dateFrom = new Date(dateFromAsDate).getTime()
                 var dateUntil = new Date(dateUntilAsDate).getTime()
 
-                tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil)
+                tableRows.innerHTML = await getData(course,company,filter,order,dateFrom,dateUntil,certificate)
             }
         }
     })

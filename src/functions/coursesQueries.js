@@ -69,14 +69,13 @@ const formsDataQueries = {
             return res.send('Ha ocurrido un error')
         }
     },
-    courseUrl: async(idCourse) => {
+    courseData: async(idCourse) => {
         try{
-            const courseUrl = await db.Courses.findOne({
+            const courseData = await db.Courses.findOne({
                 where:{id:idCourse},
-                attributes:['url'],
                 raw:true,
             })
-            return courseUrl
+            return courseData
         }catch(error){
             return res.send('Ha ocurrido un error')
         }
@@ -88,6 +87,30 @@ const formsDataQueries = {
                 raw:true,
             })
             return courseUrl
+        }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },
+    courseAssociations: async(courseId) => {
+        try{
+            const associations = await db.Associated_forms.findAll({
+                attributes:['id_associated_form'],
+                where:{id_forms:courseId},
+                raw:true,
+            })
+            return associations
+        }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },
+    coursesWithTemplate: async() => {
+        try{
+            const courses = await db.Courses.findAll({
+                where:{includes_certificate:1},
+                order:[['course_name','ASC']],
+                raw:true,
+            })
+            return courses
         }catch(error){
             return res.send('Ha ocurrido un error')
         }

@@ -3,6 +3,7 @@ const path = require('path')
 const {validationResult} = require('express-validator')
 const formsDataQueries = require('../functions/formsDataQueries')
 const coursesQueries = require('../functions/coursesQueries')
+const docTemplatesQueries = require('../functions/docTemplatesQueries')
 const datesFunctions = require('../functions/datesFunctions')
 const profileImagesQueries = require('../functions/profileImagesQueries')
 const sequelize = require('sequelize')
@@ -12,67 +13,125 @@ const fetch = require('cross-fetch')
 const dominio = require('../functions/dominio')
 const ejs = require('ejs')
 const fs = require('fs')
+const { send } = require('process')
+const sharp = require('sharp')
 
 const coursesController = {
     createCourse: async(req,res) => {
         try{
-            return res.render('courses/createCourse',{title:'Crear curso'})
+            const forms = await coursesQueries.allCourses()
+            return res.render('courses/createCourse',{title:'Crear curso',forms})
         }catch(error){
             return res.send('Ha ocurrido un error')
         }
     },
-    createCertificate: async(req,res) => {
+    createTemplate: async(req,res) => {
         try{
-            const courses = await coursesQueries.allCourses()
+            const courses = await coursesQueries.coursesWithTemplate()
+            const certificateLogos = await docTemplatesQueries.certificateLogos()
+            const credentialLogos = await docTemplatesQueries.credentialLogos()
+            const signatures1 = await docTemplatesQueries.signatures1()
+            const signatures2 = await docTemplatesQueries.signatures2()
 
-            return res.render('courses/certificateTemplate',{title:'Diseño de certificado',courses})
+            return res.render('courses/documentationTemplate',{title:'Template',courses,certificateLogos,credentialLogos,signatures1,signatures2})
+
         }catch(error){
+            console.log(error)
             return res.send('Ha ocurrido un error')
         }
     },
-    createCertificateProcess: async(req,res) => {
+    createTemplateProcess: async(req,res) => {
         try{
-            const courses = await coursesQueries.allCourses()
+            const courses = await coursesQueries.coursesWithTemplate()
+            const certificateLogos = await docTemplatesQueries.certificateLogos()
+            const credentialLogos = await docTemplatesQueries.credentialLogos()
+            const signatures1 = await docTemplatesQueries.signatures1()
+            const signatures2 = await docTemplatesQueries.signatures2()
 
             const resultValidation = validationResult(req)
 
-            console.log(req.body)
-
             if (resultValidation.errors.length > 0){                
-                return res.render('courses/certificateTemplate',{
+                return res.render('courses/documentationTemplate',{
                     courses,
                     errors:resultValidation.mapped(),
                     oldData: req.body,
-                    title:'Diseño de certificado'
+                    certificateLogos,
+                    credentialLogos,
+                    signatures1,
+                    signatures2,
+                    title:'Template'
                 })
             }
 
+            const courseId = req.body.selectCourse
+            const certificateName = req.body.certificateName
+            const certificateNormatives = req.body.certificateNormatives
+            const credentialForehead = req.body.credentialForehead
+            const credentialBack = req.body.credentialBack
+            const credentialNormatives = req.body.credentialNormatives
+
+            //logo1
+            var option1 = ''
+            if (req.body.option1 == 'other') {
+                option1 = req.files.logo1[0].filename
+            }else{
+                if (req.body.option1 == 'none') {
+                    option1 = ''
+                }else{
+                    option1 = req.body.option1
+                }
+            }
+
+            //logo2
+            var option2 = ''
+            if (req.body.option2 == 'other') {
+                option2 = req.files.logo2[0].filename
+            }else{
+                if (req.body.option2 == 'none') {
+                    option2 = ''
+                }else{
+                    option2 = req.body.option2
+                }
+            }
+
+            //Signature1 -- doesn't admit nulls
+            var option3 = ''
+            if (req.body.option3 == 'other') {
+                option3 = req.files.signature1[0].filename
+            }else{
+                option3 = req.body.option3
+            }
+
+            //signature2
+            var option4 = ''
+            if (req.body.option4 == 'other') {
+                option4 = req.files.signature2[0].filename
+            }else{
+                if (req.body.option4 == 'none') {
+                    option4 = ''
+                }else{
+                    option4 = req.body.option4
+                }
+            }
+
             //create certificate
-            await db.Certificates_templates.create({
-                id_courses: req.body.selectCourse,
-                logo1: 'logo1',
-                logo2: 'logo2',
-                logo3: 'logo3',
-                type_of_course: req.body.selectTypeOfCourse,
-                signature1_image: 'firma1',
-                signature2_image: 'firma2',
-                signature1_line1: req.body.signature1Line1,
-                signature1_line2: erq.body.signature1Line2,
-                signature2_line1: req.body.signature2Line1,
-                signature2_line2: erq.body.signature2Line2,
-                theory_hours:req.body.theoryHours,
-                practice_hours:req.body.practiceHours,
-                course_name: 'nombre del curso',
-                text1: req.body.text1,
-                text2: req.body.text2,
-                enabled: 1
+            await db.Documents_templates.create({
+                id_courses: courseId,
+                certificate_logo: option1,
+                credential_logo: option2,
+                signature1_image: option3,
+                signature2_image: option4,
+                course_name:certificateName,
+                credential_forehead:credentialForehead,
+                credential_back:credentialBack,
+                certificate_normatives:certificateNormatives,
+                credential_normatives:credentialNormatives,
+                enabled:1
             })
 
             const successMessage = true
 
-            return res.render('courses/certificateTemplate',{title:'Diseño de certificado',courses, successMessage})
-            
-            return res.render('courses/certificateTemplate',{title:'Diseño de certificado',courses})
+            return res.render('courses/documentationTemplate',{title:'Template',courses,certificateLogos,credentialLogos,signatures1,signatures2,successMessage})
 
         }catch(error){
             console.log(error)
@@ -150,6 +209,7 @@ const coursesController = {
             return res.render('courses/myCourses',{title:'Mis cursos',coursesData})
 
         }catch(error){
+            console.log(error)
             return res.send('Ha ocurrido un error')
         }
     },
@@ -172,7 +232,9 @@ const coursesController = {
                 })
             }
 
-            const courseUrl = await coursesQueries.courseUrl(idCourse)
+            const courseData = await coursesQueries.courseData(idCourse)
+
+            const courseUrl = courseData.url + '?usp=pp_url&entry.' + courseData.dni_entry_id + '=' + req.body.dni
 
             const image = await db.Profile_images.findOne({
                 where:{
@@ -201,59 +263,50 @@ const coursesController = {
                   )
             }
 
-            return res.send("<script>window.location.href = '" + courseUrl.url + "';</script>");
+            //get an image of lower quality
+            const imageSize = req.file.size / 1024 //image size in kb
+            const percentage = Math.round(300 * 100 / imageSize) // to get an image of 300kb
+
+            const filePath = req.file.path
+
+            const modifiedImageBuffer = await sharp(filePath)
+            .jpeg({ quality: percentage }) // get a lower quality for the image
+            .toBuffer()
+
+            const dirLQ = path.join('public', 'images', 'studentsPhotos') //LQ=Low Quality
+            const fileNameLQ = 'LQ_' + req.file.filename
+            const filePathLQ = path.join(dirLQ, fileNameLQ)
+            
+            fs.writeFileSync(filePathLQ, modifiedImageBuffer)
+
+            //delete high quality file
+            fs.unlink(req.file.path, (err) => {
+                if (err) {
+                  console.error('Error al eliminar el archivo:', err);
+                } else {
+                  console.log('Archivo eliminado exitosamente')
+                }
+              })
+
+            //rename low quality file
+            const oldName = fileNameLQ;
+            const newName = req.file.filename;
+
+            const oldPath = path.join(dirLQ, oldName)
+            const newPath = path.join(dirLQ, newName)
+
+            fs.rename(oldPath, newPath, (err) => {
+                if (err) {
+                    console.log('Error al renombrar el archivo.');
+                } else {
+                    console.log('Archivo renombrado exitosamente.');
+                }
+            })
+            
+            return res.send("<script>window.location.href = '" + courseUrl + "';</script>");
         }catch(error){
             console.log(error)
             return res.send('Ha ocurrido un error')
-        }
-    },
-    printCredentials: async(req,res) =>{
-        try{
-
-            const company = req.params.company
-            const course = req.params.course
-            
-            //get course students
-            const studentsData = await formsDataQueries.studentsDataFiltered(company,course)
-            const studentsDataPassed = studentsData.filter(data => parseFloat(data.grade) > 0.78)
-
-            const archive = archiver('zip')
-            res.attachment('credentials.zip')
-            archive.pipe(res)
-
-            const browser = await puppeteer.launch({
-                headless: "new", // to avoid open windows
-                printBackground: true,
-                args: ['--no-sandbox', '--disable-setuid-sandbox'] // to avoid errors
-              });
-
-            for (const student of studentsDataPassed) {
-                const dni = student.dni;
-                const name = student.last_name + ' ' + student.first_name;
-                const fileName = name + ' - ' + dni;
-        
-                const url = dominio +  "courses/view-credential/" + student.id;
-        
-                const page = await browser.newPage()
-        
-                await page.goto(url, { waitUntil: 'networkidle0' })
-                await page.emulateMediaFeatures([{ name: 'color-gamut', value: 'srgb' }])
-        
-                const pdf = await page.pdf({ printBackground: true })
-        
-                await page.close();
-        
-                // Agregar el archivo PDF al archivo zip
-                archive.append(pdf, { name: fileName + '.pdf' });
-            }
-
-            archive.finalize()
-            res.end()
-            await browser.close()
-
-        }catch(error){
-            console.log(error)
-            return res.send(error)
         }
     },
     printSelected: async(req,res) =>{
@@ -261,7 +314,8 @@ const coursesController = {
             //get course and company
             const idCourse = req.params.idCourse
             const course = await coursesQueries.courseName(idCourse)
-            const company = req.params.company  
+            const company = req.params.company
+            const courseData = await coursesQueries.filtrateCourse(course)  
 
             const resultValidation = validationResult(req)
 
@@ -283,7 +337,7 @@ const coursesController = {
             if (resultValidation.errors.length > 0){
 
                 return res.render('courses/studentsResults',{title:'Resultados',course,idCourse,studentsData,datesStrings,errors:resultValidation.mapped(),
-                oldData: req.body,})
+                oldData: req.body,courseData})
             }
 
             const body = Object.keys(req.body)
@@ -372,6 +426,9 @@ const coursesController = {
     },
     processCreateCourse: async(req,res) => {
         try{
+
+            const forms = await coursesQueries.allCourses()
+
             const resultValidation = validationResult(req)
 
             if (resultValidation.errors.length > 0){
@@ -379,21 +436,49 @@ const coursesController = {
                 return res.render('courses/createCourse',{
                     errors:resultValidation.mapped(),
                     oldData: req.body,
-                    title:'Crear curso'
+                    title:'Crear curso',
+                    forms
                 })
             }
+
+            //get associated forms quantity
+            const associatedForms = req.body.selectAssociatedForms
+            const associatedFormsQty = associatedForms.reduce((count, element) => {
+                if (element !== "default") {
+                  return count + 1
+                }
+                return count
+              }, 0)
 
             //create course
             await db.Courses.create({
                 course_name: req.body.courseName,
                 url: req.body.url,
+                dni_entry_id: req.body.dniEntryId,
                 validity: req.body.validity,
+                includes_certificate: req.body.includesCertificate ? 1 : 0,
+                associated_forms: associatedFormsQty == 0 ? 0 : 1,
                 enabled:1,
             })
 
+            //create associatons if corresponds
+            if (associatedFormsQty != 0) {
+                //get created course id
+                const courseId = await coursesQueries.courseId(req.body.courseName)
+                //create associations
+                for (let i = 0; i < associatedForms.length; i++) {
+                    if (associatedForms[i] != 'default') {
+                        await db.Associated_forms.create({
+                            id_forms: courseId,
+                            id_associated_form: associatedForms[i]
+                        })
+                    }   
+                }
+            }
+
             const successMessage = true
-            
-            return res.render('courses/createCourse',{title:'Crear curso', successMessage})
+
+            return res.render('courses/createCourse',{title:'Crear curso', forms,successMessage,})
             
         }catch(error){
             console.log(error)
@@ -414,6 +499,7 @@ const coursesController = {
             const idCourse = req.params.idCourse
             const company = req.params.company
             const course = await coursesQueries.courseName(idCourse)
+            const courseData = await coursesQueries.filtrateCourse(course)
 
             //get course students
             let studentsData = []
@@ -430,7 +516,7 @@ const coursesController = {
                 datesStrings.push({"dateString":dateString})
             }
 
-            return res.render('courses/studentsResults',{title:'Resultados',course,idCourse,studentsData,datesStrings})
+            return res.render('courses/studentsResults',{title:'Resultados',course,idCourse,studentsData,datesStrings,courseData})
 
         }catch(error){
             console.log(error)

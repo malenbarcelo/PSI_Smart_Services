@@ -16,17 +16,17 @@ const studentPhoto = multer.diskStorage({
 
 const certificateTemplate = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'public/images/certificateImages');
+      cb(null, 'public/images/documentsImages');
     },
     filename: function (req, file, cb) {
       const fileExtension = path.extname(file.originalname)
       const courseId = req.body.selectCourse
       var fileName = ''
-      if (file.fieldname === 'certLogo1') {
+      if (file.fieldname === 'logo1') {
         fileName = courseId + '_logo1'
       }
-      if (file.fieldname === 'certLogo2') {
-        fileName = courseId + '_logo1'
+      if (file.fieldname === 'logo2') {
+        fileName = courseId + '_logo2'
       }
       if (file.fieldname === 'signature1') {
         fileName = courseId + '_signature1'
@@ -34,9 +34,6 @@ const certificateTemplate = multer.diskStorage({
       if (file.fieldname === 'signature2') {
         fileName = courseId + '_signature2'
       }
-      if (file.fieldname === 'certLogo3') {
-        fileName = courseId + '_logo3'
-      }  
       cb(null, fileName + fileExtension)
     },
   })
