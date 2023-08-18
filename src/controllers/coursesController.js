@@ -14,7 +14,7 @@ const dominio = require('../functions/dominio')
 const ejs = require('ejs')
 const fs = require('fs')
 const { send } = require('process')
-const sharp = require('sharp')
+//const sharp = require('sharp')
 
 const coursesController = {
     createCourse: async(req,res) => {
