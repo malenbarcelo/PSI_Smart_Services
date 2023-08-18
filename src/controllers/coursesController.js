@@ -262,8 +262,7 @@ const coursesController = {
                     }
                   )
             }
-
-            //get an image of lower quality
+            /*//get an image of lower quality
             const imageSize = req.file.size / 1024 //image size in kb
             const percentage = Math.round(300 * 100 / imageSize) // to get an image of 300kb
 
@@ -302,6 +301,8 @@ const coursesController = {
                     console.log('Archivo renombrado exitosamente.');
                 }
             })
+
+            */
             
             return res.send("<script>window.location.href = '" + courseUrl + "';</script>");
         }catch(error){
