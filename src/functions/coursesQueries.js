@@ -20,7 +20,9 @@ const formsDataQueries = {
                 attributes:['id'],
                 raw:true,
             })
+            
             return courseId.id
+            
         }catch(error){
             return res.send('Ha ocurrido un error')
         }
@@ -41,7 +43,7 @@ const formsDataQueries = {
         try{
             const courses = await db.Courses.findAll({
                 order:['course_name'],
-                attributes:[['course_name','form_name']],
+                attributes:[['course_name','form_name'],['pass_grade','pass_grade']],
                 raw:true,
             })
             return courses

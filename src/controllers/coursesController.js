@@ -14,7 +14,8 @@ const dominio = require('../functions/dominio')
 const ejs = require('ejs')
 const fs = require('fs')
 const { send } = require('process')
-//const sharp = require('sharp')
+const sharp = require('sharp')
+const readGoogleSheets = require('../functions/readGoogleSheets')
 
 const coursesController = {
     createCourse: async(req,res) => {
@@ -22,6 +23,7 @@ const coursesController = {
             const forms = await coursesQueries.allCourses()
             return res.render('courses/createCourse',{title:'Crear curso',forms})
         }catch(error){
+            console.log(error)
             return res.send('Ha ocurrido un error')
         }
     },
@@ -165,6 +167,8 @@ const coursesController = {
             //add data to coursesData
             for (let i = 0; i < coursesData.length; i++) {
                 const course = coursesData[i].form_name
+                const passGrade = parseFloat(coursesData[i].pass_grade)/100
+                
                 if (req.session.userLogged.id_user_categories == 1){
                     students = await formsDataQueries.studentsQty(course)
                 }else{
@@ -182,13 +186,13 @@ const coursesController = {
                         studentLastResult = await formsDataQueries.studentLastResultFiltered(company,course,students[j].dni)
                     }
                     
-                    if (studentLastResult.grade > 0.78) {
+                    if (studentLastResult.grade >= passGrade) {
                         passed += 1
                     }else{
                         notPassed += 1
-                    }
-                    
+                    }                    
                 }
+
                 coursesData[i].studentsQty = students.length
                 coursesData[i].passed = passed
                 coursesData[i].passedPercentage = students.length == 0 ? 0 : (passed / students.length * 100).toFixed(2)
@@ -203,6 +207,7 @@ const coursesController = {
 
                 //add courseId
                 const courseId = await coursesQueries.courseId(course)
+
                 coursesData[i].courseId = courseId
             }
 
@@ -262,24 +267,41 @@ const coursesController = {
                     }
                   )
             }
-            /*//get an image of lower quality
+
+            const inputFolderPath = path.join('public', 'images', 'studentsPhotos')
+            const outputFolderPath = path.join('public', 'images', 'studentsPhotosLQ')
+
+            /*const files = await fs.promises.readdir(inputFolderPath)
+
+            for (const file of files) {
+                const inputFile = `${inputFolderPath}/${file}`;
+                const outputFile = `${outputFolderPath}/${file}`;
+          
+                await sharp(inputFile)
+                  .resize({ width: 800 }) // Ajusta el tamaño según tus necesidades
+                  .toFile(outputFile);
+              }*/
+
+            //get an image of lower quality
             const imageSize = req.file.size / 1024 //image size in kb
             const percentage = Math.round(300 * 100 / imageSize) // to get an image of 300kb
 
             const filePath = req.file.path
 
             const modifiedImageBuffer = await sharp(filePath)
-            .jpeg({ quality: percentage }) // get a lower quality for the image
-            .toBuffer()
+                .jpeg({ quality: percentage }) // get a lower quality for the image
+                .resize(500)
+                .withMetadata()
+                .toBuffer()
 
-            const dirLQ = path.join('public', 'images', 'studentsPhotos') //LQ=Low Quality
-            const fileNameLQ = 'LQ_' + req.file.filename
+            const dirLQ = path.join('public', 'images', 'studentsPhotosLQ') //LQ=Low Quality
+            const fileNameLQ = req.file.filename
             const filePathLQ = path.join(dirLQ, fileNameLQ)
             
             fs.writeFileSync(filePathLQ, modifiedImageBuffer)
 
             //delete high quality file
-            fs.unlink(req.file.path, (err) => {
+            /*fs.unlink(req.file.path, (err) => {
                 if (err) {
                   console.error('Error al eliminar el archivo:', err);
                 } else {
@@ -300,9 +322,7 @@ const coursesController = {
                 } else {
                     console.log('Archivo renombrado exitosamente.');
                 }
-            })
-
-            */
+            })*/
             
             return res.send("<script>window.location.href = '" + courseUrl + "';</script>");
         }catch(error){
@@ -459,6 +479,7 @@ const coursesController = {
                 validity: req.body.validity,
                 includes_certificate: req.body.includesCertificate ? 1 : 0,
                 associated_forms: associatedFormsQty == 0 ? 0 : 1,
+                pass_grade:req.body.passGrade,
                 enabled:1,
             })
 
@@ -466,14 +487,40 @@ const coursesController = {
             if (associatedFormsQty != 0) {
                 //get created course id
                 const courseId = await coursesQueries.courseId(req.body.courseName)
-                //create associations
-                for (let i = 0; i < associatedForms.length; i++) {
-                    if (associatedForms[i] != 'default') {
-                        await db.Associated_forms.create({
-                            id_forms: courseId,
-                            id_associated_form: associatedForms[i]
-                        })
-                    }   
+                if (req.body.includesCertificate) {
+                    //create associations
+                    for (let i = 0; i < associatedForms.length; i++) {
+                        if (associatedForms[i] != 'default') {
+                            await db.Associated_forms.create({
+                                id_forms: courseId,
+                                id_associated_form: associatedForms[i]
+                            })
+                            //get associated course
+                            const associatedCourseData = await coursesQueries.courseData(associatedForms[i])
+                            //update course
+                            await db.Courses.update(
+                                {
+                                    includes_certificate: 0,
+                                    associated_forms:0
+                                },
+                                {where:{id:associatedForms[i]}}
+                            )
+                            //delete associations
+                            await db.Associated_forms.destroy(
+                                {where:{id_forms:associatedForms[i]}}
+                            )
+                        }   
+                    }
+                }else{
+                    //create associations
+                    for (let i = 0; i < associatedForms.length; i++) {
+                        if (associatedForms[i] != 'default') {
+                            await db.Associated_forms.create({
+                                id_forms:associatedForms[i],
+                                id_associated_form: courseId
+                            })
+                        }   
+                    }
                 }
             }
 
@@ -589,9 +636,14 @@ const coursesController = {
     viewCourses: async(req,res) => {
         try{
 
-            const refLink = 'viewForms'
             const courses = await coursesQueries.allCourses()
-            
+            const refLink = 'viewForms'
+
+            for (let i = 0; i < courses.length; i++) {
+                const associatedForms = await coursesQueries.courseAssociations(courses[i].id)
+                courses[i].associatedForms=associatedForms
+            }
+
             return res.render('courses/viewCourses',{title:'Listado de cursos',courses,refLink})
 
         }catch(error){
@@ -621,6 +673,63 @@ const coursesController = {
               });
 
             return res.render('courses/viewStudents',{title:'Mis alumnos',uniqueSelectList})
+
+        }catch(error){
+            console.log(error)
+            return res.send('Ha ocurrido un error')
+        }
+    },
+    importAllData: async(req,res) => {
+        try{
+
+            /*-----ADD GOOGLE SHEETS DATA------*/            
+            //delete all info from database (This step is provisional, so the stage of seeing the first and last record to add is not eliminated.)
+            await db.Forms_data.destroy({where:{}})
+
+            //Add new data to dataBase
+            const mdbData = await readGoogleSheets.mdbData()
+
+            //find first row to add to database
+            //database data qty
+            const formsData = await db.Forms_data.findAll({raw:true})
+            const firstRowToAdd =  formsData.length + 1 // add one row because data includes titles
+
+            //find last row to add to database
+            const lastRowToAdd = mdbData.length
+
+            //add data to database
+            for (let i = firstRowToAdd; i < lastRowToAdd; i++) {
+                //get the date as string and complete with zeros if necessary
+                const dateString = mdbData[i][0].split(' ')[0]
+                const dateArray = dateString.split('/')
+                const date = new Date( dateArray[2], dateArray[1] - 1, dateArray[0])
+                const dateTimestamp = date.getTime()
+
+                //get student code
+                const courseCode = mdbData[i][3] == '' ? 0 : parseInt(mdbData[i][3])
+                const studentCode = await formsDataQueries.studentCode(courseCode)
+
+                let grade = 0
+                if (!isNaN(parseFloat(mdbData[i][2]))) {
+                    grade = parseFloat(mdbData[i][2]).toFixed(2)
+                }
+
+                await db.Forms_data.create({
+                    date:dateTimestamp,
+                    email:mdbData[i][1],
+                    grade:grade,
+                    last_name:mdbData[i][4],
+                    first_name:mdbData[i][5],
+                    company:mdbData[i][7],
+                    dni:mdbData[i][6] == '' ? 0 : parseInt(mdbData[i][6]),
+                    form_name:mdbData[i][8] == '' || mdbData[i][8] == null ? 'Sin Form' : mdbData[i][8],
+                    course_code:courseCode,
+                    student_code:studentCode
+                })
+            }
+            /*-----END ADD GOOGLE SHEETS DATA------*/
+
+            return res.redirect('/courses/my-courses/' + req.session.userLogged.company)
 
         }catch(error){
             console.log(error)

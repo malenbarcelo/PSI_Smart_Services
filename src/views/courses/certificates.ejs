@@ -5,11 +5,10 @@
 
         <% if (documentTemplate.id_courses == 4 || documentTemplate.id_courses == 5) { %>
             <div class="certDivStudentPhoto">
-                <img src="/images/studentsPhotos/<%= documentData.dni + '_' + documentTemplate.id_courses + '.jpg' %>" class="certStudentPhoto" alt="<%= documentData.last_name + ' ' + documentData.first_name %>">
+                <img src="/images/studentsPhotosLQ/<%= documentData.dni + '_' + documentTemplate.id_courses + '.jpg' %>" class="certStudentPhoto" alt="<%= documentData.last_name + ' ' + documentData.first_name %>">
             </div>
         <% } %>
         
-        <div class="certTriangle"></div>
         <div class="certDivHeader">
             <div class="certDivHeaderLogo">
                 <img src="/images/documentsImages/psiLogo.png" alt="Logo PSI" class="certPsiLogo">
@@ -58,6 +57,7 @@
         </div>
     
         <div class="certDivFooter">
+            <div class="certTriangle"></div>
             <div class="certDivSignature">
                 <img src="/images/documentsImages/<%= documentTemplate.signature1_image %>" alt="Firma1" class="certImgSignature">
             </div>
@@ -67,8 +67,13 @@
                     <img src="/images/documentsImages/<%= documentTemplate.signature2_image %>" alt="Firma2" class="certImgSignature">
                 </div>
             <% } %>
+
+            <% if (documentTemplate.certificate_logo) { %>
+                <div class="certDivFooterLogo">
+                    <img src="/images/documentsImages/<%= documentTemplate.certificate_logo %>" alt="Logo pie de página" class="certFooterLogo <%= documentTemplate.id_courses == 4 || documentTemplate.id_courses == 5 ? 'certDivDrivingFooterLogo' : null %>">
+                </div>
+            <% } %>
             
-            <div class="certDivFooterLogo"><img src="/images/documentsImages/<%= documentTemplate.certificate_logo %>" alt="Logo pie de página" class="certFooterLogo <%= documentTemplate.id_courses == 4 || documentTemplate.id_courses == 5 ? 'certDivDrivingFooterLogo' : null %>"></div>
         </div>
     </div>
 </div>

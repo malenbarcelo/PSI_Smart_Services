@@ -44,9 +44,10 @@ export async function getData(course,company,filter,order,dateFrom,dateUntil,cer
     for (let i = 0; i < data.length; i++) {
 
         var notPassed = 0
+        const passGrade = parseFloat(data[i].pass_grade)/100
 
         for (let j = 0; j < data[i].associatedForms.length; j++) {
-            if (data[i].associatedForms[j].grade < 0.78 || data[i].associatedForms[j].grade == 'NA') {
+            if (data[i].associatedForms[j].grade < passGrade || data[i].associatedForms[j].grade == 'NA') {
                 notPassed += 1
             }
         }
@@ -54,11 +55,11 @@ export async function getData(course,company,filter,order,dateFrom,dateUntil,cer
         let gradeClass = ''
         let checkIcon = '<td class="td1 td3"></td>'
 
-        if (data[i].grade > 0.78 && notPassed == 0) {
+        if (data[i].grade > passGrade && notPassed == 0) {
             gradeClass = 'span1'
             checkIcon = '<td class="td1 td3"><input type="checkbox" name="' + data[i].id + '" class="checkbox1"></td>'
         }else{
-            if (data[i].grade > 0.78 && notPassed > 0) {
+            if (data[i].grade > passGrade && notPassed > 0) {
                 gradeClass = 'span4'
             }else{
                 gradeClass = 'span2'

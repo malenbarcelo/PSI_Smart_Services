@@ -42,6 +42,16 @@
         </div>
 
         <div class="divCourseData">
+            <label for="passGrade" class="validityLabel">Nota de aprobación (%):</label>
+            <input type="text" name="passGrade" class="inputValidity <%= locals.errors && errors.passGrade ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.passGrade : null %>">
+        </div>
+        <div class="divError1">
+            <% if (locals.errors && errors.passGrade) { %>
+                <%= errors.passGrade.msg %>
+            <% } %>
+        </div>
+
+        <div class="divCourseData">
             <label for="validity" class="validityLabel">Validez del certificado (meses):</label>
             <input type="text" name="validity" class="inputValidity <%= locals.errors && errors.validity ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.validity : null %>">
         </div>

@@ -24,6 +24,7 @@ router.get('/view-students/:company',userMiddleware,coursesController.viewStuden
 router.get('/:typeOfDocument/:idFormData',coursesController.viewDocument)
 router.get('/create-template',admMiddleware,coursesController.createTemplate)
 router.post('/create-template',admMiddleware,uploadCertTemplate.fields([{ name: 'logo1', maxCount: 1 }, { name: 'logo2', maxCount: 1 },{ name: 'signature1', maxCount: 1 },{ name: 'signature2', maxCount: 1}]),coursesFormsValidations.documentationTemplate,coursesController.createTemplateProcess)
+router.get('/import-data',admMiddleware,coursesController.importAllData)
 
 module.exports = router
 

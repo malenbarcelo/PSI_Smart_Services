@@ -152,6 +152,8 @@
     display: flex;
     justify-content: center;
     column-gap: 5px;
+    position: relative;
+    height: 105px;
     margin-bottom: 10px;
 }
 
@@ -185,7 +187,8 @@
     border-left: 30px solid #fc6000;
     border-bottom: 30px solid #fc6000;
     position:absolute;
-    top:530px
+    top:57px;
+    right: 813px;
 }
 
 .certDivDrivingFooterLogo{

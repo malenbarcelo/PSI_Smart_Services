@@ -70,10 +70,19 @@ const formsDataQueries = {
         try{
             const courses = await db.Forms_data.findAll({
                 where: {company:company},
-                attributes: [[sequelize.fn('DISTINCT', sequelize.col('form_name')), 'form_name']],
+                attributes: [
+                    [sequelize.fn('DISTINCT', sequelize.col('form_name')), 'form_name']
+                ],
                 order:['form_name'],
                 raw:true,
             })
+
+            for (let i = 0; i < courses.length; i++) {
+                const passGrade = await db.Courses.findOne({
+                    where:{course_name:courses[i].form_name}
+                })
+                courses[i].pass_grade = passGrade.pass_grade
+            }
             return courses
         }catch(error){
             return res.send('Ha ocurrido un error')

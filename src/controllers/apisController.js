@@ -26,7 +26,7 @@ const apisController = {
     try{
       const course = req.params.courseName
       const company = req.params.company
-      
+
       //get course students
       let studentsData = []
       if (req.session.userLogged.id_user_categories == 1) {
@@ -47,6 +47,10 @@ const apisController = {
       //get course associations
       const courseId = await coursesQueries.courseId(course)
       const courseAssociations = await coursesQueries.courseAssociations(courseId)
+
+      //get course data
+      const courseData = await coursesQueries.courseData(courseId)
+
 
       //get course associations names
       for (let i = 0; i < courseAssociations.length; i++) {
@@ -71,16 +75,17 @@ const apisController = {
         courseAssociations[i].data = dataToAssociateFiltered
       }
 
-      //add associated forms to data
+      //add associated forms and pass grade to data
       for (let i = 0; i < newDataArray.length; i++) {
         var dni = newDataArray[i].dni
+        newDataArray[i].pass_grade = courseData.pass_grade
         newDataArray[i].associatedForms = []
         for (let j = 0; j < courseAssociations.length; j++) {
           const formName = courseAssociations[j].courseName
           const formData = courseAssociations[j].data
           var studentData = formData.filter(student => student.dni === dni)
           var grade = studentData.length == 0 ? 'NA' : studentData[0].grade
-          newDataArray[i].associatedForms.push({'formName':formName,'grade':grade })
+          newDataArray[i].associatedForms.push({'formName':formName,'grade':grade })        
         }
       }      
 
@@ -96,7 +101,10 @@ const apisController = {
 
       const course = req.params.courseName
       const company = req.params.company
-      
+
+      const courseId = await coursesQueries.courseId(course)
+      const courseData = await coursesQueries.courseData(courseId)
+
       //get course students
       let studentsData = []
       if (req.session.userLogged.id_user_categories == 1) {
@@ -105,7 +113,7 @@ const apisController = {
         studentsData = await formsDataQueries.studentsDataFiltered(company,course)
       }
 
-      const studentsDataNotPassed = studentsData.filter(data => parseFloat(data.grade) <= 0.78)
+      const studentsDataNotPassed = studentsData.filter(data => parseFloat(data.grade) < parseFloat(courseData.pass_grade)/100)
 
       //add date as string
       const newDataArray = await Promise.all(studentsDataNotPassed.map(async (element) => {
@@ -117,7 +125,6 @@ const apisController = {
       }));
 
       //get course associations
-      const courseId = await coursesQueries.courseId(course)
       const courseAssociations = await coursesQueries.courseAssociations(courseId)
 
       //get course associations names
@@ -165,6 +172,9 @@ const apisController = {
     try{
       const course = req.params.courseName
       const company = req.params.company
+
+      const courseId = await coursesQueries.courseId(course)
+      const courseData = await coursesQueries.courseData(courseId)
       
       //get course students
       let studentsData = []
@@ -174,7 +184,7 @@ const apisController = {
         studentsData = await formsDataQueries.studentsDataFiltered(company,course)
       }
 
-      const studentsDataPassed = studentsData.filter(data => parseFloat(data.grade) > 0.78)
+      const studentsDataPassed = studentsData.filter(data => parseFloat(data.grade) > parseFloat(courseData.pass_grade)/100)
 
       //add date as string
       const newDataArray = await Promise.all(studentsDataPassed.map(async (element) => {
@@ -186,7 +196,6 @@ const apisController = {
       }));
 
       //get course associations
-      const courseId = await coursesQueries.courseId(course)
       const courseAssociations = await coursesQueries.courseAssociations(courseId)
 
       //get course associations names

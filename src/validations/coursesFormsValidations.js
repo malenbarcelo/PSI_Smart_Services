@@ -128,8 +128,10 @@ const coursesFormsValidations = {
             .notEmpty().withMessage('Ingrese el id de prellenado del DNI'),
         body('validity')
             .notEmpty().withMessage('Ingrese la validez del formulario, si el certificado no tiene vencimiento colocar 0')
-            .isNumeric().withMessage('La validez debe ser un número entero (cantidad de meses)')
-        
+            .isNumeric().withMessage('La validez debe ser un número entero (cantidad de meses)'),
+        body('passGrade')
+        .notEmpty().withMessage('Ingrese una nota para la aprobación del curso')
+        .isNumeric().withMessage('La nota deber ser numérica (porcentaje). Utilice el punto (.) como separador de decimales')
     ],
     entryData: [
         body('dni')
