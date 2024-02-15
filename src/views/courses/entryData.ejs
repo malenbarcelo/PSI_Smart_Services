@@ -1,0 +1,41 @@
+<%- include('../partials/head') %>
+
+<div class="div40">
+    <img src="/images/companyLogo.jpg" alt="PSI SmartServices" class="img6">
+</div>
+
+<div>
+    <div class="divTitleEntryData"><h3 class="title1 titleEntryData"><%= course %></h3></div>
+    <form action="/courses/start-course/<%= idCourse %>" enctype="multipart/form-data" method="POST" class="form1">
+
+        <div>
+            <input type="text" name="dni" placeholder="Ingrese su DNI" class="input1 inputEntryData <%= locals.errors && errors.dni ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.dni : null %>">
+            <div class="divError1">
+                <% if (locals.errors && errors.dni) { %>
+                    <%= errors.dni.msg %>
+                <% } %>
+            </div>
+        </div>
+
+        <div>
+            <div class="div42">Ingrese su foto de perfil:</div>
+            <input type="file" name="image" class=" <%= locals.errors && errors.image ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.image : null %>">
+            <div class="divError1">
+                <% if (locals.errors && errors.image) { %>
+                    <%= errors.image.msg %>
+                <% } %>
+            </div>
+        </div>
+
+        <div>
+            <button type="submit" class="button1 btnEntryData">Aceptar</button>
+        </div>    
+    </form>
+</div>
+
+
+
+
+
+
+
