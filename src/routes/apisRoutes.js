@@ -9,4 +9,6 @@ router.get('/students-results-passed/:company/:courseName',userMiddleware,apisCo
 router.get('/students-results-not-passed/:company/:courseName',userMiddleware,apisController.studentsResultsNotPassed)
 router.get('/student-data/:company/:dni',userMiddleware,apisController.studentData)
 
+router.get('/find-image/:dni',apisController.findImage)
+
 module.exports = router

@@ -2,6 +2,7 @@ const db = require('../../database/models')
 const sequelize = require('sequelize')
 const formsDataQueries = require('../functions/formsDataQueries')
 const coursesQueries = require('../functions/coursesQueries')
+const profileImagesQueries = require('../dbQueries/profileImagesQueries')
 const dateFunctions = require('../functions/datesFunctions')
 const { google } = require('googleapis')
 
@@ -237,6 +238,19 @@ const apisController = {
       }
       
       return res.status(200).json(newDataArray)
+    }catch(error){
+      console.log(error)
+      return res.send('Ha ocurrido un error')
+    }
+  },
+  findImage: async(req,res) =>{
+    try{
+
+      const dni = req.params.dni
+      const findImage = await profileImagesQueries.findImage(dni)
+      
+      
+      return res.status(200).json(findImage)
     }catch(error){
       console.log(error)
       return res.send('Ha ocurrido un error')
