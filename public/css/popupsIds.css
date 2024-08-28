@@ -1,0 +1,19 @@
+/*POPUPS*/
+/* entryData.ejs --> uipp
+/* studentsResults.ejs --> arpp
+
+/*-----------------------entryData.ejs-----------------------*/
+/*upload image popup (uipp)*/
+#uippContent{
+    top: 25%;
+    width: 400px;
+    left: calc(50vw - 215px);
+}
+
+/*-----------------------studentsResults.ejs-----------------------*/
+/*associated results popup (arpp)*/
+#arppContent{
+    top: 25%;
+    width: 600px;
+    left: calc(50vw - 180px);
+}

@@ -1,36 +1,53 @@
 <%- include('../partials/head') %>
 
-<div class="div40">
-    <img src="/images/companyLogo.jpg" alt="PSI SmartServices" class="img6">
+<div class="notVisible" id="idCourse"><%= idCourse %></div>
+
+<div class="divEntryData">
+
+    <img src="/images/companyLogo.jpg" alt="PSI SmartServices" class="entryDataImage">
+    <div class="entryDataTitle mtxxxl mbm"><%= course %></div>
+    <div class="entryDataSubtitle mbm">Ingrese su DNI</div>
+
+    <div class="divInputsColumn mbxl">
+        <div class="divInput">
+            <input type="text" id="dni" name="dni" placeholder="DNI" class="input im ipm" autocomplete="off">
+            <div class="isError" id="dniError">Debe completar el DNI</div>
+        </div>
+    </div>
+
+    <div class="divButtonsRow">
+        <div class="btn1 bm" id="entryDataAccept">Aceptar</div>
+    </div>
+
 </div>
 
-<div id="entryData">
-    <div class="divTitleEntryData"><h3 class="title1 titleEntryData"><%= course %></h3></div>
-    <form action="/courses/start-course/<%= idCourse %>" enctype="multipart/form-data" method="POST" class="form1">
+<!----------upload image popup (uipp)---------->
+<div class="popup" id="uipp">
+    
+    <div class="popupContent" id="uippContent">
 
-        <div>
-            <input type="text" id="dni" name="dni" placeholder="Ingrese su DNI" class="input1 inputEntryData <%= locals.errors && errors.dni ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.dni : null %>">
-            <div class="divError1">
-                <% if (locals.errors && errors.dni) { %>
-                    <%= errors.dni.msg %>
-                <% } %>
-            </div>
+        <div class="popupIcons">
+            <div class="popupIcon1"><i class="fa-solid fa-user"></i></div>
+            <div class="popupClose1" id="uippClose"><i class="fa-solid fa-rectangle-xmark popupCloseIcon"></i></div>
         </div>
 
-        <div id="uploadImage">
-            <div class="div42">Ingrese su foto de perfil:</div>
-            <input type="file" name="image" class=" <%= locals.errors && errors.image ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.image : null %>">
-            <div class="divError1">
-                <% if (locals.errors && errors.image) { %>
-                    <%= errors.image.msg %>
-                <% } %>
+        <div class="popupSubtitle1 mbl">Debe ingresar una foto de perfil</div>
+        
+        <form action="/apis/upload-image/:dni" method="POST" enctype="multipart/form-data">
+            <div class="divInputsColumn entryDataUpload">
+                <div clss="divInput">
+                    <input type="file" name="image" id="image" class="">
+                </div>
             </div>
-        </div>
+            <div class="isError" id="uippError"></div>
+            
+            <div class="divButtonsRow mtl">
+                <button type="submit" class="btn1 bm" id="uippAccept">Continuar</button>
+            </div>
+        </form>
 
-        <div>
-            <button type="submit" id="acceptBtn" class="button1 btnEntryData">Aceptar</button>
-        </div>    
-    </form>
+    </div>
+
 </div>
 
 <script type="module" src="/js/entryData/entryData.js"></script>

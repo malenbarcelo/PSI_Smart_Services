@@ -56,5 +56,18 @@ module.exports = (sequelize, DataTypes) => {
    }
    const Form_data = sequelize.define(alias, cols, config)
 
+   Form_data.associate = (models) => {
+      Form_data.belongsTo(models.Courses, {
+        as: 'forms_data_courses',
+        foreignKey: 'form_name',
+        targetKey: 'course_name', 
+      });
+      Form_data.hasMany(models.Profile_images, {
+         as: 'student_image',
+         foreignKey: 'dni',
+         sourceKey: 'dni', 
+       });
+    };
+
    return Form_data
 }

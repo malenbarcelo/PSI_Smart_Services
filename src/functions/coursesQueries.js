@@ -43,11 +43,86 @@ const formsDataQueries = {
         try{
             const courses = await db.Courses.findAll({
                 order:['course_name'],
-                attributes:[['course_name','form_name'],['pass_grade','pass_grade']],
-                raw:true,
+                include: [
+                    {
+                        association: 'forms_data',
+                        order: [['date', 'DESC']]
+                    },
+                ],
+                attributes:[['id','courseId'],['course_name','form_name'],['pass_grade','pass_grade']],
+                nest:true
             })
             return courses
         }catch(error){
+            console.log(error)
+            return res.send('Ha ocurrido un error')
+        }
+    },
+    courseAndAssociations: async(idCourses) => {
+        try{
+            const courses = await db.Courses.findAll({
+                order:['course_name'],
+                include: [
+                    {
+                        association: 'forms_data',
+                        order: [['date', 'DESC']],
+                        include: [{association:'student_image'}]
+                    },
+                ],
+                where:{
+                    id:idCourses
+                },
+                attributes:[['id','courseId'],['course_name','form_name'],['pass_grade','pass_grade'],['includes_certificate','includes_certificate']],
+                nest:true
+            })
+            return courses
+        }catch(error){
+            console.log(error)
+            return res.send('Ha ocurrido un error')
+        }
+    },
+    coursesFiltered: async(company) => {
+        try{
+            const courses = await db.Courses.findAll({
+                order:['course_name'],
+                include: [
+                    {
+                        association: 'forms_data',
+                        order: [['date', 'DESC']],
+                        where: { company: company }
+                    },
+                ],
+                attributes:[['id','courseId'],['course_name','form_name'],['pass_grade','pass_grade']],
+                nest:true
+            })
+            return courses
+        }catch(error){
+            console.log(error)
+            return res.send('Ha ocurrido un error')
+        }
+    },
+    courseAndAssociationsFiltered: async(company,idCourses) => {
+        try{
+            const courses = await db.Courses.findAll({
+                order:['course_name'],
+                include: [
+                    {
+                        association: 'forms_data',
+                        order: [['date', 'DESC']],
+                        where: { 
+                            company: company
+                         }
+                    },
+                ],
+                where:{
+                    id:idCourses
+                },
+                attributes:[['id','courseId'],['course_name','form_name'],['pass_grade','pass_grade'],['includes_certificate','includes_certificate']],
+                nest:true
+            })
+            return courses
+        }catch(error){
+            console.log(error)
             return res.send('Ha ocurrido un error')
         }
     },

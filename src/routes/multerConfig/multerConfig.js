@@ -3,13 +3,13 @@ const multer = require('multer')
 
 
 //Multer config
-const studentPhoto = multer.diskStorage({
+const studentPhoto = multer.diskStorage({  
     destination: function (req, file, cb) {
       cb(null, path.resolve('public/images/studentsPhotos'))
     },
     filename: function (req, file, cb) {
       const fileExtension = path.extname(file.originalname)   
-      const fileName = req.body.dni + '_' + req.params.idCourse      
+      const fileName = req.body.dni
       cb(null, fileName + fileExtension)
     }
 })

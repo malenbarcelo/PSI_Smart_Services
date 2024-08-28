@@ -47,6 +47,14 @@ module.exports = (sequelize, DataTypes) => {
    }
    const Course = sequelize.define(alias, cols, config)
 
+   Course.associate = (models) => {
+      Course.hasMany(models.Forms_data, {
+         as: 'forms_data',
+         foreignKey: 'form_name',
+         sourceKey: 'course_name'
+      })
+   }
+
    
    return Course
 }

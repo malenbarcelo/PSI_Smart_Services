@@ -6,7 +6,6 @@ const coursesQueries = require('../functions/coursesQueries')
 const docTemplatesQueries = require('../functions/docTemplatesQueries')
 const datesFunctions = require('../functions/datesFunctions')
 const profileImagesQueries = require('../functions/profileImagesQueries')
-const sequelize = require('sequelize')
 const puppeteer = require('puppeteer')
 const archiver = require('archiver')
 const fetch = require('cross-fetch')
@@ -151,66 +150,72 @@ const coursesController = {
     },
     myCourses: async(req,res) => {
         try{
-            //get courses to show            
-            let coursesData = []
-            let company = ''
-            let students = ''            
 
-            if (req.session.userLogged.id_user_categories == 1){
-                coursesData = await coursesQueries.courses() //all courses
-
+            const company = req.session.userLogged.company
+            
+            //get coursesData
+            let coursesData
+            
+            if (req.session.userLogged.id_user_categories == 1) {
+                coursesData = await coursesQueries.courses()
             }else{
-                company = req.session.userLogged.company
-                coursesData = await formsDataQueries.coursesFiltered(company)
+                coursesData = await coursesQueries.coursesFiltered(company)
             }
 
-            //add data to coursesData
-            for (let i = 0; i < coursesData.length; i++) {
-                const course = coursesData[i].form_name
-                const passGrade = parseFloat(coursesData[i].pass_grade)/100
-                
-                if (req.session.userLogged.id_user_categories == 1){
-                    students = await formsDataQueries.studentsQty(course)
-                }else{
-                    students = await formsDataQueries.studentsQtyFiltered(company,course)
-                }
+            //get plain data
+            coursesData = coursesData.map(course => course.get({ plain: true }))
 
-                let passed = 0
-                let notPassed = 0
-                
-                for (let j = 0; j < students.length; j++) {
-                    let studentLastResult = ''
-                    if (req.session.userLogged.id_user_categories == 1){
-                        studentLastResult = await formsDataQueries.studentLastResult(course,students[j].dni)
-                    }else{
-                        studentLastResult = await formsDataQueries.studentLastResultFiltered(company,course,students[j].dni)
-                    }
+            //transform data
+            coursesData = coursesData.map(course => ({ ...course, pass_grade: parseFloat(course.pass_grade,2)/100}))
+
+            //get unique companies
+            coursesData = coursesData.map(course => {
+                const uniqueCompanies = [...new Set(course.forms_data.map(fd => fd.company))]
+              
+                return {
+                  ...course,
+                  companiesQty: uniqueCompanies.length
+                }
+              })
+
+            coursesData.forEach(course => {
+                course.forms_data = course.forms_data.map(fd => ({ ...fd, grade: parseFloat(fd.grade,2)}))
+            })
+
+            //get unique students
+            coursesData.forEach(course => {
+
+                //unique students
+                const filteredResults = course.forms_data.reduce((acc, current) => {
+                    const existingStudent = acc.find(student => student.dni === current.dni)
                     
-                    if (studentLastResult.grade >= passGrade) {
-                        passed += 1
-                    }else{
-                        notPassed += 1
-                    }                    
-                }
+                    if (!existingStudent || new Date(existingStudent.date) < new Date(current.date)) {
+                      if (existingStudent) {
+                        acc = acc.filter(student => student.dni !== current.dni)
+                      }
+                      acc.push(current)
+                    }
+                  
+                    return acc
+                  }, [])
 
-                coursesData[i].studentsQty = students.length
-                coursesData[i].passed = passed
-                coursesData[i].passedPercentage = students.length == 0 ? 0 : (passed / students.length * 100).toFixed(2)
-                coursesData[i].notPassed = notPassed
-                coursesData[i].notPassedPercentage = students.length == 0 ? 0 : (notPassed / students.length * 100).toFixed(2)
+                  course.students_results = filteredResults
+            })
+            //add aditional data
+            coursesData.forEach(course => {
 
-                //if user logged is administrator, add company qty
-                if (req.session.userLogged.id_user_categories == 1){
-                    const companiesQty = await formsDataQueries.companiesFiltered(course)
-                    coursesData[i].companiesQty = companiesQty.length
-                }
-
-                //add courseId
-                const courseId = await coursesQueries.courseId(course)
-
-                coursesData[i].courseId = courseId
-            }
-
+                const studentsQty = course.students_results.length
+                const passed = course.students_results.filter(s => s.grade >= course.pass_grade).length
+                const passedPercentege = studentsQty == 0 ? 0 : Number((passed / studentsQty * 100).toFixed(2))                
+                
+                course.studentsQty = studentsQty
+                course.passed = passed
+                course.passedPercentage = passedPercentege
+                course.notPassed = studentsQty - passed
+                course.notPassedPercentage = Number((100 - passedPercentege).toFixed(2))
+                
+            })
+            
             return res.render('courses/myCourses',{title:'Mis cursos',coursesData})
 
         }catch(error){
@@ -221,110 +226,92 @@ const coursesController = {
     openForm: async(req,res) => {
         try{
 
-            const idCourse = req.params.idCourse
-            const course = await coursesQueries.courseName(idCourse)
-
-            const resultValidation = validationResult(req)
-
-            if (resultValidation.errors.length > 0){
-                
-                return res.render('courses/entryData',{
-                    errors:resultValidation.mapped(),
-                    oldData: req.body,
-                    title:'Iniciar cuestionario',
-                    course:course,
-                    idCourse
-                })
-            }
-
-            const courseData = await coursesQueries.courseData(idCourse)
-
+            const courseData = await coursesQueries.courseData(req.body.idCourse)
             const courseUrl = courseData.url + '?usp=pp_url&entry.' + courseData.dni_entry_id + '=' + req.body.dni
 
-            const image = await db.Profile_images.findOne({
-                where:{
-                    dni:req.body.dni,
-                    id_courses: req.params.idCourse
-                },
-                raw:true
-            })
+            console.log(courseUrl)
 
-            if (!image) {
-                await db.Profile_images.create({
-                    dni: req.body.dni,
-                    id_courses: req.params.idCourse,
-                    image: req.file.filename
-                })
-            }else{
-                await db.Profile_images.update(
-                    {
-                      dni: req.body.dni,
-                      id_courses: req.params.idCourse,
-                      image: req.file.filename
-                    },
-                    {
-                      where: { id: image.id }
-                    }
-                  )
-            }
+            // const image = await db.Profile_images.findOne({
+            //     where:{
+            //         dni:req.body.dni
+            //     },
+            //     raw:true
+            // })
 
-            const inputFolderPath = path.join('public', 'images', 'studentsPhotos')
-            const outputFolderPath = path.join('public', 'images', 'studentsPhotosLQ')
+            // if (!image) {
+            //     await db.Profile_images.create({
+            //         dni: req.body.dni,
+            //         image: req.file.filename
+            //     })
+            // }else{
+            //     await db.Profile_images.update(
+            //         {
+            //           dni: req.body.dni,
+            //           image: req.file.filename
+            //         },
+            //         {
+            //           where: { id: image.id }
+            //         }
+            //       )
+            // }
 
-            /*const files = await fs.promises.readdir(inputFolderPath)
+            // const inputFolderPath = path.join('public', 'images', 'studentsPhotos')
+            // const outputFolderPath = path.join('public', 'images', 'studentsPhotosLQ')
 
-            for (const file of files) {
-                const inputFile = `${inputFolderPath}/${file}`;
-                const outputFile = `${outputFolderPath}/${file}`;
+            // /*const files = await fs.promises.readdir(inputFolderPath)
+
+            // for (const file of files) {
+            //     const inputFile = `${inputFolderPath}/${file}`;
+            //     const outputFile = `${outputFolderPath}/${file}`;
           
-                await sharp(inputFile)
-                  .resize({ width: 800 }) // Ajusta el tamaño según tus necesidades
-                  .toFile(outputFile);
-              }*/
+            //     await sharp(inputFile)
+            //       .resize({ width: 800 }) // Ajusta el tamaño según tus necesidades
+            //       .toFile(outputFile);
+            //   }*/
 
-            //get an image of lower quality
-            const imageSize = req.file.size / 1024 //image size in kb
-            const percentage = Math.round(300 * 100 / imageSize) // to get an image of 300kb
+            // //get an image of lower quality
+            // const imageSize = req.file.size / 1024 //image size in kb
+            // const percentage = Math.round(300 * 100 / imageSize) // to get an image of 300kb
 
-            const filePath = req.file.path
+            // const filePath = req.file.path
 
-            const modifiedImageBuffer = await sharp(filePath)
-                .jpeg({ quality: percentage }) // get a lower quality for the image
-                .resize(500)
-                .withMetadata()
-                .toBuffer()
+            // const modifiedImageBuffer = await sharp(filePath)
+            //     .jpeg({ quality: percentage }) // get a lower quality for the image
+            //     .resize(500)
+            //     .withMetadata()
+            //     .toBuffer()
 
-            const dirLQ = path.join('public', 'images', 'studentsPhotosLQ') //LQ=Low Quality
-            const fileNameLQ = req.file.filename
-            const filePathLQ = path.join(dirLQ, fileNameLQ)
+            // const dirLQ = path.join('public', 'images', 'studentsPhotosLQ') //LQ=Low Quality
+            // const fileNameLQ = req.file.filename
+            // const filePathLQ = path.join(dirLQ, fileNameLQ)
             
-            fs.writeFileSync(filePathLQ, modifiedImageBuffer)
+            // fs.writeFileSync(filePathLQ, modifiedImageBuffer)
 
-            //delete high quality file
-            /*fs.unlink(req.file.path, (err) => {
-                if (err) {
-                  console.error('Error al eliminar el archivo:', err);
-                } else {
-                  console.log('Archivo eliminado exitosamente')
-                }
-              })
+            // //delete high quality file
+            // /*fs.unlink(req.file.path, (err) => {
+            //     if (err) {
+            //       console.error('Error al eliminar el archivo:', err);
+            //     } else {
+            //       console.log('Archivo eliminado exitosamente')
+            //     }
+            //   })
 
-            //rename low quality file
-            const oldName = fileNameLQ;
-            const newName = req.file.filename;
+            // //rename low quality file
+            // const oldName = fileNameLQ;
+            // const newName = req.file.filename;
 
-            const oldPath = path.join(dirLQ, oldName)
-            const newPath = path.join(dirLQ, newName)
+            // const oldPath = path.join(dirLQ, oldName)
+            // const newPath = path.join(dirLQ, newName)
 
-            fs.rename(oldPath, newPath, (err) => {
-                if (err) {
-                    console.log('Error al renombrar el archivo.');
-                } else {
-                    console.log('Archivo renombrado exitosamente.');
-                }
-            })*/
+            // fs.rename(oldPath, newPath, (err) => {
+            //     if (err) {
+            //         console.log('Error al renombrar el archivo.');
+            //     } else {
+            //         console.log('Archivo renombrado exitosamente.');
+            //     }
+            // })*/
             
-            return res.send("<script>window.location.href = '" + courseUrl + "';</script>");
+            return res.send("<script>window.location.href = '" + courseUrl + "';</script>")
         }catch(error){
             console.log(error)
             return res.send('Ha ocurrido un error')

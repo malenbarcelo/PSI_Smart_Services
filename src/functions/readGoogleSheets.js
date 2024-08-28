@@ -12,7 +12,7 @@ const readMDBSheet = {
 
         const sheets = google.sheets({ version: 'v4', auth });
         const spreadsheetId = '11QFK7UFuwY6GQnScu5ds7B0icuIuH-5qUW_6pJyrFlg';
-        const range = 'MDB!A:J';
+        const range = 'MDB!A:K';
 
         try{
             const mdbData = await sheets.spreadsheets.values.get({

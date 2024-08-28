@@ -703,10 +703,6 @@ accent-color: black
     margin-bottom: 6px;
 }
 
-.notVisible{
-    display: none;
-}
-
 .visible{
     display: block;
 }
@@ -863,11 +859,6 @@ accent-color: black
     width: 250px;
 }
 
-.titleEntryData{
-    margin-top: 50px;
-    margin-bottom: 50px;
-}
-
 .underlined{
     text-decoration: underline;
     font-weight: bold;
@@ -926,17 +917,11 @@ accent-color: black
     .title2{
         font-size: 13px;
     }
-    .titleEntryData{
-        font-size: 15px;
-    }
     .img6{
         height: 30px;
     }
 
-    .divTitleEntryData{
-        width: 80%;
-        margin: auto;
-    }
+    
 
 
 }

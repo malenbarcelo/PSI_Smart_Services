@@ -1,9 +1,13 @@
 const db = require('../../database/models')
 const sequelize = require('sequelize')
 const formsDataQueries = require('../functions/formsDataQueries')
+const associatedFormsQueries = require('../dbQueries/associatedFormsQueries')
 const coursesQueries = require('../functions/coursesQueries')
 const profileImagesQueries = require('../dbQueries/profileImagesQueries')
 const dateFunctions = require('../functions/datesFunctions')
+const path = require('path')
+const sharp = require('sharp')
+const fs = require('fs')
 const { google } = require('googleapis')
 
 const apisController = {
@@ -23,7 +27,126 @@ const apisController = {
       return res.send('Ha ocurrido un error')
     }
   },
-  studentsResults: async(req,res) =>{
+  studentsResults: async(req,res) => {
+    try{
+
+        const company = req.session.userLogged.company
+        const courseName = req.params.courseName
+        let coursesToGet = []
+
+        //get associated forms
+        const courseId = await coursesQueries.courseId(courseName)
+        const courseAssociations = await coursesQueries.courseAssociations(courseId)
+
+        //findout if there are intermediate associated forms
+        let findAssociatedCourse = []
+        let otherAssociations = []
+        if (courseAssociations.length == 0) {
+          findAssociatedCourse = await associatedFormsQueries.findAssociatedForm(courseId)
+          if (findAssociatedCourse.length > 0) {
+            otherAssociations = await coursesQueries.courseAssociations(findAssociatedCourse[0].id_forms)            
+          }
+        }
+
+        //complete courses to get
+        coursesToGet.push(courseId)
+        courseAssociations.forEach(element => {
+          coursesToGet.push(element.id_associated_form)
+        })
+        if (findAssociatedCourse.length > 0) {
+          coursesToGet.push(findAssociatedCourse[0].id_forms)
+          otherAssociations.forEach(element => {
+            if (!coursesToGet.includes(element.id_associated_form)) {
+              coursesToGet.push(element.id_associated_form)
+            }
+          })          
+        }
+
+        coursesToGet = coursesToGet.sort((a, b) => b - a)
+        
+        //get coursesData
+        let coursesData
+        
+        if (req.session.userLogged.id_user_categories == 1) {
+            coursesData = await coursesQueries.courseAndAssociations(coursesToGet)
+        }else{
+            coursesData = await coursesQueries.courseAndAssociationsFiltered(company,coursesToGet)
+        }
+
+        //get plain data
+        coursesData = coursesData.map(course => course.get({ plain: true }))
+
+        //transform data
+        coursesData = coursesData.map(course => ({ ...course, pass_grade: parseFloat(course.pass_grade,2)/100}))
+
+        //add float grade to forms_data
+        coursesData.forEach(course => {
+            course.forms_data = course.forms_data.map(fd => ({ ...fd, grade: parseFloat(fd.grade,2)}))
+        })
+
+        //get unique students and add results array
+        coursesData.forEach(course => {
+
+            //unique students
+            const filteredResults = course.forms_data.reduce((acc, current) => {
+                const existingStudent = acc.find(student => student.dni === current.dni)
+                
+                if (!existingStudent || new Date(existingStudent.date) < new Date(current.date)) {
+                  if (existingStudent) {
+                    acc = acc.filter(student => student.dni !== current.dni)
+                  }
+                  acc.push(current)
+                }
+              
+                return acc
+              }, [])
+
+              course.students_results = filteredResults
+        })
+
+        //add course type
+        coursesData.forEach(element => {
+          if (element.form_name == courseName) {
+            element.type = 'course'
+          }else{
+            element.type = 'association'
+          }
+        })
+
+        //add aditional data      
+        coursesData.forEach(cd => {
+          const passGrade = cd.pass_grade
+          const includesCertificate = cd.includes_certificate
+          cd.students_results = cd.students_results.map(sr => ({
+            ...sr,
+            passGrade:passGrade,
+            passed: sr.grade >= passGrade ? 1 : 0,
+            includesCertificate: includesCertificate
+          }))
+        })
+
+        //split data
+        let studentsResults = coursesData.filter(c => c.type == 'course')[0].students_results
+        let associationsStudentsResults = coursesData.filter(c => c.type != 'course')
+
+        //add associations data
+        studentsResults.forEach(sr => {
+          const dni = sr.dni
+          sr.associatedResults = []
+          associationsStudentsResults.forEach(asr => {
+            const filteredResults = asr.students_results.filter(student => student.dni == dni)
+            sr.associatedResults.push(filteredResults[0])
+          })
+        })
+
+        return res.status(200).json(studentsResults)
+
+    }catch(error){
+        console.log(error)
+        return res.send('Ha ocurrido un error')
+    }
+  },
+  studentsResults2: async(req,res) =>{
     try{
       const course = req.params.courseName
       const company = req.params.company
@@ -256,6 +379,54 @@ const apisController = {
       return res.send('Ha ocurrido un error')
     }
   },
+  courseData: async(req,res) =>{
+    try{
+
+      const idCourse = req.params.idCourse
+      const courseData = await coursesQueries.courseData(idCourse)
+      
+      
+      return res.status(200).json(courseData)
+    }catch(error){
+      console.log(error)
+      return res.send('Ha ocurrido un error')
+    }
+  },
+  uploadImage: async(req,res) => {
+    try{
+        
+        const fileName = req.file.filename
+        const dni = req.body.dni
+        
+        //get an image of lower quality
+        const imageSize = req.file.size / 1024 //image size in kb
+        //const percentage = Math.round(300 * 100 / imageSize)
+        const percentage = Math.min(100, Math.max(1, Math.round(300 * 100 / imageSize))) // to get an image of 300kb
+
+        const filePath = req.file.path
+
+        const modifiedImageBuffer = await sharp(filePath)
+            .jpeg({ quality: percentage }) // get a lower quality for the image
+            .resize(500)
+            .withMetadata()
+            .toBuffer()
+
+        const dirLQ = path.join('public', 'images', 'studentsPhotosLQ') //LQ=Low Quality
+        const fileNameLQ = req.file.filename
+        const filePathLQ = path.join(dirLQ, fileNameLQ)
+        
+        fs.writeFileSync(filePathLQ, modifiedImageBuffer)
+
+        //save data
+        await profileImagesQueries.create(dni,fileName)
+        
+        return res.status(200).json()
+
+    }catch(error){
+        console.log(error)
+        return res.send('Ha ocurrido un error')
+    }
+},
 }
 module.exports = apisController
 

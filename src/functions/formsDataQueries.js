@@ -1,8 +1,40 @@
 const db = require('../../database/models')
 const datesFunctions = require('../functions/datesFunctions')
 const sequelize = require('sequelize')
+const { Op, literal } = require('sequelize')
 
 const formsDataQueries = {
+    courseData: async(courseId) => {
+        try{
+            const allData = await db.Forms_data.findAll({
+                include: [{
+                    association: 'forms_data_courses',
+                    where: {
+                        id: courseId
+                    },
+                }],
+                where: {
+                    date: {
+                        [Op.in]: sequelize.literal(`(
+                            SELECT MAX(date)
+                            FROM Forms_data AS fd
+                            WHERE fd.dni = Forms_data.dni
+                        )`)
+                    }
+                },
+                order:[['last_name','DESC']],
+                raw:true,
+                nest:true
+            })
+            return allData
+        }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },
+
+
+
+
     allCourses: async() => {
         try{
             const courses = await db.Forms_data.findAll({

@@ -1,0 +1,142 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/userLogged') %>
+
+<div class="srDivBody">
+    <h3 class="srTitle1" id="course"><%= course %></h3>
+
+    <h3 class="srTitle1" id="formTitle">Resultados del formulario (último año)</h3>
+
+    <% if (userLogged.id_user_categories == 1) { %>
+        <div class="srDivCompanies">
+            <select name="" id="srSelectCompany" class="srInput1">
+                <option value="allCompanies" selected>--Todas las instituciones--</option>
+                <% companies.forEach(company => { %>
+                    <% if (company.company_name != 'PSI') { %>
+                        <option value="<%= company.company %>"><%= company.company %></option>
+                    <% } %>
+                <% }) %>
+            </select>
+        </div>
+    <% } %>
+
+    <div class="srInputsDate">
+        
+        <div class="srDivInputDate">
+            <label for="dateFrom" class="srLabelDate">Desde</label>
+            <input type="date" name="dateFrom" class="srInput1 srInputDate" id="dateFrom"><br>            
+        </div>
+        
+        <div class="srDivInputDate">
+            <label for="dateUntill" class="srLabelDate">Hasta</label>
+            <input type="date" name="dateUntill" class="srInput1 srInputDate" id="dateUntil">
+        </div>
+        <i class="fa-solid fa-filter srFilterDate" id="acceptBtn"></i>
+        <i class="fa-solid fa-filter-circle-xmark srFilterDate" id="srCancelFilterBtn"></i>        
+
+    </div>
+
+    <div class="srDivErrorDate" id="divError"></div>
+    
+
+    <!---<div class="div45">
+        <i class="fa-solid fa-triangle-exclamation"></i> Se muestran datos del último año. Si desea ver datos anteriores o períodos más acotados debe utilizar los <span class="span3" id="dateFilter">Filtros <i class="fa-solid fa-filter"></i></span>
+
+        <div class="div46 notVisible" id="divDateFilter">
+            <div class="div47"><b>Filtrar por fecha</b></div>
+            <label for="dateFrom" class="label2">Desde</label>
+            <input type="date" name="dateFrom" class="input8" id="dateFrom"><br>
+            <label for="dateUntill" class="label2">Hasta</label>
+            <input type="date" name="dateUntill" class="input8" id="dateUntil">
+            <div class="div48" id="acceptBtn">Aceptar</div>
+            <div class="divError1 divError3" id="divError"></div>
+        </div>
+    </div>--->
+
+    
+    
+    <form action="/courses/students-results/<%= userLogged.company %>/<%= idCourse %>" method="POST" class="form1">
+
+        <div class="divFlex8">            
+
+            <div class="srDivFilterResults">
+                <div class="srFilterResults underlined" id="viewAllData">TODOS LOS RESULTADOS</i></div>
+                <div class="srFilterResults" id="viewPassed">APROBADOS</i></div>
+                <div class="srFilterResults" id="viewNotPassed">DESAPROBADOS</i></div>
+            </div>
+                
+            <div class="srDivPrint <%= courseData.includes_certificate == 0 ? 'srDivPrintNotVisible' : null %>">
+                <div class="divFlex16 <%= locals.errors && errors.credentials ? 'isInvalid' : null %>" id="divCredentials">
+                    <input type="checkbox" name="certificates" id="certificates" class="checkbox2" <%= locals.oldData && oldData.certificates ? 'checked' : null %>>
+                    <label for="credentials" class="srLabelPrint">Certificados</label>
+                </div>
+                <div class="divFlex16 <%= locals.errors && errors.credentials ? 'isInvalid' : null %>" id="divCertificates">
+                    <input type="checkbox" name="credentials" id="credentials" class="checkbox2" <%= locals.oldData && oldData.credentials ? 'checked' : null %>>
+                    <label for="credentials" class="srLabelPrint">Credenciales</label>
+                </div>
+                <div class="divFlex11" id="downloadSelected">
+                    <div class="div39"><i class="fa-solid fa-download"></i></div>
+                    <button type="submit" class="srDownload">Descargar</button>
+                </div>
+            </div>
+                
+            <div class="srDivErrors">
+                <div class="srDivError <%= locals.errors && errors.credentials ? 'visible' : 'notVisible' %>" id="error1">
+                    <% if (locals.errors && errors.credentials) { %>
+                        <%= errors.credentials.msg %>
+                    <% } %>
+                </div>
+                <div class="srDivError <%= locals.errors && errors.selectAll ? 'visible' : 'notVisible' %>" id="error2">
+                    <% if (locals.errors && errors.selectAll) { %>
+                        <%= errors.selectAll.msg %>
+                    <% } %>
+                </div>
+                <div class="srDivError <%= locals.errors && errors.certificateTemplate ? 'visible' : 'notVisible' %>" id="error2">
+                    <% if (locals.errors && errors.certificateTemplate) { %>
+                        <%= errors.certificateTemplate.msg %>
+                    <% } %>
+                </div>
+                <div class="srDivError <%= locals.errors && errors.credentialTemplate ? 'visible' : 'notVisible' %>" id="error2">
+                    <% if (locals.errors && errors.credentialTemplate) { %>
+                        <%= errors.credentialTemplate.msg %>
+                    <% } %>
+                </div>
+            </div>
+            
+            
+            <div id="tableStudentsResults">
+                <table class="srTable">
+                    <thead>
+                        <tr>
+                            <th class="srTableTitle1 relativePosition topLeftBorderRadius">
+                                Fecha
+                                <i class="fa-solid fa-arrow-down-long srOrderDate notVisible" id="orderDateAsc"></i>
+                                <i class="fa-solid fa-arrow-up srOrderDate"  id="orderDateDesc"></i>
+                            </th>
+                            <th class="srTableTitle2">Empresa</th>
+                            <th class="srTableTitle3">DNI</th>
+                            <th class="srTableTitle2 relativePosition">
+                                Apellido y nombre
+                                <i class="fa-solid fa-arrow-down-long srOrderName notVisible" id="orderNameAsc"></i>
+                                <i class="fa-solid fa-arrow-up srOrderName"  id="orderNameDesc"></i></th>
+                            <th class="srTableTitle2">Email</th>
+                            <th class="srTableTitle3">Nota</th>
+                            <th class="srTableTitle4 <%= locals.errors && errors.selectAll ? 'isInvalid2' : null %> <%= courseData.includes_certificate == 0 ? 'notVisible' : null %>" id="thSelectAll"><input type="checkbox" name="selectAll" id="selectAll" class="checkbox2"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableRows"></tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<script type="module" src="/js/studentsResults.js"></script>
+
+
+
+
+
+
+

@@ -1,31 +1,70 @@
 
 import { dominio } from "../dominio.js"
+import { closePopupsEventListeners,isInvalid,isValid,acceptWithEnter } from "../generalFunctions.js"
 
 window.addEventListener('load',async()=>{
 
-    dni.addEventListener("change",async(e)=>{
-        if (dni.value != '') {
+    let findImage
+    let courseData    
 
-            const findImage = await (await fetch(dominio + 'apis/find-image/' + dni.value)).json()
+    //close popups
+    const closePopups = [uippClose]
+    closePopupsEventListeners(closePopups)
 
+    //entryData
+    entryDataAccept.addEventListener("click",async(e)=>{
+        //validations
+        if (dni.value == '') {
+            dniError.style.display = 'block'
+            isInvalid([dni])
+        }else{
+            dniError.style.display = 'none'
+            isValid([dni])
+            findImage = await (await fetch(dominio + 'apis/find-image/' + dni.value)).json()
+            courseData = await (await fetch(dominio + 'apis/course-data/' + idCourse.innerText)).json()
             if (findImage == null) {
-                uploadImage.style.display = 'block'                
+                uipp.style.display = 'block'
+            }else{                
+                window.location.href = courseData.url + '?usp=pp_url&entry.' + courseData.dni_entry_id + '=' + dni.value
+            }            
+        }
+    })
+    
+    acceptWithEnter(dni,entryDataAccept)
+
+    //upload image accept
+    uippAccept.addEventListener("click",async(e)=>{
+
+        e.preventDefault()
+
+        const file = image.files[0]
+        if (!file) {
+            uippError.innerText = 'Debe ingresar una imagen'
+            uippError.style.display = 'block'
+            
+        }else{
+            const fileName = file.name
+            const fileExtension = fileName.split('.').pop()
+            
+            if (fileExtension != 'jpg' && fileExtension != 'png') {
+                uippError.innerText = 'Las extensiones permitidas son ".jpg" y ".png"'
+                uippError.style.display = 'block'
             }else{
-                uploadImage.style.display = 'none'
+                const formData = new FormData()
+                formData.append('image', file)
+                formData.append('dni', dni.value)
+                formData.append('idCourse', idCourse.innerText)                
+                    
+                const response = await fetch(dominio + 'apis/upload-image/' + dni.value, {
+                    method: 'POST',
+                    body: formData
+                })
+
+                window.location.href = courseData.url + '?usp=pp_url&entry.' + courseData.dni_entry_id + '=' + dni.value
+                
             }
         }
         
     })
-
-    //acceptBtn
-    acceptBtn.addEventListener("click",async(e)=>{
-        e.preventDefault()
-        if (condition) {
-            
-        }
-        console.log('hola')
-
-    })
-
 
 })

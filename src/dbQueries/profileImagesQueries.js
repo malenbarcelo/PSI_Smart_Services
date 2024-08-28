@@ -10,6 +10,12 @@ const profileImagesQueries = {
             }
         })
         return findImage
+    },
+    create: async(dni,fileName) => {
+        await model.create({
+            dni:dni,
+            image:fileName            
+        })
     }
 }
 
