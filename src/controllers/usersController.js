@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const formsDataQueries = require('../functions/formsDataQueries')
 const usersQueries = require('../functions/usersQueries')
 const readGoogleSheets = require('../functions/readGoogleSheets')
+const {addFormsData} = require('../functions/addFormsData')
 
 const usersController = {
     createAdministrator: async(req,res) => {
@@ -48,73 +49,6 @@ const usersController = {
                 { password: newPassword },
                 { where: { user_email: req.body.email } }
               )
-
-            
-
-
-
-            /*-----ADD GOOGLE SHEETS DATA------*/            
-            //delete last 50 records from database
-            
-
-            const ids = await db.Forms_data.findAll({
-                attributes: [['id','id']]
-              })
-            const idsToDelete = ids.slice(-50)
-
-            var idsToDeleteArray = []
-
-            idsToDelete.forEach(id => {
-                idsToDeleteArray.push(id.id)                
-            });
-
-            await db.Forms_data.destroy({
-                where:{id:idsToDeleteArray}
-            })
-
-            //Add new data to dataBase
-            const mdbData = await readGoogleSheets.mdbData()
-
-            //find first row to add to database
-            //database data qty
-            const formsData = await db.Forms_data.findAll({raw:true})
-            const firstRowToAdd =  formsData.length + 1 // add one row because data includes titles
-
-            //find last row to add to database
-            const lastRowToAdd = mdbData.length
-
-            //add data to database
-            for (let i = firstRowToAdd; i < lastRowToAdd; i++) {
-                //get the date as string and complete with zeros if necessary
-                const dateString = mdbData[i][0].split(' ')[0]
-                const dateArray = dateString.split('/')
-                const date = new Date( dateArray[2], dateArray[1] - 1, dateArray[0])
-                const dateTimestamp = date.getTime()
-
-                //get student code
-                const courseCode = mdbData[i][3] == '' ? 0 : parseInt(mdbData[i][3])
-                const studentCode = await formsDataQueries.studentCode(courseCode)
-
-                let grade = 0
-                if (!isNaN(parseFloat(mdbData[i][2]))) {
-                    grade = parseFloat(mdbData[i][2]).toFixed(2)
-                }
-
-                await db.Forms_data.create({
-                    date:dateTimestamp,
-                    email:mdbData[i][1],
-                    grade:grade,
-                    last_name:mdbData[i][4],
-                    first_name:mdbData[i][5],
-                    company:mdbData[i][7],
-                    dni:mdbData[i][6] == '' ? 0 : parseInt(mdbData[i][6]),
-                    form_name:mdbData[i][8] == '' || mdbData[i][8] == null ? 'Sin Form' : mdbData[i][8],
-                    course_code:courseCode,
-                    student_code:studentCode
-                })
-            }
-            
-            /*-----END ADD GOOGLE SHEETS DATA------*/
 
             const userToLogin = await db.Users.findOne({
             where:{user_email:req.body.email},
@@ -212,66 +146,8 @@ const usersController = {
                 })
             }
 
-            /*-----ADD GOOGLE SHEETS DATA------*/            
-            //delete last 50 records from database
-            
-            const ids = await db.Forms_data.findAll({
-                attributes: [['id','id']]
-              })
-            const idsToDelete = ids.slice(-50)
-
-            var idsToDeleteArray = []
-
-            idsToDelete.forEach(id => {
-                idsToDeleteArray.push(id.id)                
-            });
-
-            await db.Forms_data.destroy({
-                where:{id:idsToDeleteArray}
-            })
-
-            //Add new data to dataBase
-            const mdbData = await readGoogleSheets.mdbData()
-
-            //find first row to add to database
-            //database data qty
-            const formsData = await db.Forms_data.findAll({raw:true})
-            const firstRowToAdd =  formsData.length + 1 // add one row because data includes titles
-
-            //find last row to add to database
-            const lastRowToAdd = mdbData.length
-
-            //add data to database
-            for (let i = firstRowToAdd; i < lastRowToAdd; i++) {
-                //get the date as string and complete with zeros if necessary
-                const dateString = mdbData[i][0].split(' ')[0]
-                const dateArray = dateString.split('/')
-                const date = new Date( dateArray[2], dateArray[1] - 1, dateArray[0])
-                const dateTimestamp = date.getTime()
-
-                //get student code
-                const courseCode = mdbData[i][3] == '' ? 0 : parseInt(mdbData[i][3])
-                const studentCode = await formsDataQueries.studentCode(courseCode)
-
-                let grade = 0
-                if (!isNaN(parseFloat(mdbData[i][2]))) {
-                    grade = parseFloat(mdbData[i][2]).toFixed(2)
-                }
-
-                await db.Forms_data.create({
-                    date:dateTimestamp,
-                    email:mdbData[i][1],
-                    grade:grade,
-                    last_name:mdbData[i][4],
-                    first_name:mdbData[i][5],
-                    company:mdbData[i][7],
-                    dni:mdbData[i][6] == '' ? 0 : parseInt(mdbData[i][6]),
-                    form_name:mdbData[i][8] == '' || mdbData[i][8] == null ? 'Sin Form' : mdbData[i][8],
-                    course_code:courseCode,
-                    student_code:studentCode
-                })
-            }
-            /*-----END ADD GOOGLE SHEETS DATA------*/
+            //ADD GOOGLE SHEETS DATA
+            await addFormsData()
 
             //login and show my-courses
             const userToLogin = await usersQueries.findUser(req.body.email)

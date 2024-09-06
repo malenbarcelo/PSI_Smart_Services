@@ -26,6 +26,7 @@
     margin: auto;
     margin-bottom: 10px;
     justify-content: center;
+    position: relative;
 }
 
 .studentsResultsDownload{
@@ -33,6 +34,53 @@
     font-weight: lighter;
     display: flex;
     align-items: center;
+}
+
+#srError{
+    color: var(--errorColor);
+    font-weight: bold;
+    font-size: 12px;
+    width: 200px;
+    margin: auto;
+    margin-bottom: 3px;
+    position: absolute;
+    right: 150px;
+    top: 4px;
+    background-color: white;
+}
+.srObsDiv{
+    position: relative;
+}
+
+.srObs{
+    border: black solid 2px;
+    background-color: rgb(192, 189, 189);
+    padding: 3px 8px 8px 8px;
+    width: 300px;
+    position: absolute;
+    left: -310px;
+    top: 50%;
+    display: none;
+}
+
+.srObsTitle{
+    margin-top: -10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+#srObstText{
+    font-size: 13px;
+}
+
+.srObsIcon1{
+    font-size: 13px;
+}
+
+.srObsIcon2{
+    font-size: 15px;
+    cursor: pointer;
 }
 
 /*popupsARPP.ejs*/
@@ -45,3 +93,4 @@
     font-weight: bold;
     color: grey;
 }
+

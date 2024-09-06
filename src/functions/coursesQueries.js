@@ -157,6 +157,17 @@ const formsDataQueries = {
             return res.send('Ha ocurrido un error')
         }
     },
+    coursesData: async(idCourses) => {
+        try{
+            const courseData = await db.Courses.findAll({
+                where:{id:idCourses},
+                raw:true,
+            })
+            return courseData
+        }catch(error){
+            return res.send('Ha ocurrido un error')
+        }
+    },
     filtrateCourse: async(courseName) => {
         try{
             const courseUrl = await db.Courses.findOne({

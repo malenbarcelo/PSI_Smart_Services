@@ -145,17 +145,34 @@
     font-size: 14px;
 }
 
-.srDownload{
-    background-color: transparent;
-    border:none;
-    padding-left: 0px;
+#srDownload{
     cursor: pointer;
-    font-size: 14px;
 }
 
-.srDownload:hover{
-    text-decoration: underline;
+.srDivDownload{
+    position: relative;
 }
+
+.srInfoDownload{
+    position: absolute;
+    font-size: 11px;
+    width: 140px;
+    color: rgb(98, 97, 97);
+    text-align: center;
+    padding: 3px 0px;
+    border-radius: 3px;
+    bottom: 100%;
+    left: -50px;
+    display: none;
+}
+
+.srDivDownload:hover .srInfoDownload {
+    display: block;
+    
+}
+
+
+
 
 .srTd1{
     font-size: 12px;

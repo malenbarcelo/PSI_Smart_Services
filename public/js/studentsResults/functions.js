@@ -12,7 +12,9 @@ function applyFilters() {
 
     //result
     srg.studentsResultsFiltered = filterResult.value == '' ? srg.studentsResultsFiltered : srg.studentsResultsFiltered.filter(sr => sr.passed == filterResult.value)
-        
+    
+    //dni
+    srg.studentsResultsFiltered = filterDni.value == '' ? srg.studentsResultsFiltered : srg.studentsResultsFiltered.filter(sr => sr.dni == filterDni.value)
 }
 
 

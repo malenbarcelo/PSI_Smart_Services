@@ -130,9 +130,11 @@ const apisController = {
         let associationsStudentsResults = coursesData.filter(c => c.type != 'course')
 
         //add associations data
+        const coursesToGetData = await coursesQueries.coursesData(coursesToGet)
         studentsResults.forEach(sr => {
           const dni = sr.dni
           sr.associatedResults = []
+          sr.associatedCourses = coursesToGetData.filter( c => c.id != courseId)
           associationsStudentsResults.forEach(asr => {
             const filteredResults = asr.students_results.filter(student => student.dni == dni)
             sr.associatedResults.push(filteredResults[0])

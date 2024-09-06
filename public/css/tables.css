@@ -34,6 +34,13 @@ thead{
     font-size: 13px;
 }
 
+.tableInfo{
+    font-size: 12px;
+    position: absolute;
+    display: none;
+    text-align: center;
+}
+
 /*sizes*/
 .thxs{
     width: 50px;

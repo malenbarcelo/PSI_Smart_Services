@@ -68,4 +68,20 @@ function clearInputs(inputs) {
     })
 }
 
-export {closePopupsEventListeners,isInvalid,isValid, acceptWithEnter,dateToString, clearInputs}
+function showTableInfo(tableIcons,top,width) {
+    tableIcons.forEach(element => {
+        const info = document.getElementById(element.icon.id.replace('Icon','Info'))
+        element.icon.addEventListener("mouseover", async(e) => {
+            info.style.top = top + 'px'
+            info.style.right = element.right
+            
+            info.style.width = width + 'px'
+            info.style.display = 'block'
+        })
+        element.icon.addEventListener("mouseout", async(e) => {
+            info.style.display = 'none'
+        })
+    })
+}
+
+export {closePopupsEventListeners,isInvalid,isValid, acceptWithEnter,dateToString, clearInputs, showTableInfo}

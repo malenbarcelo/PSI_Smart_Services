@@ -55,6 +55,13 @@ accent-color: black
 }
 
 /*----------width----------*/
+.ixxs{
+    width: 70px;
+}
+
+.ixs{
+    width: 100px;
+}
 
 .is{
     width: 150px;
@@ -78,5 +85,9 @@ accent-color: black
 }
 
 .ipl{
+    padding: 7px 9px 8px 9px;
+}
+
+.spl{
     padding: 7px 9px;
 }

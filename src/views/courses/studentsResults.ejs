@@ -14,8 +14,8 @@
         <div class="divInputsRow">            
             <div class="divInput">
                 <label class="label">Empresa</label>
-                <select class="input ixl ipl" id="filterCompany">
-                    <option value="">Todas las empresas</option>
+                <select class="input il spl" id="filterCompany">
+                    <option value=""></option>
                     <% companies.forEach(company => { %>
                         <% if (company.company_name != 'PSI') { %>
                             <option value="<%= company.company %>"><%= company.company %></option>
@@ -25,21 +25,30 @@
             </div>
             <div class="divInput">
                 <label class="label">Resultado</label>
-                <select class="input im ipl" id="filterResult">
-                    <option value="">Todos los resultados</option>
+                <select class="input is spl" id="filterResult">
+                    <option value=""></option>
                     <option value=1>Aprobados</option>
                     <option value=0>Desaprobados</option>
                                    
                 </select>            
             </div>
             <div class="divInput">
+                <label class="label">DNI</label>
+                <input type="text" class="input ixxs ipl" id="filterDni">                    
+            </div>
+            <div class="divInput">
+                <label class="label">Nombre y apellido</label>
+                <input type="text" class="input im ipl" id="filterName">                    
+            </div>
+            <div class="divInput">
                 <label class="label">Desde</label>
-                <input type="date" class="input is ipl" id="filterFrom">                    
+                <input type="date" class="input ixs ipl" id="filterFrom">                    
             </div>
             <div class="divInput">
                 <label class="label">Hasta</label>
-                <input type="date" class="input is ipl" id="filterUntil">                    
+                <input type="date" class="input ixs ipl" id="filterUntil">                    
             </div>
+            
             <div class="divInput">
                 <i class="fa-solid fa-filter-circle-xmark unfilterIcon" id="unfilter"></i>
             </div>
@@ -49,22 +58,34 @@
     <!------ELEMENTS TO PRINT------>
     <div id="studentsResultsDownloads">    
         <div class="studentsResultsDownload">
-            <input type="checkbox" id="filterPassed">
+            <input type="checkbox" id="printCertificates">
             <label>Certificados</label>
         </div>
         
         <div class="studentsResultsDownload">
-            <input type="checkbox" id="filterNotPassed">
+            <input type="checkbox" id="printCredentials">
             <label>Credenciales</label>
         </div>
 
-        <div>
-            <i class="fa-solid fa-download"></i>
+        <div class="srDivDownload">
+            <i class="fa-solid fa-download" id="srDownload"></i>
+            <div class="srInfoDownload">Descargar seleccionados</div>
         </div>
+
+        <!------ERRORS------>
+        <div id="srError" class="notVisible">- Debe elegir al menos un documento y un alumno para imprimir</div>
+    
     </div>
+
+    
 
     <!------STUDENTS RESULTS------>
     <div class="divTable" id="studentsResultsTable">
+
+        <div class="tableInfo" id="infoInfo">Cursos asociados</div>
+        <div class="tableInfo" id="obsInfo">Observaciones</div>
+        <div class="tableInfo" id="imageInfo">Subir foto</div>
+        <div class="tableInfo" id="checkInfo">Seleccionar</div>
     
         <table>
             <thead>
@@ -76,15 +97,15 @@
                     <th class="thCss thl">Email</th>
                     <th class="thCss thxs">Nota</th>
                     <th class="thCss thxs">
-                        <i class="fa-solid fa-circle-info icon" id="vdppIcon"></i>
+                        <i class="fa-solid fa-circle-info icon" id="infoIcon"></i>
                     </th>
                     <th class="thCss thxs">
-                        <i class="fa-regular fa-comment-dots icon" id="vdppIcon"></i>
+                        <i class="fa-regular fa-comment-dots icon" id="obsIcon"></i>
                     </th>
                     <th class="thCss thxs notVisible" id="thCamera">
-                        <i class="fa-solid fa-camera icon" id="vdppIcon"></i>
+                        <i class="fa-solid fa-camera icon" id="imageIcon"></i>
                     </th>
-                    <th class="thCss thxs notVisible" id="thCheck"><input type="checkbox"></th>
+                    <th class="thCss thxs notVisible" id="checkIcon"><input type="checkbox" class="icon" id="thCheck"></th>
                     
                     
                 </tr>

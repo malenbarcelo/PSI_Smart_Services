@@ -4,9 +4,9 @@ let srg = {
     courseId:0,
     studentsResults:[],
     studentsResultsFiltered:[],
-    courseData:[]
-    
-
+    courseData:[],
+    downloadAlloweded:[],
+    downloadSelected:[]
 }
 
 export default srg
