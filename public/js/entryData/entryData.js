@@ -23,6 +23,7 @@ window.addEventListener('load',async()=>{
             findImage = await (await fetch(dominio + 'apis/find-image/' + dni.value)).json()
             courseData = await (await fetch(dominio + 'apis/course-data/' + idCourse.innerText)).json()
             if (findImage == null) {
+                uippTitle.innerText = 'Debe ingrear una foto de perfil'
                 uipp.style.display = 'block'
             }else{                
                 window.location.href = courseData.url + '?usp=pp_url&entry.' + courseData.dni_entry_id + '=' + dni.value
@@ -38,6 +39,7 @@ window.addEventListener('load',async()=>{
         e.preventDefault()
 
         const file = image.files[0]
+
         if (!file) {
             uippError.innerText = 'Debe ingresar una imagen'
             uippError.style.display = 'block'

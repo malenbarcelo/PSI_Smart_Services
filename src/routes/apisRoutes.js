@@ -31,6 +31,7 @@ router.post('/upload-image/:dni',upload.single('image'),apisController.uploadIma
 
 //version 2.0
 router.get('/students-results/:company/:courseName',userMiddleware,apisController.studentsResults)
+router.get('/students/predict-full-names/:courseName/:string',apisController.predictNames)
 
 
 module.exports = router

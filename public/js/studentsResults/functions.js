@@ -15,6 +15,16 @@ function applyFilters() {
     
     //dni
     srg.studentsResultsFiltered = filterDni.value == '' ? srg.studentsResultsFiltered : srg.studentsResultsFiltered.filter(sr => sr.dni == filterDni.value)
+
+    //name
+    srg.studentsResultsFiltered = filterName.value == '' ? srg.studentsResultsFiltered : srg.studentsResultsFiltered.filter(sr => (sr.last_name + ', ' + sr.first_name).trim() == filterName.value)
+
+    //dateFrom
+    srg.studentsResultsFiltered = filterFrom.value == '' ? srg.studentsResultsFiltered : srg.studentsResultsFiltered.filter(sr => (new Date(sr.date)).toISOString().split('T')[0] >= filterFrom.value)
+    
+    //dateUntil
+    srg.studentsResultsFiltered = filterUntil.value == '' ? srg.studentsResultsFiltered : srg.studentsResultsFiltered.filter(sr => (new Date(sr.date)).toISOString().split('T')[0] <= filterUntil.value)
+    
 }
 
 

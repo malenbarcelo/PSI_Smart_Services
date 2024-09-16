@@ -11,6 +11,10 @@ const usersRoutes = require('./src/routes/usersRoutes.js')
 const coursesRoutes = require('./src/routes/coursesRoutes.js')
 const { google } = require('googleapis')
 const dotenv = require('dotenv')
+const cron = require('node-cron')
+
+//Controllers
+const cronController = require('./src/controllers/cronController.js')
 
 const app = express()
 
@@ -32,15 +36,19 @@ app.set('view engine','ejs')
 
 //configure session
 app.use(session({
-    store: new FileStore(),
+    //store: new FileStore(),
     secret:'secret',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // Change to true in PRD to use HTTPS
+    //cookie: { secure: false } // Change to true in PRD to use HTTPS
 }))
 
 //middlewares
 app.use(userLoggedMiddleware)
+
+//get forms data
+cron.schedule('*/5 * * * *', cronController.getFormsData)
+//cron.schedule('* * * * *', cronController.getFormsData)
 
 //Declare and listen port
 const APP_PORT = 3000

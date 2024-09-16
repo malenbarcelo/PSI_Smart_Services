@@ -11,7 +11,6 @@ const fs = require('fs')
 const { google } = require('googleapis')
 
 const apisController = {
-
   studentData: async(req,res) =>{
     try{
       const company = req.params.company
@@ -137,7 +136,7 @@ const apisController = {
           sr.associatedCourses = coursesToGetData.filter( c => c.id != courseId)
           associationsStudentsResults.forEach(asr => {
             const filteredResults = asr.students_results.filter(student => student.dni == dni)
-            sr.associatedResults.push(filteredResults[0])
+            sr.associatedResults.push(filteredResults.length == 0 ? {data: 'noInfo'} : filteredResults[0])
           })
         })
 
@@ -428,7 +427,29 @@ const apisController = {
         console.log(error)
         return res.send('Ha ocurrido un error')
     }
-},
+  },
+  predictNames: async(req,res) =>{
+    try{
+
+      const string = req.params.string.toLowerCase()
+      const courseName = req.params.courseName
+      
+      const list = await formsDataQueries.fullNames(courseNme)
+      
+      // const list = fullNames.map(element => ({ //delete spaces at the end
+      //   ...element,
+      //   full_name: element.full_name.trimEnd() 
+      // }))
+      
+      const predictedList = list.filter(l => l.full_name.toLowerCase().includes(string))
+      const uniqueList = [...new Set(predictedList)]
+      res.status(200).json(uniqueList)
+
+    }catch(error){
+      console.group(error)
+      return res.send('Ha ocurrido un error')
+    }
+  },
 }
 module.exports = apisController
 

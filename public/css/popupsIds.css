@@ -1,6 +1,6 @@
 /*POPUPS*/
 /* entryData.ejs --> uipp
-/* studentsResults.ejs --> arpp
+/* studentsResults.ejs --> arpp, usipp
 
 /*-----------------------entryData.ejs-----------------------*/
 /*upload image popup (uipp)*/
@@ -16,4 +16,17 @@
     top: 25%;
     width: 800px;
     left: calc(59vw - 410px);
+}
+
+/*upload student image popup (usipp)*/
+#usippContent{
+    top: 25%;
+    width: 400px;
+    left: calc(59vw - 215px);
+}
+
+#usippOkContent{
+    width: 300px;
+    top: 42%;
+    left: calc(59vw - 165px);
 }

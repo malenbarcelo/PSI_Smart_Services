@@ -1,7 +1,7 @@
 const db = require('../../database/models')
 const datesFunctions = require('../functions/datesFunctions')
 const sequelize = require('sequelize')
-const { Op, literal } = require('sequelize')
+const { Op, literal, fn, col} = require('sequelize')
 
 const formsDataQueries = {
     courseData: async(courseId) => {
@@ -283,6 +283,25 @@ const formsDataQueries = {
         }catch(error){
             return res.send('Ha ocurrido un error')
         }
+    },
+    fullNames: async(courseName) => {        
+        const fullNames = await db.Forms_data.findAll({
+            attributes: [
+                [db.sequelize.fn('DISTINCT', 
+                    db.sequelize.fn('CONCAT', 
+                        db.sequelize.col('last_name'), 
+                        ', ', 
+                        db.sequelize.col('first_name')
+                    )
+                ), 'full_name']
+            ],
+            where:{
+                form_name:courseName
+            },
+            order:['full_name'],
+            raw:true
+        })
+        return fullNames
     },
 }
 

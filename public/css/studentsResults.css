@@ -150,6 +150,8 @@
 }
 
 .srDivDownload{
+    background-color: transparent;
+    border: none;
     position: relative;
 }
 

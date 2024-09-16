@@ -18,15 +18,14 @@
 }
 
 #studentsResultsDownloads{
-    padding: 8px;
     display: flex;
     column-gap: 10px;
     row-gap: 8px;
-    width: 75%;
+    width: 89%;
     margin: auto;
-    margin-bottom: 10px;
-    justify-content: center;
-    position: relative;
+    margin-bottom: 5px;
+    margin-top: 20px;
+    justify-content: left;
 }
 
 .studentsResultsDownload{
@@ -40,21 +39,16 @@
     color: var(--errorColor);
     font-weight: bold;
     font-size: 12px;
-    width: 200px;
-    margin: auto;
-    margin-bottom: 3px;
-    position: absolute;
-    right: 150px;
-    top: 4px;
     background-color: white;
+    display: none;
 }
 .srObsDiv{
     position: relative;
 }
 
 .srObs{
-    border: black solid 2px;
-    background-color: rgb(192, 189, 189);
+    border: grey solid 1px;
+    background-color: rgb(223, 220, 220);
     padding: 3px 8px 8px 8px;
     width: 300px;
     position: absolute;

@@ -320,6 +320,116 @@ const coursesController = {
     },
     printSelected: async(req,res) =>{
         try{
+
+            //get course and company
+            const idCourse = req.params.idCourse
+            const course = await coursesQueries.courseName(idCourse)
+            const company = req.params.company
+            const courseData = await coursesQueries.filtrateCourse(course)
+            const companies = await formsDataQueries.companies()
+
+            // //get course students
+            // let studentsData = []
+            // if (req.session.userLogged.id_user_categories == 1) {
+            //     studentsData = await formsDataQueries.studentsData(course)
+            // }else{
+            //     studentsData = await formsDataQueries.studentsDataFiltered(company,course)
+            // }            
+                
+            // let datesStrings = []
+
+            // for (let i = 0; i < studentsData.length; i++) {
+            //     let dateString = await datesFunctions.dateToString(studentsData[i].date)
+            //     datesStrings.push({"dateString":dateString})
+            // }
+
+            const body = Object.keys(req.body)
+            console.log(body)
+
+            //get idFormsData to print and documents to print
+            var idsFormsData = []
+            var documents = []
+            
+            for (let i = 0; i < body.length; i++) {
+                if (body[i] == "certificates" || body[i] == "credentials") {
+                    documents.push(body[i])
+                }else{
+                    if (body[i] != "selectAll") {
+                        idsFormsData.push(body[i])
+                    }
+                }
+            }
+
+            //get dataToPrint to print
+            const dataToPrint = await formsDataQueries.dataToPrint(idsFormsData)
+
+            //create .zip
+            const archive = archiver('zip')
+            res.attachment(course + '.zip')
+            archive.pipe(res)
+
+            const browser = await puppeteer.launch({
+                headless: "new", // to avoid open windows
+                printBackground: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox'] // to avoid errors
+            });
+
+            //print credentials if necessary
+            if (documents.includes('credentials')) {
+                for (const data of dataToPrint) {
+                    const dni = data.dni;
+                    const name = data.last_name + ' ' + data.first_name;
+                    const fileName = data.company + '_Cred_ ' + name + '_' + dni;
+            
+                    const url = dominio + "courses/credentials/" + data.id;
+            
+                    const page = await browser.newPage()
+            
+                    await page.goto(url, { waitUntil: 'networkidle0' })
+                    await page.emulateMediaFeatures([{ name: 'color-gamut', value: 'srgb' }])
+            
+                    const pdf = await page.pdf({ printBackground: true })
+            
+                    await page.close();
+            
+                    // Agregar el archivo PDF al archivo zip
+                    archive.append(pdf, { name: fileName + '.pdf' });
+                }
+            }
+
+            //print certificates if necessary
+            if (documents.includes('certificates')) {
+                for (const data of dataToPrint) {
+                    const dni = data.dni;
+                    const name = data.last_name + ' ' + data.first_name;
+                    const fileName = data.company + '_Cert_ ' + name + '_' + dni;
+            
+                    const url = dominio + "courses/certificates/" + data.id;
+            
+                    const page = await browser.newPage()
+            
+                    await page.goto(url, { waitUntil: 'networkidle0' })
+                    await page.emulateMediaFeatures([{ name: 'color-gamut', value: 'srgb' }])
+            
+                    const pdf = await page.pdf({ printBackground: true, landscape: true })
+            
+                    await page.close();
+            
+                    // Agregar el archivo PDF al archivo zip
+                    archive.append(pdf, { name: fileName + '.pdf' });
+                }
+            }
+            
+            await browser.close()
+            await archive.finalize()
+
+        }catch(error){
+            console.log(error)
+            return res.send(error)
+        }
+    },
+    printSelectedOld: async(req,res) =>{
+        try{
             //get course and company
             const idCourse = req.params.idCourse
             const course = await coursesQueries.courseName(idCourse)
@@ -599,8 +709,8 @@ const coursesController = {
                 expirationDateString = await datesFunctions.dateToString(expirationDate);
             }
             
-            //get student image
-            const studentImage = await profileImagesQueries.imageName(documentData.dni,courseId)
+            //get student image            
+            const studentImage = await profileImagesQueries.imageName(documentData.dni)
             
             //get certificate code
             const courseCode = documentData.course_code

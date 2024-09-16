@@ -7,7 +7,7 @@
     <div class="mainTitle mbm notVisible" id="companyName"><%= userLogged.company %></div>
     <div class="mainTitle mbm notVisible" id="courseId"><%= idCourse %></div>
     <div class="mainTitle mbm" id="course"><%= course %></div>
-    <div class="subtitle mbm">Resultados del formulario (último año)</div>
+    <div class="subtitle mbm">RESULADOS DEL FORMULARIO</div>
 
     <!------MAIN FILTERS------>
     <div id="srMainFilters">
@@ -38,7 +38,8 @@
             </div>
             <div class="divInput">
                 <label class="label">Nombre y apellido</label>
-                <input type="text" class="input im ipl" id="filterName">                    
+                <input type="text" class="input im ipl" id="filterName">
+                <ul class="predictedElements" id="ulFilterName"></ul>                    
             </div>
             <div class="divInput">
                 <label class="label">Desde</label>
@@ -56,63 +57,72 @@
     </div>
 
     <!------ELEMENTS TO PRINT------>
-    <div id="studentsResultsDownloads">    
-        <div class="studentsResultsDownload">
-            <input type="checkbox" id="printCertificates">
-            <label>Certificados</label>
-        </div>
+    <form action="/courses/students-results/<%= userLogged.company %>/<%= idCourse %>" method="POST" class="form1" id="printForm">
+        <div id="studentsResultsDownloads">    
+            <div class="studentsResultsDownload">
+                <input type="checkbox" id="printCertificates" name="certificates">
+                <label>Certificados</label>
+            </div>
+            
+            <div class="studentsResultsDownload">
+                <input type="checkbox" id="printCredentials" name="credentials">
+                <label>Credenciales</label>
+            </div>
+    
+            <button type="submit" class="srDivDownload">
+                <i class="fa-solid fa-download" id="srDownload"></i>
+                <div class="srInfoDownload">Descargar seleccionados</div>
+            </button>
+    
+            <!------ERRORS------>
+            <div class="studentsResultsDownload" id="srError">- Debe seleccionar al menos un documento y un alumno</div>
         
-        <div class="studentsResultsDownload">
-            <input type="checkbox" id="printCredentials">
-            <label>Credenciales</label>
         </div>
 
-        <div class="srDivDownload">
-            <i class="fa-solid fa-download" id="srDownload"></i>
-            <div class="srInfoDownload">Descargar seleccionados</div>
+        <!------STUDENTS RESULTS------>
+        <div class="divTable" id="studentsResultsTable">
+
+            <div class="tableInfo" id="infoInfo">Cursos asociados</div>
+            <div class="tableInfo" id="obsInfo">Observaciones</div>
+            <div class="tableInfo" id="imageInfo">Subir foto</div>
+            <div class="tableInfo" id="checkInfo">Seleccionar</div>
+        
+            <table>
+                <thead>
+                    <tr>                    
+                        <th class="thCss thl">
+                            Empresa
+                        </th>
+                        <th class="thCss thFlex ths">
+                            <div>Fecha</div>
+                            <i class="fa-solid fa-arrow-up icon" id="dateUp"></i>
+                            <i class="fa-solid fa-arrow-down icon notVisible" id="dateDown"></i>
+                        </th>
+                        <th class="thCss ths">DNI</th>
+                        <th class="thCss thFlex thl">
+                            <div>Apellido y nombre</div>
+                            <i class="fa-solid fa-arrow-up icon" id="nameUp"></i>
+                            <i class="fa-solid fa-arrow-down icon notVisible" id="nameDown"></i>
+                        </th>
+                        <th class="thCss thl">Email</th>
+                        <th class="thCss thxs">Nota</th>
+                        <th class="thCss thxs">
+                            <i class="fa-solid fa-circle-info icon" id="infoIcon"></i>
+                        </th>
+                        <th class="thCss thxs">
+                            <i class="fa-regular fa-comment-dots icon" id="obsIcon"></i>
+                        </th>
+                        <th class="thCss thxs notVisible" id="thCamera">
+                            <i class="fa-solid fa-camera icon" id="imageIcon"></i>
+                        </th>
+                        <th class="thCss thxs notVisible" id="checkIcon"><input type="checkbox" name="selectAll" class="icon" id="thCheck"></th>
+                    </tr>
+                </thead>
+                <tbody id="studentsResultsBody"></tbody>
+            </table>
         </div>
 
-        <!------ERRORS------>
-        <div id="srError" class="notVisible">- Debe elegir al menos un documento y un alumno para imprimir</div>
-    
-    </div>
-
-    
-
-    <!------STUDENTS RESULTS------>
-    <div class="divTable" id="studentsResultsTable">
-
-        <div class="tableInfo" id="infoInfo">Cursos asociados</div>
-        <div class="tableInfo" id="obsInfo">Observaciones</div>
-        <div class="tableInfo" id="imageInfo">Subir foto</div>
-        <div class="tableInfo" id="checkInfo">Seleccionar</div>
-    
-        <table>
-            <thead>
-                <tr>                    
-                    <th class="thCss thl">Empresa</th>
-                    <th class="thCss ths">Fecha</th>
-                    <th class="thCss ths">DNI</th>
-                    <th class="thCss thl">Apellido y Nombre</th>
-                    <th class="thCss thl">Email</th>
-                    <th class="thCss thxs">Nota</th>
-                    <th class="thCss thxs">
-                        <i class="fa-solid fa-circle-info icon" id="infoIcon"></i>
-                    </th>
-                    <th class="thCss thxs">
-                        <i class="fa-regular fa-comment-dots icon" id="obsIcon"></i>
-                    </th>
-                    <th class="thCss thxs notVisible" id="thCamera">
-                        <i class="fa-solid fa-camera icon" id="imageIcon"></i>
-                    </th>
-                    <th class="thCss thxs notVisible" id="checkIcon"><input type="checkbox" class="icon" id="thCheck"></th>
-                    
-                    
-                </tr>
-            </thead>
-            <tbody id="studentsResultsBody"></tbody>
-        </table>
-    </div>
+    </form>
 
 </div>
 
@@ -121,7 +131,7 @@
 
 <!----------POPUPS---------->
 <%- include('../studentsResults/popupsARPP') %>
-
+<%- include('../studentsResults/popupsUSIPP') %>
 
 
 <script type="module" src="/js/studentsResults/studentsResults.js"></script>

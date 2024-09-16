@@ -147,7 +147,7 @@ const usersController = {
             }
 
             //ADD GOOGLE SHEETS DATA
-            await addFormsData()
+            //await addFormsData()
 
             //login and show my-courses
             const userToLogin = await usersQueries.findUser(req.body.email)

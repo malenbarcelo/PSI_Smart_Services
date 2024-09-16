@@ -3,9 +3,9 @@
 
 <div class="div1 div2">
 
-    <h3 class="title1">Iniciar sesión</h3>
+    <h3 class="title1">INICIAR SESIÓN</h3>
     
-    <form action="/users/login" method="POST" class="form1">
+    <form action="/users/login" method="POST" class="form1 mtxl">
     
         <div>
             <input type="text" name="email" placeholder="Email" class="input1 <%= locals.errors && errors.email ? 'isInvalid' : null %>" value="<%= locals.oldData ? oldData.email : null %>">
@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        <div>
+        <div class="mtxxl">
             <button type="submit" class="button1">Ingresar</button>
         </div>
     

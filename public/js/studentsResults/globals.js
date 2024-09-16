@@ -6,7 +6,10 @@ let srg = {
     studentsResultsFiltered:[],
     courseData:[],
     downloadAlloweded:[],
-    downloadSelected:[]
+    downloadSelected:[],
+    documentsToPrint:[],
+    studentDniToUpload:[],
+    
 }
 
 export default srg

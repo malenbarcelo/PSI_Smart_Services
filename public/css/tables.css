@@ -34,6 +34,14 @@ thead{
     font-size: 13px;
 }
 
+.thFlex{
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+    justify-content: center;
+
+}
+
 .tableInfo{
     font-size: 12px;
     position: absolute;

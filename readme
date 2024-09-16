@@ -11,6 +11,9 @@ npm install cors
 npm install --save googleapis
 npm install --save sharp
 npm install --save dotenv
+npm install node-cron
+npm install session-file-store
+npm install moment-timezone
 
 /*---Sequelize---*/
 1. npm install --save sequelize-cli
@@ -26,7 +29,7 @@ npm install read-excel-file
 
 Resumed --->
 npm init -y
-npm install express ejs method-override multer express-validator express-session bcryptjs sequelize-cli sequelize mysql2 puppeteer exceljs read-excel-file
+npm install express ejs method-override multer express-validator express-session bcryptjs sequelize-cli sequelize mysql2 puppeteer exceljs read-excel-file node-cron session-file-store mooment-timezone
 
 
 

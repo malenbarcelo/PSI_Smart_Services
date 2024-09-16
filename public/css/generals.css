@@ -7,6 +7,12 @@
     --color10:#848282;    
 }
 
+/*-----------------------------uls-----------------------------*/
+ul {
+    list-style-type: none; 
+    padding: 0; 
+}
+
 /*---------------------titles---------------------*/
 .mainTitle{
     font-size: 20px;
@@ -66,6 +72,14 @@
     margin-top: 30px;
 }
 
+.mtxl{
+    margin-top: 40px;
+}
+
+.mtxxl{
+    margin-top: 50px;
+}
+
 .mbxl{
     margin-bottom: 45px;
 }
@@ -121,4 +135,26 @@
 }
 .yellowColor{
     color:rgb(204, 204, 2)
+}
+
+/*---------------------predicted items---------------------*/
+.predictedElements{
+    display: none;
+    position: absolute;
+    top:60%;
+    width: 99%;
+    border: black solid 1px;
+    background-color: white;
+    z-index: 1;
+    max-height: 400px;
+    overflow-y: auto;
+    text-align: center;
+}
+.liPredictedElements{
+    font-size: 12px;
+    padding: 5px 0px 5px 3px;
+    cursor: pointer;
+}
+.predictedElementFocused{
+    background-color:var(--color7);
 }

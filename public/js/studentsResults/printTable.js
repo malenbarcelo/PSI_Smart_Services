@@ -22,7 +22,7 @@ async function printTableSR(dataToPrint) {
         
         const color = element.passed == 0 ? 'redColor' : (notPassedAssociations > 0 ? 'yellowColor' : 'greenColor')
         const camera = element.student_image.length != 0 ? '' : '<i class="fa-solid fa-camera errorIcon" id="image_' + element.id + '"></i>'
-        const checkIcon = (camera == '' && color == 'greenColor') ? '<input type="checkbox" id="check_' + element.id + '" class="checkbox1">' : ''
+        const checkIcon = (camera == '' && color == 'greenColor') ? '<input type="checkbox" name="' + element.id + '" id="check_' + element.id + '" class="checkbox1">' : ''
 
         //complete downloadAlloweded
         if (camera == '' && color == 'greenColor') {
@@ -63,7 +63,6 @@ async function printTableSR(dataToPrint) {
             html += `
                 </tr>
             `
-
         }
 
         counter += 1
@@ -86,15 +85,19 @@ function srEventListeners(dataToPrint) {
         const srObs = document.getElementById('srObs_' + element.id)
         const close = document.getElementById('close_' + element.id)
         const check = document.getElementById('check_' + element.id)
+        const image = document.getElementById('image_' + element.id)
 
         //associated forms info
         info.addEventListener('click',async()=>{
-            console.log(element)
             arppMainTitle.innerHTML = element.last_name + ', ' + element.first_name
+            console.log(element)
+            console.log(element.associatedResults)
             if (element.associatedResults.length == 0) {
+                console.log(element)
                 arppNoAssociatedForms.style.display = 'flex'
                 arppTable.style.display = 'none'
             }else{
+                console.log(element)
                 arppNoAssociatedForms.style.display = 'none'
                 printAssociatedResults(element)
                 arppTable.style.display = 'block'
@@ -114,6 +117,16 @@ function srEventListeners(dataToPrint) {
                         }
                     }
                 })
+            })
+        }
+
+        //upload image
+        if (image) {
+            image.addEventListener('click',async()=>{
+                srg.studentDniToUpload = element.dni
+                usippError.style.display = 'none'
+                usippTitle.innerText = element.last_name + ', ' + element.first_name
+                usipp.style.display = 'block'
             })
         }
 
