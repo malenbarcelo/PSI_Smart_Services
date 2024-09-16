@@ -4,5 +4,5 @@ package.json
 sqlScripts
 prdToDev.js
 devToPrd.js
-/public/images/studentsPhotosLQ
-/public/images/studentsPhotos
+/images/studentsPhotosLQ
+/images/studentsPhotos

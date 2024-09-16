@@ -53,6 +53,7 @@ async function printTableSR(dataToPrint) {
                 <th class="${rowClass}"><i class="fa-solid fa-circle-info allowedIcon" id="info_${element.id}"></i></th>
                 <th class="${rowClass}">${observations}</th>
         `
+
         if (srg.courseData.includes_certificate == 1) {
             html += `
                 <th class="${rowClass}">${ camera }</th>
