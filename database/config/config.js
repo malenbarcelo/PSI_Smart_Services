@@ -1,6 +1,6 @@
-const username = "psismart_userpsi"
-const password = "psismartservices"
-const database = "psismart_psi_db"
+const username = "root"
+const password = "30941767"
+const database = "psi_db"
 
 module.exports = 
 {

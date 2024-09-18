@@ -60,6 +60,9 @@ window.addEventListener('load',async()=>{
         clearInputs([filterCompany,filterResult,filterDni,filterFrom,filterUntil,filterName])
         srg.studentsResultsFiltered = srg.studentsResults        
         printTableSR(srg.studentsResultsFiltered)
+        thCheck.checked = false
+        printCertificates.checked = false
+        printCredentials.checked = false
     })
 
     //close popups
