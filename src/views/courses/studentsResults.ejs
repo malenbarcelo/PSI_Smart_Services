@@ -4,25 +4,29 @@
 
 <div class="mainBody">
 
-    <div class="mainTitle mbm notVisible" id="companyName"><%= userLogged.company %></div>
-    <div class="mainTitle mbm notVisible" id="courseId"><%= idCourse %></div>
+    <div class="notVisible" id="idUserCategory"><%= userLogged.id_user_categories %></div>
+    <div class="notVisible" id="companyName"><%= userLogged.company %></div>
+    <div class="notVisible" id="courseId"><%= idCourse %></div>
     <div class="mainTitle mbm" id="course"><%= course %></div>
-    <div class="subtitle mbm">RESULADOS DEL FORMULARIO</div>
+    <div class="subtitle mbm">RESULTADOS DEL FORMULARIO</div>
 
     <!------MAIN FILTERS------>
     <div id="srMainFilters">
-        <div class="divInputsRow">            
-            <div class="divInput">
-                <label class="label">Empresa</label>
-                <select class="input il spl" id="filterCompany">
-                    <option value=""></option>
-                    <% companies.forEach(company => { %>
-                        <% if (company.company_name != 'PSI') { %>
-                            <option value="<%= company.company %>"><%= company.company %></option>
-                        <% } %>
-                    <% }) %>                
-                </select>            
-            </div>
+        
+        <div class="divInputsRow">
+            <% if (userLogged.id_user_categories == 1) { %>
+                <div class="divInput">
+                    <label class="label">Empresa</label>
+                    <select class="input il spl" id="filterCompany">
+                        <option value=""></option>
+                        <% companies.forEach(company => { %>
+                            <% if (company.company_name != 'PSI') { %>
+                                <option value="<%= company.company %>"><%= company.company %></option>
+                            <% } %>
+                        <% }) %>                
+                    </select>            
+                </div>
+            <% } %>
             <div class="divInput">
                 <label class="label">Resultado</label>
                 <select class="input is spl" id="filterResult">
@@ -90,7 +94,7 @@
             <table>
                 <thead>
                     <tr>                    
-                        <th class="thCss thl">
+                        <th class="thCss thm">
                             Empresa
                         </th>
                         <th class="thCss thFlex ths">

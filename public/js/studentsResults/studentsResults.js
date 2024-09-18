@@ -14,6 +14,7 @@ window.addEventListener('load',async()=>{
     srg.courseName = course.innerText
     srg.courseId = courseId.innerText
     srg.companyName = companyName.innerText
+    srg.idUserCategory = idUserCategory.innerText
 
     //get data
     srg.courseData = await (await fetch(dominio + 'apis/course-data/' + srg.courseId)).json()
@@ -34,6 +35,7 @@ window.addEventListener('load',async()=>{
     }
 
     srg.studentsResults = await (await fetch(dominio + 'apis/students-results/' + srg.companyName + '/' + srg.courseName)).json()
+
     srg.studentsResultsFiltered = srg.studentsResults
 
     printTableSR(srg.studentsResultsFiltered)
@@ -68,19 +70,19 @@ window.addEventListener('load',async()=>{
     const tableIcons = [
         {
             icon:infoIcon,
-            right: srg.courseData.includes_certificate == 1 ? '13.5%' : '9.5%'
+            right: srg.courseData.includes_certificate == 1 ? '9%' : '7.5%'
         },
         {
             icon:obsIcon,
-            right:srg.courseData.includes_certificate == 1 ? '9.5%' : '5.5%'
+            right:srg.courseData.includes_certificate == 1 ? '6.5%' : '4.5%'
         },
         {
             icon:imageIcon,
-            right:'6%'
+            right:'4%'
         },
         {
             icon:checkIcon,
-            right:'2%'
+            right:'1%'
         }
     ]
 
@@ -131,8 +133,6 @@ window.addEventListener('load',async()=>{
         printTableSR(srg.studentsResultsFiltered)        
     })
 
-    
-
 
     //select all elements
     thCheck.addEventListener("click", async() => {
@@ -140,13 +140,18 @@ window.addEventListener('load',async()=>{
             srg.downloadSelected = srg.downloadAlloweded
             srg.downloadAlloweded.forEach(element => {
                 const check = document.getElementById('check_' + element)
-                check.checked = true
+                if (check) {
+                    check.checked = true
+                }
             })
         }else{
             srg.downloadSelected = []
             srg.downloadAlloweded.forEach(element => {
                 const check = document.getElementById('check_' + element)
-                check.checked = false
+                if (check) {
+                    check.checked = false
+                }
+                
             })
         }
     })

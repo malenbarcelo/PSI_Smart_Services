@@ -1,4 +1,5 @@
 let srg = {
+    idUserCategory:0,
     courseName:'',
     companyName:'',
     courseId:0,

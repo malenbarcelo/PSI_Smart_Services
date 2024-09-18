@@ -2,6 +2,7 @@ import { dominio } from "../dominio.js"
 import srg from "./globals.js"
 import {showOkPopup} from "../generalFunctions.js"
 import {printTableSR} from "./printTable.js"
+import {applyFilters} from "./functions.js"
 
 //UPLOAD STUDENT IMAGE POPUP (usipp)
 async function usippEventListeners() {
@@ -36,6 +37,7 @@ async function usippEventListeners() {
                 studentsResultsLoader.style.display = 'block'
                 srg.studentsResults = await (await fetch(dominio + 'apis/students-results/' + srg.companyName + '/' + srg.courseName)).json()
                 srg.studentsResultsFiltered = srg.studentsResults
+                applyFilters()
                 printTableSR(srg.studentsResultsFiltered)
                 showOkPopup(usippOk)
             }

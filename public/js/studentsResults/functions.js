@@ -25,6 +25,14 @@ function applyFilters() {
     //dateUntil
     srg.studentsResultsFiltered = filterUntil.value == '' ? srg.studentsResultsFiltered : srg.studentsResultsFiltered.filter(sr => (new Date(sr.date)).toISOString().split('T')[0] <= filterUntil.value)
     
+
+    //uncheck
+    thCheck.checked = false
+    srg.downloadSelected = []
+    srg.downloadAlloweded.forEach(element => {
+        const check = document.getElementById('check_' + element)
+        check.checked = true
+    })
 }
 
 
