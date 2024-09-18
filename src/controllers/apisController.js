@@ -434,7 +434,7 @@ const apisController = {
       const string = req.params.string.toLowerCase()
       const courseName = req.params.courseName
       
-      const list = await formsDataQueries.fullNames(courseNme)
+      const list = await formsDataQueries.fullNames(courseName)
       
       // const list = fullNames.map(element => ({ //delete spaces at the end
       //   ...element,
