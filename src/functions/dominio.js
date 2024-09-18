@@ -1,3 +1,3 @@
-const dominio = 'https://psi-smart-services.wnpower.host/'
+const dominio = 'http://localhost:3000/'
 
 module.exports = dominio

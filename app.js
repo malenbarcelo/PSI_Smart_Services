@@ -36,11 +36,11 @@ app.set('view engine','ejs')
 
 //configure session
 app.use(session({
-    //store: new FileStore(),
+    store: new FileStore(),
     secret:'secret',
     resave: false,
     saveUninitialized: false,
-    //cookie: { secure: false } // Change to true in PRD to use HTTPS
+    cookie: { secure: false } // Change to true in PRD to use HTTPS
 }))
 
 //middlewares

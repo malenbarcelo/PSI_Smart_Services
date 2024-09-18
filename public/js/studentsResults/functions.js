@@ -31,7 +31,10 @@ function applyFilters() {
     srg.downloadSelected = []
     srg.downloadAlloweded.forEach(element => {
         const check = document.getElementById('check_' + element)
-        check.checked = true
+        if (check) {
+            check.checked = false
+        }
+        
     })
 }
 
