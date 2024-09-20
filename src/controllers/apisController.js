@@ -90,7 +90,7 @@ const apisController = {
             const filteredResults = course.forms_data.reduce((acc, current) => {
                 const existingStudent = acc.find(student => student.dni === current.dni)
                 
-                if (!existingStudent || new Date(existingStudent.date) < new Date(current.date)) {
+                if (!existingStudent || existingStudent.id < current.id) {
                   if (existingStudent) {
                     acc = acc.filter(student => student.dni !== current.dni)
                   }
