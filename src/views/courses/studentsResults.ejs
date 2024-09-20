@@ -11,7 +11,7 @@
     <div class="subtitle mbm">RESULTADOS DEL FORMULARIO</div>
 
     <!------MAIN FILTERS------>
-    <div id="srMainFilters">
+    <div id="srMainFilters" class="mbl">
         
         <div class="divInputsRow">
             <% if (userLogged.id_user_categories == 1) { %>
@@ -62,27 +62,7 @@
 
     <!------ELEMENTS TO PRINT------>
     <form action="/courses/students-results/<%= userLogged.company %>/<%= idCourse %>" method="POST" class="form1" id="printForm">
-        <div id="studentsResultsDownloads">    
-            <div class="studentsResultsDownload">
-                <input type="checkbox" id="printCertificates" name="certificates">
-                <label>Certificados</label>
-            </div>
-            
-            <div class="studentsResultsDownload">
-                <input type="checkbox" id="printCredentials" name="credentials">
-                <label>Credenciales</label>
-            </div>
-    
-            <button type="submit" class="srDivDownload">
-                <i class="fa-solid fa-download" id="srDownload"></i>
-                <div class="srInfoDownload">Descargar seleccionados</div>
-            </button>
-    
-            <!------ERRORS------>
-            <div class="studentsResultsDownload" id="srError">- Debe seleccionar al menos un documento y un alumno</div>
         
-        </div>
-
         <!------STUDENTS RESULTS------>
         <div class="divTable" id="studentsResultsTable">
 
@@ -124,6 +104,33 @@
                 </thead>
                 <tbody id="studentsResultsBody"></tbody>
             </table>
+        </div>
+
+        <!------DOWNLOAD BOX----->
+        <div id="srBoxDownload">
+
+            <div class="srDownloadTitle">DESCARGAR SELECCIONADOS</div>
+
+            <div id="studentsResultsDownloads">
+
+                <div class="studentsResultsDownload">
+                    <input type="checkbox" id="printCertificates" name="certificates">
+                    <label>Certificados</label>
+                </div>
+                
+                <div class="studentsResultsDownload">
+                    <input type="checkbox" id="printCredentials" name="credentials">
+                    <label>Credenciales</label>
+                </div>
+        
+                <button type="submit" class="srDivDownload">
+                    <i class="fa-solid fa-download" id="srDownload"></i>
+                </button>
+            
+            </div>
+            <!------ERRORS------>
+            <div class="studentsResultsDownload" id="srError">Debe seleccionar al menos un documento y un alumno</div>
+
         </div>
 
     </form>

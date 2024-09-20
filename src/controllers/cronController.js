@@ -5,7 +5,7 @@ const cronController = {
         try {
 
             //ADD GOOGLE SHEETS DATA
-            await addFormsData()
+            await addFormsData('newData')
 
         }catch (error) {
              console.log(error)

@@ -782,7 +782,7 @@ const coursesController = {
     importAllData: async(req,res) => {
         try{
             //ADD GOOGLE SHEETS DATA
-            await addFormsData()
+            await addFormsData('allData')
 
             return res.redirect('/courses/my-courses/' + req.session.userLogged.company)
 

@@ -174,6 +174,25 @@ const formsDataQueries = {
 
         return studentCourses      
     },
+    studentsData: async(course) => {
+
+        //get the max id of each student
+        const idsList = await db.Forms_data.findAll({
+            where:{form_name:course},
+            attributes: ['dni', [sequelize.fn('MAX', sequelize.col('id')), 'id']],
+            group: ['dni']
+        })
+
+        const idsArray = idsList.map(obj => obj.id)
+
+        //get studentsData
+        const studentsData = await db.Forms_data.findAll({
+            where:{id:idsArray},
+            order:[['company','ASC'],['last_name','ASC']]
+        })
+
+        return studentsData        
+    },
     studentDataFiltered: async(idFormData) => {
 
         const studentDataFiltered = await db.Forms_data.findOne({
@@ -181,6 +200,25 @@ const formsDataQueries = {
             raw:true
         })
         return studentDataFiltered        
+    },
+    studentsDataFiltered: async(company,course) => {
+
+        //get the max id of each student
+        const idsList = await db.Forms_data.findAll({
+            where:{company:company,form_name:course},
+            attributes: ['dni', [sequelize.fn('MAX', sequelize.col('id')), 'id']],
+            group: ['dni']
+        })
+
+        const idsArray = idsList.map(obj => obj.id)
+
+        //get studentsData
+        const studentsData = await db.Forms_data.findAll({
+            where:{id:idsArray},
+            order:[['last_name','ASC']]
+        })
+
+        return studentsData        
     },
     studentLastResult: async(course,dni) => {
         try{
@@ -221,44 +259,6 @@ const formsDataQueries = {
         }catch(error){
             return res.send('Ha ocurrido un error')
         }
-    },
-    studentsDataFiltered: async(company,course) => {
-
-        //get the max id of each student
-        const idsList = await db.Forms_data.findAll({
-            where:{company:company,form_name:course},
-            attributes: ['dni', [sequelize.fn('MAX', sequelize.col('id')), 'id']],
-            group: ['dni']
-        })
-
-        const idsArray = idsList.map(obj => obj.id)
-
-        //get studentsData
-        const studentsData = await db.Forms_data.findAll({
-            where:{id:idsArray},
-            order:[['last_name','ASC']]
-        })
-
-        return studentsData        
-    },
-    studentsData: async(course) => {
-
-        //get the max id of each student
-        const idsList = await db.Forms_data.findAll({
-            where:{form_name:course},
-            attributes: ['dni', [sequelize.fn('MAX', sequelize.col('id')), 'id']],
-            group: ['dni']
-        })
-
-        const idsArray = idsList.map(obj => obj.id)
-
-        //get studentsData
-        const studentsData = await db.Forms_data.findAll({
-            where:{id:idsArray},
-            order:[['company','ASC'],['last_name','ASC']]
-        })
-
-        return studentsData        
     },
     studentsQty: async(course) => {
         try{

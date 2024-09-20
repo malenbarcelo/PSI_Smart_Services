@@ -191,7 +191,7 @@ function selectFocusedElement(e,input,list,elementName) {
     }else if(e.key === 'Enter'){
 
         if (list.style.display == 'block') {
-            if (g.productFocused == -1) {
+            if (g.focusedElement == -1) {
                 input.value = ''
             }else{
                 input.value = g.elementToFocus.innerText

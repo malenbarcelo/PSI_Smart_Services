@@ -3,13 +3,18 @@ const db = require('../../database/models')
 const readGoogleSheets = require('../functions/readGoogleSheets')
 const formsDataQueries = require('../functions/formsDataQueries')
 
-async function addFormsData() {
+async function addFormsData(dataToImport) {
 
     //delete last 50 records from database            
     const ids = await db.Forms_data.findAll({
         attributes: [['id','id']]
-      })
-    const idsToDelete = ids.slice(-50)
+    })
+
+    //import all data (last 5000 or all data)
+    let idsToDelete = []
+    if (dataToImport == 'allData') {
+        idsToDelete = ids.slice(-5000)
+    }
 
     var idsToDeleteArray = []
 

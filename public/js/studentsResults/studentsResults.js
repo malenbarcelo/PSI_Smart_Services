@@ -21,14 +21,11 @@ window.addEventListener('load',async()=>{
 
     //hide certificates if applies
     if (srg.courseData.includes_certificate == 0) {
-        studentsResultsDownloads.style.display = 'none'
-        srMainFilters.classList.add('mbxl')
-        srMainFilters.classList.remove('mbs')
+        srBoxDownload.style.display = 'none'
         thCamera.classList.add('notVisible')
         checkIcon.classList.add('notVisible')       
     }else{
-        studentsResultsDownloads.style.display = 'flex'
-        srMainFilters.classList.add('mbs')
+        srBoxDownload.style.display = 'block'
         srMainFilters.classList.remove('mbxl')
         thCamera.classList.remove('notVisible')
         checkIcon.classList.remove('notVisible')
@@ -89,7 +86,7 @@ window.addEventListener('load',async()=>{
         }
     ]
 
-    showTableInfo(tableIcons,215,150)
+    showTableInfo(tableIcons,202,150)
 
     //filter name predict elements
     filterName.addEventListener("input", async(e) => {
@@ -195,4 +192,5 @@ window.addEventListener('load',async()=>{
             
         }
     })
+
 })

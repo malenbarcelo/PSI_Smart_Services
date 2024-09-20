@@ -1,3 +1,9 @@
+.divStudentsResults{
+    width: max-content;
+    margin:auto;
+
+}
+
 .studentsResultsChecks{
     padding: 8px;
     border: var(--color7) solid 2px;
@@ -17,15 +23,27 @@
     align-items: center;
 }
 
+#srBoxDownload{
+    border: black solid 2px;
+    padding: 5px 10px;
+    width: 300px;
+    margin: auto;
+    margin-top: 22px;
+}
+
+.srDownloadTitle{
+    font-size: 13px;
+    font-weight: bold;
+}
+
 #studentsResultsDownloads{
     display: flex;
     column-gap: 10px;
     row-gap: 8px;
-    width: 89%;
     margin: auto;
-    margin-bottom: 5px;
-    margin-top: 20px;
-    justify-content: left;
+    margin-top: 5px;
+    justify-content: center;
+    width: fit-content;
 }
 
 .studentsResultsDownload{
@@ -41,6 +59,7 @@
     font-size: 12px;
     background-color: white;
     display: none;
+    text-align: center;
 }
 .srObsDiv{
     position: relative;

@@ -15,7 +15,7 @@ async function printTableSR(dataToPrint) {
 
         let notPassedAssociations = 0
         element.associatedResults.forEach(ar => {
-            if (ar == null || ar.passed == 0) {
+            if (ar.data == 'noInfo' || ar.passed == 0) {
                 notPassedAssociations += 1
             }
         })
@@ -49,7 +49,7 @@ async function printTableSR(dataToPrint) {
                 <th class="${rowClass}">${element.dni}</th>
                 <th class="${rowClass}">${element.last_name + ', ' + element.first_name}</th>
                 <th class="${rowClass}">${element.email}</th>
-                <th class="${rowClass + ' ' + color}">${element.grade * 100 + '%'}</th>
+                <th class="${rowClass + ' ' + color}">${(element.grade * 100).toFixed(2) + '%'}</th>
                 <th class="${rowClass}"><i class="fa-solid fa-circle-info allowedIcon" id="info_${element.id}"></i></th>
                 <th class="${rowClass}">${observations}</th>
         `
@@ -91,10 +91,7 @@ function srEventListeners(dataToPrint) {
         //associated forms info
         info.addEventListener('click',async()=>{
             arppMainTitle.innerHTML = element.last_name + ', ' + element.first_name
-            console.log(element)
-            console.log(element.associatedResults)
             if (element.associatedResults.length == 0) {
-                console.log(element)
                 arppNoAssociatedForms.style.display = 'flex'
                 arppTable.style.display = 'none'
             }else{
