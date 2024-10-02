@@ -724,6 +724,8 @@ const coursesController = {
             const issueMonth = months[month]
             
             if (typeOfDocument == 'certificates') {
+                console.log(documentTemplate)
+                console.log(studentImage)
                 return res.render('courses/certificates',{title:'Certificado',documentCode,documentTemplate,documentData,issueMonth,issueDateString,expirationDateString,studentImage})
             }else{
                 return res.render('courses/credentials',{title:'Credencial',documentCode,documentTemplate,documentData,issueDateString,expirationDateString,studentImage})
